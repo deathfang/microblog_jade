@@ -1,0 +1,13 @@
+if (!user)
+    .hero-unit
+        h1 欢迎来到 山寨的世界
+        p 这是一个基于 Node.js 的微博系统。
+        p
+            a.btn.btn-primary.btn-large(href="/login") 登录
+            | &nbsp;
+            a.btn.btn-large(href="/reg") 立即注册
+else
+    include say
+include  posts
+
+

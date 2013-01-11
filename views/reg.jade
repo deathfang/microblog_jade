@@ -1,0 +1,15 @@
+extends layout
+block style
+    style
+        .form-horizontal .controls {
+            margin-bottom: 10px;
+        }
+block reg
+    form.form-horizontal(method="post")
+        fieldset
+            legend 用户注册
+            +control-group("username","用户名","text",true)
+            +control-group("password","口令","password")
+            +control-group("password-repeat","重复输入口令","password")
+            .form-actions
+                button(type="submit").btn.btn-primary 注册

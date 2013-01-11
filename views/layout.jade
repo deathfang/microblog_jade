@@ -1,0 +1,58 @@
+doctype 5
+html
+  head
+    title #{title} - microblog
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    style
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+        .postlist .span4{
+            float: none;
+            display: inline-block;
+            vertical-align: top;
+        }
+    link(rel='stylesheet', href='/stylesheets/bootstrap-responsive.min.css')
+    block style
+    body
+        .navbar.navbar-fixed-top
+            .navbar-inner
+                .container
+                    a.btn.btn-navbar(data-toggle="collapse",data-target=".nav-collapse")
+                        span.icon-bar
+                        span.icon-bar
+                        span.icon-bar
+                    a.brand(href='/') Microblog
+                    .nav-collapse
+                        mixin links(href,text)
+                            li: a(href="/" + href) #{text}
+                        ul.nav
+                            li.active: a(href="/") 首页
+                            if (!user)
+                                +links("login","登录")
+                                +links("reg","注册")
+                            else
+                                +links("logout","登出")
+        #container.container
+            if success
+                .alert.alert-success #{success}
+            if error
+                .alert.alert-error #{error}
+            block container
+            mixin control-group(id,label_text,type,autofocus)
+                label.control-label(for=id) #{label_text}
+                .controls
+                    input(type=type,name=id,id=id,autofocus=autofocus).input-medium
+            block reg
+            block login
+            block user
+            block test_module
+            hr(style="clear:both")
+            footer
+                p
+                    a(href="http://t.qq.com/deathfang",target='_blank') 点这里
+                    |  2012
+    script(src="/javascripts/jquery-min.js")
+    script(src="/javascripts/bootstrap.min.js")
+

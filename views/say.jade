@@ -3,3 +3,18 @@ form(method='post',action='/post',style='text-align:center').well.form-inlinecen
     button(type='submit',style='margin:0 0 10px 10px').btn.btn-success
         i.icon-comment.icon-white
         | 发言
+script(src="/javascripts/store.min.js")
+script
+    if( store.enabled ) {
+        var postInput = $('.form-inlinecenter [name=post]');
+        postInput.keyup(function(){
+            store.set('postText',postInput.val())
+        });
+        typeof store.get('postText') != 'undefined' && postInput.val(store.get('postText'));
+        postInput.parent('form').submit(function(e){
+            e.preventDefault();
+            store.clear('postText');
+            $(this).get(0).submit();
+        })
+    }
+

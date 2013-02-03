@@ -3,6 +3,7 @@ html
   head
     title #{title} - microblog
     link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap-responsive.min.css')
     style
         body {
             padding-top: 60px;
@@ -13,8 +14,11 @@ html
             display: inline-block;
             vertical-align: top;
         }
-    link(rel='stylesheet', href='/stylesheets/bootstrap-responsive.min.css')
     block style
+    if user
+        include post_modify_style
+    script(src="/javascripts/jquery.min.js")
+    script(src="/javascripts/bootstrap.min.js")
     body
         .navbar.navbar-fixed-top
             .navbar-inner
@@ -34,11 +38,13 @@ html
                                 +links("reg","注册")
                             else
                                 +links("logout","登出")
+                        if user
+                            ul.nav.pull-right: li: a(href="/u/" + user.name) #{user.name}
         #container.container
             if success
-                .alert.alert-success #{success}
+                .alert.alert-success.fade.in #{success}
             if error
-                .alert.alert-error #{error}
+                .alert.alert-error.fade.in #{error}
             block container
             mixin control-group(id,label_text,type,autofocus)
                 label.control-label(for=id) #{label_text}
@@ -53,6 +59,12 @@ html
                 p
                     a(href="http://t.qq.com/deathfang",target='_blank') 点这里
                     |  2012
-    script(src="/javascripts/jquery-min.js")
-    script(src="/javascripts/bootstrap.min.js")
+    script
+        if ($(".alert").text()) {
+            setTimeout(function(){
+                $(".alert").alert("close")
+            },2000)
+        }
+    block post_modify
+
 

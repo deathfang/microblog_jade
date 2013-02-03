@@ -119,9 +119,26 @@ module.exports = function(app) {
             });
         });
     });
-
+    app.get('/del/:id',function(req,res){
+        Post.del(req.params.id,function(err){
+            if (err) {
+                return res.redirect('/');
+            }
+        })
+    });
+    app.post('/edit/:id',function(req,res){
+        Post.edit(req.params.id,req.body.post,function(err){
+            if (err) {
+                return res.redirect('/');
+            }
+        })
+    });
+    //route test
     app.get('/ua',function(req,res){
         res.send(req.headers)
+    });
+    app.get('/ut/:user_test',function(req,res){
+        res.send(req.params.user_test)
     })
 }
 

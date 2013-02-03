@@ -1,9 +1,18 @@
 .row.postlist
-    - posts.forEach(function(post,index){
-        .span4
+    - posts.forEach(function(post){
+        .span4(id=post.id)
             h2
                 a(href="/u/" + post.user) #{post.user}
                 | 说
+                if user && user.name == post.user
+                    a(href="",title="关闭").icon-remove.fade
+                    a(href="",title="编辑").icon-edit.fade
+                    a(href="",title="Ctrl+Enter保存").icon-file.fade.hide
             p: small #{post.time}
-            p #{post.post}
+            .post: p #{post.post}
     - })
+if user
+    script(src="/javascripts/post_modify.js")
+
+
+

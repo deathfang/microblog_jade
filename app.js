@@ -8,9 +8,9 @@ var express = require('express')
   , flash = require('connect-flash')
   , settings = require('./settings')
   , MongoStore = require('connect-mongo')(express)
-    , fs = require('fs')
-    , accessLogfile = fs.createWriteStream('access.log', {flags: 'a'})
-    , errorLogfile = fs.createWriteStream('error.log', {flags: 'a'});
+  , fs = require('fs')
+  , accessLogfile = fs.createWriteStream('access.log', {flags: 'a'})
+  , errorLogfile = fs.createWriteStream('error.log', {flags: 'a'});
 
 var app = express();
 

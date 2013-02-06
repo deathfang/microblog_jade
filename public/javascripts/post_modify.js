@@ -4,9 +4,7 @@ $(".postlist").delegate(".icon-remove","click",function(e){
     post.fadeTo("normal",0,function(){
         $(this).animate({width:"toggle",height:"toggle"},"normal",function(){
             post.remove();
-            $.ajax({
-                url: "/del/" + post.attr("id")
-            });
+            $.get("/del/" + post.attr("id"));
         })
     })
 })
@@ -15,9 +13,8 @@ $(".postlist").delegate(".icon-edit","click",function(e){
     var postEditor = $(this).parents(".span4").find(".post p"),
         saveButton = $(this).next(),
         postText = postEditor.text();
-    console.log(postText);
     postEditor.attr("contenteditable",true).focus();
-    postEditor.keyup(function(){
+    postEditor.on("keyup paste",function(){
         if (saveButton.is(":hidden")) {
             saveButton.toggleClass("hide");
         }

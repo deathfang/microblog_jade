@@ -7,6 +7,7 @@ var express = require('express')
   , http = require('http')
   , flash = require('connect-flash')
   , settings = require('./settings')
+  , lessToCSS = require('./lessToCSS')
   , MongoStore = require('connect-mongo')(express)
   , fs = require('fs')
   , accessLogfile = fs.createWriteStream('access.log', {flags: 'a'})
@@ -56,7 +57,7 @@ app.configure('production', function(){
         next();
     });
 });
-
+lessToCSS();
 require('./routes')(app);
 
 if (!module.parent) {

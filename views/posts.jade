@@ -7,7 +7,7 @@
                 if user && user.name == post.user
                     a(href="",title="关闭").icon-remove.fade
                     a(href="",title="编辑").icon-edit.fade
-                    a(href="",title="Ctrl+Enter保存").icon-file.fade.hide
+                    a(href="",title="Enter保存").icon-file.fade.hide
             p: small #{post.time}
             .post: p #{post.post}
     - })

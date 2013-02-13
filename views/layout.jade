@@ -1,24 +1,24 @@
 doctype 5
 html
-  head
-    title #{title} - microblog
-    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
-    link(rel='stylesheet', href='/stylesheets/bootstrap-responsive.min.css')
-    style
-        body {
-            padding-top: 60px;
-            padding-bottom: 40px;
-        }
-        .postlist .span4{
-            float: none;
-            display: inline-block;
-            vertical-align: top;
-        }
-    block style
-    if user
-        include post_modify_style
-    script(src="/javascripts/jquery.min.js")
-    script(src="/javascripts/bootstrap.min.js")
+    head
+        title #{title} - microblog
+        link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+        link(rel='stylesheet', href='/stylesheets/bootstrap-responsive.min.css')
+        style
+            body {
+                padding-top: 60px;
+                padding-bottom: 40px;
+            }
+            .postlist .span4{
+                float: none;
+                display: inline-block;
+                vertical-align: top;
+            }
+        block style
+        if user
+            link(rel='stylesheet', href='/stylesheets/post_modify_style.css')
+        script(src="/javascripts/jquery.min.js")
+        script(src="/javascripts/bootstrap.min.js")
     body
         .navbar.navbar-fixed-top
             .navbar-inner
@@ -59,12 +59,12 @@ html
                 p
                     a(href="http://t.qq.com/deathfang",target='_blank') 点这里
                     |  2012
-    script
-        if ($(".alert").text()) {
-            setTimeout(function(){
-                $(".alert").alert("close")
-            },2000)
-        }
-    block post_modify
+        script
+            if ($(".alert").text()) {
+                setTimeout(function(){
+                    $(".alert").alert("close")
+                },2000)
+            }
+        block post_modify
 
 

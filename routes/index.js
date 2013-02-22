@@ -77,6 +77,7 @@ module.exports = function(app) {
                 return res.redirect('/login');
             }
             req.session.user = user;
+//            req.cookies.
             req.flash('success', '登入成功');
             res.redirect('/');
         });

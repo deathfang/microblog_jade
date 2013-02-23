@@ -8,10 +8,22 @@ module.exports = function(app) {
             if (err) {
                 posts = []
             }
-            res.render('index', {
-                title: '首頁',
-                posts:posts
-            });
+            if (req.cookies.user) {
+                User.get(req.cookies.user, function(err, user) {
+                    req.session.user = user;
+                    res.render('index', {
+                        title: '首頁',
+                        posts:posts,
+                        user:user
+                    });
+                });
+            }
+            else {
+                res.render('index', {
+                    title: '首頁',
+                    posts:posts,
+                });
+            }
         });
     });
     app.get('/reg', checkNotLogin);
@@ -77,13 +89,14 @@ module.exports = function(app) {
                 return res.redirect('/login');
             }
             req.session.user = user;
-//            req.cookies.
+            res.cookie('user', user.name, { maxAge: req.body.login_enable*365*24*3600*1000, httpOnly: true })
             req.flash('success', '登入成功');
             res.redirect('/');
         });
     });
     app.get('/logout', function(req, res) {
         req.session.user = null;
+        res.clearCookie('user');
         req.flash('success', '登出成功');
         res.redirect('/');
     });

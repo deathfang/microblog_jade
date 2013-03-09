@@ -4,13 +4,13 @@ var Post = require('../models/post')
 
 module.exports = function(app) {
     app.get('/', function(req, res) {
-        Post.get(null, function(err, posts) {
+        Post.handle(true,null,null,null, function(err, posts) {
             if (err) {
                 posts = []
             }
             if (req.cookies.user) {
                 User.get(req.cookies.user, function(err, user) {
-                    req.session.user = user;
+                    !req.session.user && (req.session.user = user);
                     res.render('index', {
                         title: '首頁',
                         posts:posts,
@@ -121,7 +121,7 @@ module.exports = function(app) {
                 req.flash('error', '用户不存在');
                 return res.redirect('/');
             }
-            Post.get(user.name, function(err, posts) {
+            Post.handle(true,user.name,null,null, function(err, posts) {
                 if (err) {
                     req.flash('error', err);
                     return res.redirect('/');
@@ -134,14 +134,14 @@ module.exports = function(app) {
         });
     });
     app.get('/del/:id',function(req,res){
-        Post.del(req.params.id,function(err){
+        Post.handle(null,null,req.params.id,null,function(err){
             if (err) {
                 return res.redirect('/');
             }
         })
     });
     app.post('/edit/:id',function(req,res){
-        Post.edit(req.params.id,req.body.post,function(err){
+        Post.handle(null,null,req.params.id,req.body.post,function(err){
             if (err) {
                 return res.redirect('/');
             }

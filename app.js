@@ -10,6 +10,7 @@ var express = require('express')
   , lessToCSS = require('./lessToCSS')
   , MongoStore = require('connect-mongo')(express)
   , fs = require('fs')
+  , path = require('path')
   , accessLogfile = fs.createWriteStream('access.log', {flags: 'a'})
   , errorLogfile = fs.createWriteStream('error.log', {flags: 'a'});
 
@@ -43,7 +44,7 @@ app.configure(function(){
         next();
     });
   app.use(app.router);
-  app.use(express.static(require('path').join(__dirname, 'public')));
+  app.use(express.static(path.join(__dirname, 'public')));
 });
 
 app.configure('development', function(){

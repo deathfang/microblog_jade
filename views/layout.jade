@@ -2,8 +2,8 @@ doctype 5
 html
     head
         title #{title} - microblog
-        link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
-        link(rel='stylesheet', href='/stylesheets/bootstrap-responsive.min.css')
+        link(rel='stylesheet', href='//twitter.github.com/bootstrap/assets/css/bootstrap.css')
+        link(rel='stylesheet', href='//twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css')
         style
             body {
                 padding-top: 60px;
@@ -17,8 +17,6 @@ html
         block style
         if user
             link(rel='stylesheet', href='/stylesheets/post_modify_style.css')
-        script(src="/javascripts/jquery.min.js")
-        script(src="/javascripts/bootstrap.min.js")
     body
         .navbar.navbar-fixed-top
             .navbar-inner
@@ -53,18 +51,20 @@ html
             block reg
             block login
             block user
-            block test_module
             hr(style="clear:both")
             footer
                 p
                     a(href="http://t.qq.com/deathfang",target='_blank') 点这里
                     |  2012
+        script(src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
+        script(src="//twitter.github.com/bootstrap/assets/js/bootstrap.min.js")
         script
             if ($(".alert").text()) {
                 setTimeout(function(){
                     $(".alert").alert("close")
                 },2000)
             }
-        block post_modify
+        if user
+            script(src="/javascripts/post_modify.js")
 
 

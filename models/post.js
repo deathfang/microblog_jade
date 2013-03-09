@@ -43,10 +43,16 @@ Post.prototype.save = function (callback) {
     });
 };
 
-Post.get = function (username, callback) {
+Post.handle = function (getpost,username,id,text,callback) {
     mongodb.open(function(err, db) {
-        if (err) {
-            return callback(err);
+        function error(err){
+            if (err) {
+                return callback(err);
+            }
+        }
+        function closeMongodb (err) {
+            mongodb.close();
+            error(err)
         }
         // 讀取 posts 集合
         db.collection('posts', function(err, collection) {
@@ -54,69 +60,29 @@ Post.get = function (username, callback) {
                 mongodb.close();
                 return callback(err);
             }
-            // 查找 user 屬性爲 username 的文檔，如果 username 是 null 則匹配全部
-            var query = {};
-            if (username) {
-                query.user = username;
-            }
-            collection.find(query).sort({time: -1}).toArray(function(err, docs) {
-                mongodb.close();
-                if (err) {
-                    callback(err, null);
+            if (getpost){
+                // 查找 user 屬性爲 username 的文檔，如果 username 是 null 則匹配全部
+                var query = {};
+                if (username) {
+                    query.user = username;
                 }
-                // 封裝 posts 爲 Post 對象
-                var posts = [];
-                docs.forEach(function(doc, index) {
-                    var post = new Post(doc.user, doc.post, doc.time,doc._id);
-                    posts.push(post);
+                collection.find(query).sort({time: -1}).toArray(function(err, docs) {
+                    closeMongodb(err);
+                    // 封裝 posts 爲 Post 對象
+                    var posts = [];
+                    docs.forEach(function(doc, index) {
+                        var post = new Post(doc.user, doc.post, doc.time,doc._id);
+                        posts.push(post);
+                    });
+                    callback(null, posts);
                 });
-                callback(null, posts);
-            });
-        });
-    });
-};
-
-Post.del = function(post_id,callback) {
-    mongodb.open(function(err, db) {
-        if (err) {
-            return callback(err);
-        }
-        // 讀取 posts 集合
-        db.collection('posts', function(err, collection) {
-            if (err) {
-                mongodb.close();
-                return callback(err);
             }
-            collection.remove({_id : ObjectId(post_id)}, function(err, doc) {
-                mongodb.close();
-                if (!doc) {
-                    callback(err);
-                }
-            })
-        });
-    });
-}
-Post.edit = function(post_id,post_text,callback) {
-    mongodb.open(function(err, db) {
-        if (err) {
-            return callback(err);
-        }
-        // 讀取 posts 集合
-        db.collection('posts', function(err, collection) {
-            if (err) {
-                mongodb.close();
-                return callback(err);
+            else if (!text && id) {
+                collection.remove({_id : ObjectId(id)},closeMongodb)
             }
-            collection.update({
-                _id : ObjectId(post_id)
-                },{
-                    $set:{post:post_text}
-                },{safe:true},function(err, doc) {
-                    mongodb.close();
-                    if (!doc) {
-                        callback(err);
-                }
-            })
-        });
-    });
+            else if (text && id) {
+                collection.update({_id : ObjectId(id)},{$set:{post:text}},{safe:true},closeMongodb)
+            }
+        })
+    })
 }

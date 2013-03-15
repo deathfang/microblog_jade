@@ -4,73 +4,71 @@ var Post = require('../models/post')
 
 module.exports = function(app) {
     app.get('/', function(req, res) {
-        Post.handle(true,null,null,null, function(err, posts) {
-            if (err) {
-                posts = []
-            }
-            if (req.cookies.user) {
-                User.get(req.cookies.user, function(err, user) {
-                    !req.session.user && (req.session.user = user);
+        if (req.session.user || req.cookies.user) {
+            Post.handle(true,null,null,null, function(err, posts) {
+                if (err) {
+                    posts = []
+                }
+                if (!req.session.user) {
+                    User.get(req.cookies.user, function(err, user) {
+                        req.session.user = user;
+                        res.render('index', {
+                            title: '首頁',
+                            posts:posts,
+                            user:user
+                        });
+                    });
+                }
+                else {
                     res.render('index', {
                         title: '首頁',
                         posts:posts,
-                        user:user
                     });
-                });
-            }
-            else {
-                res.render('index', {
-                    title: '首頁',
-                    posts:posts,
-                });
-            }
-        });
-    });
-    app.get('/reg', checkNotLogin);
-    app.get('/reg',function(req,res){
-        res.render('reg',{title:'用户注册'})
-    });
+                }
+            });
+        }
+        else {
+            res.render('sign');
+        }
+    })
+
     app.post('/reg',checkNotLogin)
     app.post('/reg', function(req, res) {
-        //检验用户两次输入的口令是否一致
-        if (req.body['password-repeat'] != req.body['password']) {
-            req.flash('error', '两次输入的口令不一致');
-            return res.redirect('/reg');
-        }
+
         //生成口令的散列值
         var md5 = crypto.createHash('md5');
-        var password = md5.update(req.body.password).digest('base64');
+        var password = md5.update(req.body.passwordsignup).digest('base64');
 
         var newUser = new User({
-            name: req.body.username,
+            name: req.body.usernamesignup,
             password: password,
         });
 
         //检查用户名是否已经存在
         User.get(newUser.name, function(err, user) {
-            if (user)
-                err = 'Username already exists.';
+//            if (user)
+//                err = 'Username already exists.';
             if (err) {
-                req.flash('error', err);
-                return res.redirect('/reg');
+                return res.redirect('/#toregister');
             }
             //如果不存在则新增用户
             newUser.save(function(err) {
                 if (err) {
-                    req.flash('error', err);
-                    return res.redirect('/reg');
+                    return res.redirect('/#toregister');
                 }
                 req.session.user = newUser;
-//                req.flash('success', '注册成功');
-                req.session.success = '注册成功';
                 res.redirect('/');
             });
         });
     });
-    app.get('/login', checkNotLogin);
-    app.get('/login', function(req, res) {
-        res.render('login', {
-            title: '用户登入',
+    app.post('/check_username',function(req, res){
+        User.get(req.body.username, function(err, user) {
+            if (user)
+                return res.send(false);
+            if (err) {
+                return res.redirect('/');
+            }
+            res.send(true);
         });
     });
     app.post('/login', checkNotLogin);
@@ -82,22 +80,21 @@ module.exports = function(app) {
         User.get(req.body.username, function(err, user) {
             if (!user) {
                 req.flash('error', '用户不存在');
-                return res.redirect('/login');
+                return res.redirect('/');
             }
             if (user.password != password) {
                 req.flash('error', '用户口令错误');
-                return res.redirect('/login');
+                return res.redirect('/');
             }
             req.session.user = user;
-            res.cookie('user', user.name, { maxAge: req.body.login_enable*365*24*3600*1000, httpOnly: true })
-            req.flash('success', '登入成功');
+            res.cookie('user', user.name, { maxAge: req.body.loginkeeping*365*24*3600*1000, httpOnly: true })
             res.redirect('/');
         });
     });
+
     app.get('/logout', function(req, res) {
         req.session.user = null;
         res.clearCookie('user');
-        req.flash('success', '登出成功');
         res.redirect('/');
     });
     app.post('/post', checkLogin);
@@ -109,17 +106,15 @@ module.exports = function(app) {
                 req.flash('error', err);
                 return res.redirect('/');
             }
-            req.flash('success', '发表成功');
-            res.redirect('/u/' + currentUser.name);
+            res.redirect('/' + currentUser.name);
         });
     });
 
 
-    app.get('/u/:user', function(req, res) {
+    app.get('/:user', function(req, res) {
         User.get(req.params.user, function(err, user) {
             if (!user) {
-                req.flash('error', '用户不存在');
-                return res.redirect('/');
+                return res.sendfile('views/Page not found.html')
             }
             Post.handle(true,user.name,null,null, function(err, posts) {
                 if (err) {
@@ -134,22 +129,24 @@ module.exports = function(app) {
         });
     });
     app.get('/del/:id',function(req,res){
-        Post.handle(null,null,req.params.id,null,function(err){
+        Post.handle(null,null,req.params.id,null,function(err,success){
             if (err) {
                 return res.redirect('/');
             }
+            res.send(success)
         })
     });
     app.post('/edit/:id',function(req,res){
-        Post.handle(null,null,req.params.id,req.body.post,function(err){
+        Post.handle(null,null,req.params.id,req.body.post,function(err,success){
             if (err) {
                 return res.redirect('/');
             }
+            res.send(success)
         })
     });
     //route test
     app.get('/ua',function(req,res){
-        res.send(req.headers)
+//        res.send(req.headers)
     });
     app.get('/ut/:user_test',function(req,res){
         res.send(req.params.user_test)
@@ -159,7 +156,7 @@ module.exports = function(app) {
 function checkLogin(req, res, next) {
     if (!req.session.user) {
         req.flash('error', '未登入');
-        return res.redirect('/login');
+        return res.redirect('/');
     }
     next();
 }

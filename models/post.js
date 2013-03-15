@@ -50,10 +50,6 @@ Post.handle = function (getpost,username,id,text,callback) {
                 return callback(err);
             }
         }
-        function closeMongodb (err) {
-            mongodb.close();
-            error(err)
-        }
         // 讀取 posts 集合
         db.collection('posts', function(err, collection) {
             if (err) {
@@ -67,7 +63,8 @@ Post.handle = function (getpost,username,id,text,callback) {
                     query.user = username;
                 }
                 collection.find(query).sort({time: -1}).toArray(function(err, docs) {
-                    closeMongodb(err);
+                    error(err);
+                    mongodb.close();
                     // 封裝 posts 爲 Post 對象
                     var posts = [];
                     docs.forEach(function(doc, index) {
@@ -78,10 +75,18 @@ Post.handle = function (getpost,username,id,text,callback) {
                 });
             }
             else if (!text && id) {
-                collection.remove({_id : ObjectId(id)},closeMongodb)
+                collection.remove({_id : ObjectId(id)},function(err){
+                    error(err);
+                    mongodb.close();
+                    callback(null,true)
+                })
             }
             else if (text && id) {
-                collection.update({_id : ObjectId(id)},{$set:{post:text}},{safe:true},closeMongodb)
+                collection.update({_id : ObjectId(id)},{$set:{post:text}},{safe:true},function(err){
+                    error(err);
+                    mongodb.close();
+                    callback(null,true)
+                })
             }
         })
     })

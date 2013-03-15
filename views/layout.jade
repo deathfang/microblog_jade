@@ -1,18 +1,22 @@
 doctype 5
 html
     head
+        meta(charset="utf-8")
         title #{title} - microblog
         link(rel='stylesheet', href='//twitter.github.com/bootstrap/assets/css/bootstrap.css')
         link(rel='stylesheet', href='//twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css')
+        link(rel='stylesheet', href='//fortawesome.github.com/Font-Awesome/assets/css/font-awesome.css')
         style
-            body {
-                padding-top: 60px;
-                padding-bottom: 40px;
-            }
             .postlist .span4{
                 float: none;
                 display: inline-block;
                 vertical-align: top;
+            }
+            @media (min-width: 979px) {
+                body {
+                    padding-top: 60px;
+                    padding-bottom: 40px;
+                }
             }
         block style
         if user
@@ -32,15 +36,13 @@ html
                         ul.nav
                             li.active: a(href="/") 首页
                             if (!user)
-                                +links("login","登录")
-                                +links("reg","注册")
+                                +links("","登录")
+                                +links("#toregister","注册")
                             else
                                 +links("logout","登出")
                         if user
                             ul.nav.pull-right: li: a(href="/u/" + user.name) #{user.name}
         #container.container
-            if success
-                .alert.alert-success.fade.in #{success}
             if error
                 .alert.alert-error.fade.in #{error}
             block container

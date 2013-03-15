@@ -40,7 +40,6 @@ app.configure(function(){
     app.use(function(req,res,next){
         res.locals.user = req.session.user;
         res.locals.error = req.flash('error').toString();
-        res.locals.success = req.flash('success').toString();
         next();
     });
   app.use(app.router);
@@ -58,7 +57,7 @@ app.configure('production', function(){
         next();
     });
 });
-lessToCSS();
+//lessToCSS();
 require('./routes')(app);
 
 if (!module.parent) {

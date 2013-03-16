@@ -46,8 +46,6 @@ module.exports = function(app) {
 
         //检查用户名是否已经存在
         User.get(newUser.name, function(err, user) {
-//            if (user)
-//                err = 'Username already exists.';
             if (err) {
                 return res.redirect('/#toregister');
             }
@@ -80,15 +78,15 @@ module.exports = function(app) {
         User.get(req.body.username, function(err, user) {
             if (!user) {
                 req.flash('error', '用户不存在');
-                return res.redirect('/');
+                return res.send('err_id');
             }
             if (user.password != password) {
                 req.flash('error', '用户口令错误');
-                return res.redirect('/');
+                return res.send('err_pw');
             }
             req.session.user = user;
             res.cookie('user', user.name, { maxAge: req.body.loginkeeping*365*24*3600*1000, httpOnly: true })
-            res.redirect('/');
+            res.send(true);
         });
     });
 

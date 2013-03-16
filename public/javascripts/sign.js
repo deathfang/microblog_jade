@@ -37,6 +37,30 @@ $(function(){
         $("#username").focus();
     }
 });
+$("#login form").submit(function(e){
+    e.preventDefault();
+    $.post("/login",{
+        username:$("#username").val(),
+        password:$("#password").val(),
+        loginkeeping:$("#loginkeeping").val()
+    },function(res){
+        if (res == 'err_id') {
+            $("#username").parent('.control-group')
+                .addClass('error')
+                .find('.help-block')
+                .html('<ul role="alert"><li>用户名不存在</li></ul>')
+        }
+        else if (res == 'err_pw'){
+            $("#password").parent('.control-group')
+                .addClass('error')
+                .find('.help-block')
+                .html('<ul role="alert"><li>密码错误</li></ul>')
+        }
+        else if (res) {
+            location.reload();
+        }
+    })
+});
 $("#usernamesignup").on('keyup paste',function(){
     var $that = $(this);
     $.ajax({

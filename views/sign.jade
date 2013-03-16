@@ -33,7 +33,7 @@ html
                     h1 Mini Blog
                     form(method="post",action="/login",autocomplete="on",novalidate)
                         +control-group("username","用户名或邮箱","icon-user","用户名或邮箱","请填写用户名！")
-                        +control-group("password","密码","icon-key","密码","请填写密码！")
+                        +control-group("password","密码","icon-key","密码","请填写密码！","password")
                         p.keeplogin.checkbox
                             input#loginkeeping(type="checkbox",name="loginkeeping",value=1)
                             label(for="loginkeeping") 记住我

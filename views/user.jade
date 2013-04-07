@@ -1,5 +1,7 @@
 extends layout
 block user
-    if user
-        include say
-    include posts
+    .dashboard
+        if user
+            include say
+    .content-main
+        include posts

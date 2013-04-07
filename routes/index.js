@@ -77,11 +77,9 @@ module.exports = function(app) {
 
         User.get(req.body.username, function(err, user) {
             if (!user) {
-                req.flash('error', '用户不存在');
                 return res.send('err_id');
             }
             if (user.password != password) {
-                req.flash('error', '用户口令错误');
                 return res.send('err_pw');
             }
             req.session.user = user;

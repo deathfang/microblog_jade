@@ -1,16 +1,19 @@
-.row.postlist
+.postlist
     - posts.forEach(function(post){
-        .span4(id=post.id)
-            h2
-                a(href="/" + post.user) #{post.user}
-                | 说
-                if user && user.name == post.user
-                    a(href="",title="关闭").icon-remove.fade
-                    a(href="",title="编辑").icon-edit.fade
-                    a(href="",title="Enter保存").icon-save.fade.hide
-            - var time = post.time.getMonth() + '月' + post.time.getDay() + '日' + ' '+ post.time.getHours() + ":"+ post.time.getMinutes();
-            p: small #{time}
-            .post: p #{post.post}
+        .media(id=post.id)
+            a.pull-left(href="#")
+                img.media-object.avatar(src="../img/avatar.png")
+            .media-body
+                h4.media-heading
+                    a(href="/" + post.user) #{post.user}
+                    | 说
+                    if user && user.name == post.user
+                        a(href="",title="关闭").icon-remove.fade
+                        a(href="",title="编辑").icon-edit.fade
+                        a(href="",title="Enter保存").icon-save.fade.hide
+                - var time = post.time.getMonth() + '月' + post.time.getDay() + '日' + ' '+ post.time.getHours() + ":"+ post.time.getMinutes();
+                .post: p #{post.post}
+                p: small #{time}
     - })
 
 

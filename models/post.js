@@ -1,6 +1,6 @@
 var mongodb = require('./db'),
     ObjectId = require('mongodb').ObjectID;
-
+var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://)?(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
 function Post(username, post, time,id) {
     this.user = username;
     this.post = post;
@@ -12,6 +12,11 @@ function Post(username, post, time,id) {
     this.id = id
 };
 module.exports = Post;
+
+function PostFormat(post,time){
+    post.split(urlRxp)
+
+}
 
 Post.prototype.save = function (callback) {
     // 存入 Mongodb 的文档

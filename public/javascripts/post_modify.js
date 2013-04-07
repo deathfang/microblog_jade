@@ -1,6 +1,6 @@
 $(".postlist").delegate(".icon-remove","click",function(e){
     e.preventDefault();
-    var post = $(this).parents(".span4");
+    var post = $(this).parents(".media");
     $.get("/del/" + post.attr("id"),function(res){
         res && post.fadeTo("normal",0,function(){
             $(this).animate({width:"toggle",height:"toggle"},"normal",function(){
@@ -11,7 +11,7 @@ $(".postlist").delegate(".icon-remove","click",function(e){
 })
 $(".postlist").delegate(".icon-edit","click",function(e){
     e.preventDefault();
-    var postEditor = $(this).parents(".span4").find(".post p"),
+    var postEditor = $(this).parents(".media").find(".post p"),
         saveButton = $(this).next(),
         postText = postEditor.text();
     postEditor.attr("contenteditable",true).focus();
@@ -57,7 +57,7 @@ $(".postlist").delegate(".icon-edit","click",function(e){
     }
 
     function savePost(){
-        $.post('/edit/'+postEditor.parents('.span4').attr('id'),{post:postEditor.text()},function(res){
+        $.post('/edit/'+postEditor.parents('.media').attr('id'),{post:postEditor.text()},function(res){
             if (res) {
                 saveButton.toggleClass("hide");
                 var savelabel;
@@ -72,7 +72,7 @@ $(".postlist").delegate(".icon-edit","click",function(e){
                     postEditor.unbind('keydown');
                     setTimeout(function(){
                         savelabel.modal('hide');
-                    },1000)
+                    },500)
                 })
             }
         });

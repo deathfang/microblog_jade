@@ -1,13 +1,23 @@
-if (!user)
-    .hero-unit
-        h1 欢迎来到 山寨的世界
-        p 这是一个基于 Node.js 的微博系统。
-        p
-            a.btn.btn-primary.btn-large(href="/login") 登录
-            | &nbsp;
-            a.btn.btn-large(href="/reg") 立即注册
-else
-    include say
-include  posts
+.dashboard
+    .module.mini-profile
+        a.media(href="" + user.name).account-summary
+            img.avatar.pull-left(src="../img/avatar.png")
+            .media-body
+                strong.fullname #{user.name}
+                small.metadata View my profile page
+        ul.stats
+            - var Tweets = posts.filter(function(i){return i.user == user.name}).length
+            li: a(href="" + user.name)
+                strong #{Tweets}
+                | 话题
+            li: a(href="")
+                strong 30
+                | 收听
+            li: a(href="")
+                strong 30
+                | 听众
+        include say
+.content-main
+    include  posts
 
 

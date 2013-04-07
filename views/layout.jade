@@ -3,28 +3,15 @@ html
     head
         meta(charset="utf-8")
         title #{title} - microblog
-        link(rel='stylesheet', href='//twitter.github.com/bootstrap/assets/css/bootstrap.css')
-        link(rel='stylesheet', href='//twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css')
+        link(rel='stylesheet', href='bootstrap/css/bootstrap.css')
+        link(rel='stylesheet', href='bootstrap/css/bootstrap-responsive.css')
         link(rel='stylesheet', href='//fortawesome.github.com/Font-Awesome/assets/css/font-awesome.css')
-        style
-            .postlist .span4{
-                float: none;
-                display: inline-block;
-                vertical-align: top;
-            }
-            @media (min-width: 979px) {
-                body {
-                    padding-top: 60px;
-                    padding-bottom: 40px;
-                }
-            }
-        block style
-        if user
-            link(rel='stylesheet', href='/stylesheets/post_modify_style.css')
+        link(rel='stylesheet', href='/stylesheets/twitter.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
     body
-        .navbar.navbar-fixed-top
+        .navbar.navbar-inverse.navbar-fixed-top
             .navbar-inner
-                .container
+                .page-container
                     a.btn.btn-navbar(data-toggle="collapse",data-target=".nav-collapse")
                         span.icon-bar
                         span.icon-bar
@@ -41,25 +28,20 @@ html
                             else
                                 +links("logout","登出")
                         if user
-                            ul.nav.pull-right: li: a(href="/u/" + user.name) #{user.name}
-        #container.container
-            if error
-                .alert.alert-error.fade.in #{error}
-            block container
-            mixin control-group(id,label_text,type,autofocus)
-                label.control-label(for=id) #{label_text}
-                .controls
-                    input(type=type,name=id,id=id,autofocus=autofocus).input-medium
-            block reg
-            block login
-            block user
-            hr(style="clear:both")
-            footer
-                p
-                    a(href="http://t.qq.com/deathfang",target='_blank') 点这里
-                    |  2012
+                            ul.nav.pull-right: li: a(href="" + user.name) #{user.name}
+        #container.page-container
+            .container-inner.clearfix
+                if error
+                    .alert.alert-error.fade.in #{error}
+                block container
+                block user
+        footer
+            .page-container
+                a(href="http://t.qq.com/deathfang",target='_blank') 点这里
+                |  2012
         script(src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
-        script(src="//twitter.github.com/bootstrap/assets/js/bootstrap.min.js")
+        script(src="/javascripts/util.js")
+        script(src="/bootstrap/js/bootstrap.min.js")
         script
             if ($(".alert").text()) {
                 setTimeout(function(){

@@ -4,16 +4,16 @@ html
         meta(charset="utf-8")
         title microblog
         meta(name='viewport',content='width=device-width, initial-scale=1.0')
-        link(rel='stylesheet', href='//twitter.github.com/bootstrap/assets/css/bootstrap.css')
+        link(rel='stylesheet', href='bootstrap/css/bootstrap.min.css')
         link(rel='stylesheet', href='//fortawesome.github.com/Font-Awesome/assets/css/font-awesome.css')
         link(rel='stylesheet', href='/stylesheets/login.css')
     body
+        a.logo(data-toggle="tooltip",data-placement="right",title="顫抖吧！人類……",href="/",tabindex=-1)
+            img(src="/img/logo.png",alt="logo")
         .container
             a.hiddenanchor#toregister
             a.hiddenanchor#tologin
             #wrapper
-                a.logo(data-toggle="tooltip",data-placement="right",title="顫抖吧！人類……",href="/",tabindex=-1)
-                    img(src="/img/logo.png",alt="logo")
                 mixin control-group(id,label_text,icon_class,placeholder,required_message,type)
                     if !type
                         type = "text"
@@ -58,7 +58,7 @@ html
                         +submit_button("注册")
                         +change_link("已有账号？","#tologin","立即登录")
         script(src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
-        script(src="//twitter.github.com/bootstrap/assets/js/bootstrap.min.js")
+        script(src="/bootstrap/js/bootstrap.min.js")
         script(src="/javascripts/jquery.backstretch.min.js")
         script(src="/javascripts/jqBootstrapValidation.js")
         script(src="/javascripts/sign.js")

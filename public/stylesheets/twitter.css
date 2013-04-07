@@ -1,0 +1,103 @@
+h1,h2,h3,h4,h5,h6{margin:0;color:#333;text-rendering:optimizeLegibility}
+h1{font-size:24px;font-weight:bold;line-height:1}
+h2{font-size:18px;font-weight:bold;line-height:20px}
+h2 small{font-size:12px;font-weight:normal;color:#999}
+h3{font-size:14px;font-weight:normal;line-height:1}
+h4{font-size:12px;line-height:18px}
+h5,h6{font-size:10px}
+p{margin:0}
+table{border-collapse:collapse;border-spacing:0}
+td,th{padding:0}
+small{font-size:12px}
+.muted{color:#999}
+.important{color:#c00c0c}
+.lead{margin-bottom:10px;font-size:16px;font-weight:200;color:#999}
+.fine-print{font-size:11px;line-height:15px;color:#999}
+.hidden{display:none}
+.visuallyhidden{border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}
+ul,ol{padding:0;margin:0}
+ul{list-style:none}
+ol{margin-left:20px;list-style:decimal}
+ol>li{line-height:20px}
+.inline-list{margin-left:0}
+.inline-list li{display:inline}
+button{margin:0}
+
+form{font-size:12px;margin-bottom:0}
+form p+p{margin-top:9px}
+legend{display:block;width:100%;margin-bottom:20px;font-size:20px;line-height:30px;color:#333;border-bottom:1px solid #eee}
+label,input,textarea,div[contenteditable="true"],select{margin:0;font-size:13px;line-height:20px}
+label{display:block;margin-bottom:5px;color:#333;cursor:pointer}
+button{border:0}
+fieldset{padding:0;margin:0;border:0}
+input,textarea,div[contenteditable="true"],select{display:inline-block;width:210px;padding:4px;margin:0;outline:0;background-color:#fff;border:1px solid #ccc;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}
+
+input[type=checkbox],input[type=radio]{width:auto;height:auto;padding:0;margin:3px 0;line-height:normal;border:0;background-color:transparent;cursor:pointer}
+input[type=file]{background-color:#fff;padding:initial;border:initial;line-height:initial;-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none}
+input[type=button],input[type=reset],input[type=submit]{width:auto;height:auto}
+select,input[type=file]{height:30px;line-height:30px}
+select[multiple]{background-color:#fff;height:inherit}
+.inline-form{float:left;width:100%;margin:10px 0}
+
+.radio,.checkbox{margin:5px 0;padding-left:18px;line-height:18px}
+.radio input[type=radio],.checkbox input[type=checkbox]{float:left;margin-left:-18px}
+.radio-nested,.checkbox-nested{margin-left:18px}
+.controls>.radio:first-child,.controls>.checkbox:first-child{padding-top:1px}
+input,textarea,div[contenteditable="true"]{-webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,.05),0 1px 0 rgba(255,255,255,.075);-moz-box-shadow:inset 0 1px 3px rgba(0,0,0,.05),0 1px 0 rgba(255,255,255,.075);box-shadow:inset 0 1px 3px rgba(0,0,0,.05),0 1px 0 rgba(255,255,255,.075);-webkit-transition:.2s linear background;-moz-transition:.2s linear background;transition:.2s linear background}
+input:focus,textarea:focus,div[contenteditable="true"]:focus{outline:0;color:#333;border-color:#56b4ef;-webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,.05),0 0 8px rgba(82,168,236,.6);-moz-box-shadow:inset 0 1px 3px rgba(0,0,0,.05),0 0 8px rgba(82,168,236,.6);box-shadow:inset 0 1px 3px rgba(0,0,0,.05),0 0 8px rgba(82,168,236,.6)}
+input[type=file]:focus,input[type=checkbox]:focus,input[type=radio]:focus,select:focus{outline:1px dotted #666;outline:auto 5px -webkit-focus-ring-color;-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none}
+.disabled,.disabled:hover,.disabled:focus,.disabled:active,input[disabled],select[disabled],textarea[disabled],input[readonly],select[readonly],textarea[readonly],div[contenteditable="true"][readonly]{background:#f5f5f5;border-color:#ccc;cursor:not-allowed}
+.disabled.btn,.disabled.btn:active{cursor:default;-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none}
+input.placeholded,textarea.placeholded{color:#7f7f7f}
+.btn{
+	font-weight: bold;
+}
+.btn.active, .btn:active{border-color:#bbb;background-image:none;-webkit-box-shadow:inset 0 2px 4px rgba(0,0,0,.1),0 1px 0 rgba(255,255,255,.5);-moz-box-shadow:inset 0 2px 4px rgba(0,0,0,.1),0 1px 0 rgba(255,255,255,.5);box-shadow:inset 0 2px 4px rgba(0,0,0,.1),0 1px 0 rgba(255,255,255,.5)}
+.btn-primary{
+	background-color: #019ad2;
+	background-image: -khtml-gradient(linear,left top,left bottom,from(#33bcef),to(#019ad2));
+	background-image: -moz-linear-gradient(#33bcef,#019ad2);
+	background-image: -ms-linear-gradient(#33bcef,#019ad2);
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#33bcef),color-stop(100%,#019ad2));
+	background-image: -webkit-linear-gradient(#33bcef,#019ad2);
+	background-image: -o-linear-gradient(#33bcef,#019ad2);
+	background-image: linear-gradient(#33bcef,#019ad2);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#33bcef', endColorstr='#019ad2',GradientType=0);
+	border-color: #057ed0;
+}
+.btn-primary:hover,.btn-primary:focus{
+	background-color: #0271bf;
+	background-repeat: repeat-x;
+	background-image: -khtml-gradient(linear,left top,left bottom,from(#2daddc),to(#0271bf));
+	background-image: -moz-linear-gradient(#2daddc,#0271bf);
+	background-image: -ms-linear-gradient(#2daddc,#0271bf);
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#2daddc),color-stop(100%,#0271bf));
+	background-image: -webkit-linear-gradient(#2daddc,#0271bf);
+	background-image: -o-linear-gradient(#2daddc,#0271bf);
+	background-image: linear-gradient(#2daddc,#0271bf);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2daddc', endColorstr='#0271bf',GradientType=0);
+}
+.btn-primary:active{
+	background-image: none;
+border-color: #096eb3;
+}
+.btn.disabled, .btn.disabled:hover, .btn[disabled], .btn[aria-disabled=true], .primary-btn.btn.disabled, .primary-btn.btn.disabled:hover, .primary-btn.btn[disabled] {
+color: #777;
+text-shadow: 0 1px 1px rgba(255,255,255,.75);
+cursor: default;
+background-color: #ddd;
+background-image: none;
+border-color: #ccc;
+filter: alpha(opacity=65);
+opacity: .65;
+}
+.btn.disabled, .btn.disabled:hover, .btn[disabled], .btn[aria-disabled=true], .primary-btn.btn.disabled, .primary-btn.btn.disabled:hover, .primary-btn.btn[disabled] {
+color: #777;
+text-shadow: 0 1px 1px rgba(255,255,255,.75);
+cursor: default;
+background-color: #ddd;
+background-image: none;
+border-color: #ccc;
+filter: alpha(opacity=65);
+opacity: .65;
+}

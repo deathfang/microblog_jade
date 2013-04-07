@@ -3,16 +3,16 @@
  * Module dependencies.
  */
 
-var express = require('express')
-  , http = require('http')
-  , flash = require('connect-flash')
-  , settings = require('./settings')
-  , lessToCSS = require('./lessToCSS')
-  , MongoStore = require('connect-mongo')(express)
-  , fs = require('fs')
-  , path = require('path')
-  , accessLogfile = fs.createWriteStream('access.log', {flags: 'a'})
-  , errorLogfile = fs.createWriteStream('error.log', {flags: 'a'});
+var express = require('express');
+var http = require('http');
+var flash = require('connect-flash');
+var settings = require('./settings');
+var lessToCSS = require('./lessToCSS');
+var MongoStore = require('connect-mongo')(express);
+var fs = require('fs');
+var path = require('path');
+var accessLogfile = fs.createWriteStream('access.log', {flags: 'a'});
+var errorLogfile = fs.createWriteStream('error.log', {flags: 'a'});
 
 var app = express();
 

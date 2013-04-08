@@ -4,8 +4,21 @@ document.addEventListener('DOMContentLoaded',function(){
     var oPostInput = postInput.get(0);
     var toolbar = tweetBox.find(".toolbar");
     var tweetButton = tweetBox.find(".tweet-button button");
+    var msgtips = $(".tweet-counter");
     var condensed = function(){
         postInput.val() == "" && tweetBox.removeClass("uncondensed");
+    }
+    var textTips = function(val){
+        var msglen = Util.msglen(val),
+            tips = 140-msglen;
+        if (msglen<=140) {
+            tweetButton.removeClass("disabled").removeAttr("disabled")
+            msgtips.removeClass("text-warn");
+        } else {
+            msgtips.addClass("text-warn");
+            tweetButton.addClass("disabled").attr("disabled",true)
+        }
+        msgtips.text(tips);
     }
     if( store.enabled ) {
         storePostText = {
@@ -38,18 +51,10 @@ document.addEventListener('DOMContentLoaded',function(){
             else {
                 tweetButton.addClass("disabled").attr("disabled",true)
             }
-            var msglen = Util.msglen(val),msgtip = $(".tweet-counter"),
-                tip = 140-msglen;
-            if (msglen<=140) {
-                tweetButton.removeClass("disabled").removeAttr("disabled")
-                msgtip.removeClass("text-warn");
-            } else {
-                msgtip.addClass("text-warn");
-                tweetButton.addClass("disabled").attr("disabled",true)
-            }
-            msgtip.text(tip);
+            textTips(val);
         }).keydown(function(e){
-            e.ctrlKey && e.keyCode === 13 && postInput.parent('form').trigger('submit');
+            //Mac习惯用command
+            (e.metaKey || e.ctrlKey) && e.keyCode === 13 && postInput.parent('form').trigger('submit');
         })
     storePostText.apply();
     postInput.parent('form').submit(function(e){
@@ -63,7 +68,8 @@ document.addEventListener('DOMContentLoaded',function(){
             var length = postInput.val().length;
             oPostInput.setSelectionRange(length ,length );
             oPostInput.focus();
-            tweetButton.removeClass("disabled").removeAttr("disabled")
+            tweetButton.removeClass("disabled").removeAttr("disabled");
+            textTips(postInput.val());
         }
     }();
 });

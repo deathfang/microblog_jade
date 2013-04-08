@@ -1,6 +1,6 @@
 var mongodb = require('./db'),
     ObjectId = require('mongodb').ObjectID;
-var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://)?(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
+
 function Post(username, post, time,id) {
     this.user = username;
     this.post = post;
@@ -13,10 +13,38 @@ function Post(username, post, time,id) {
 };
 module.exports = Post;
 
-function PostFormat(post,time){
-    post.split(urlRxp)
+var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://)?(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
+var tmplTool = {}
+tmplTool.NAMETAG = '<a href="{url}">{text}</a>';
+tmplTool.SUBREGEX = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
+tmplTool.isUndefined = function(o) {
+    return typeof o === 'undefined';
+};
+tmplTool.sub = function(s, o) {
+    return s.replace ? s.replace(tmplTool.SUBREGEX, function (match, key) {
+        return tmplTool.isUndefined(o[key]) ? match : o[key];
+    }) : s;
+};
 
+
+function PostFormat(post,time){
+    var tokens = {}, links = null,
+        hasUrl = post.match(urlRxp);
+    if (hasUrl) {
+        links = function(match, key) {
+
+            if (!match.match("://")) {
+                match = "http://" + match
+            }
+            tokens.url = match;
+            tokens.text = tokens.url.replace(/(http:\/\/)?www\./, "").slice(0,20);
+            tokens.text.length >= 19 && (tokens.text = tokens.text.slice(0,19) + "...")
+            return tmplTool.sub(tmplTool.NAMETAG, tokens);
+        }
+    }
+    return hasUrl ? post.replace(urlRxp,links) : post;
 }
+
 
 Post.prototype.save = function (callback) {
     // 存入 Mongodb 的文档
@@ -74,6 +102,7 @@ Post.handle = function (getpost,username,id,text,callback) {
                     var posts = [];
                     docs.forEach(function(doc, index) {
                         var post = new Post(doc.user, doc.post, doc.time,doc._id);
+                        post.post = PostFormat(post.post);
                         posts.push(post);
                     });
                     callback(null, posts);

@@ -32,8 +32,7 @@ $(".postlist").delegate(".icon-edit","click",function(e){
 
     });
     postEditor.keydown(function(e){
-        if (!e.shiftKey && e.keyCode == 13){
-            e.preventDefault();
+        if ((e.metaKey || e.ctrlKey) && e.keyCode === 13){
             if (postTextChange()) {
                 postEditor.blur().attr("contenteditable",false);
                 savePost();

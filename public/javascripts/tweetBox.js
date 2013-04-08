@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded',function(){
         postInput.val() == "" && tweetBox.removeClass("uncondensed");
     }
     var textTips = function(val){
-        var msglen = Util.msglen(val),
+        var msglen = tUtil.msglen(val),
             tips = 140-msglen;
         if (msglen<=140) {
             tweetButton.removeClass("disabled").removeAttr("disabled")

@@ -15,7 +15,7 @@ module.exports = Post;
 
 var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://)?(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
 var tmplTool = {}
-tmplTool.NAMETAG = '<a href="{url}">{text}</a>';
+tmplTool.NAMETAG = '<a href="{url}" title="{url}" target="_blank" rel="nofollow">{text}</a>';
 tmplTool.SUBREGEX = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 tmplTool.isUndefined = function(o) {
     return typeof o === 'undefined';
@@ -31,7 +31,7 @@ function PostFormat(post,time){
     var tokens = {}, links = null,
         hasUrl = post.match(urlRxp);
     if (hasUrl) {
-        links = function(match, key) {
+        links = function(match) {
 
             if (!match.match("://")) {
                 match = "http://" + match

@@ -14,7 +14,11 @@ $(".postlist").delegate(".icon-edit","click",function(e){
     var postEditor = $(this).parents(".media").find(".post p"),
         saveButton = $(this).next(),
         postText = postEditor.text();
-    postEditor.attr("contenteditable",true).focus();
+    postEditor.attr("contenteditable",true).focus(function(){
+        postEditor.find("a").each(function(){
+            $(this).text($(this).attr("href"))
+        })
+    }).focus();
     postEditor.on("keyup paste",function(){
         if (saveButton.is(":hidden")) {
             saveButton.toggleClass("hide");
@@ -58,6 +62,9 @@ $(".postlist").delegate(".icon-edit","click",function(e){
     function savePost(){
         $.post('/edit/'+postEditor.parents('.media').attr('id'),{post:postEditor.text()},function(res){
             if (res) {
+                postEditor.find("a").each(function(){
+                    //修改anchor href title
+                })
                 saveButton.toggleClass("hide");
                 var savelabel;
                 if (postEditor.find('.modal').length < 1) {

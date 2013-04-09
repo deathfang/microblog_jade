@@ -37,8 +37,8 @@ function PostFormat(post,time){
                 match = "http://" + match
             }
             tokens.url = match;
-            tokens.text = tokens.url.replace(/(http:\/\/)?www\./, "").slice(0,20);
-            tokens.text.length >= 19 && (tokens.text = tokens.text.slice(0,19) + "...")
+            tokens.text = tokens.url.replace(/(http(s?):\/\/)?(www\.)?/, "");
+            tokens.text.length > 19 && (tokens.text = tokens.text.slice(0,19) + "...")
             return tmplTool.sub(tmplTool.NAMETAG, tokens);
         }
     }

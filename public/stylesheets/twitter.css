@@ -81,23 +81,7 @@ input.placeholded,textarea.placeholded{color:#7f7f7f}
 	background-image: none;
 border-color: #096eb3;
 }
-.btn.disabled, .btn.disabled:hover, .btn[disabled], .btn[aria-disabled=true], .primary-btn.btn.disabled, .primary-btn.btn.disabled:hover, .primary-btn.btn[disabled] {
+.btn.disabled, .btn.disabled:hover, .btn[disabled], .btn[aria-disabled=true]{
 color: #777;
-text-shadow: 0 1px 1px rgba(255,255,255,.75);
-cursor: default;
 background-color: #ddd;
-background-image: none;
-border-color: #ccc;
-filter: alpha(opacity=65);
-opacity: .65;
-}
-.btn.disabled, .btn.disabled:hover, .btn[disabled], .btn[aria-disabled=true], .primary-btn.btn.disabled, .primary-btn.btn.disabled:hover, .primary-btn.btn[disabled] {
-color: #777;
-text-shadow: 0 1px 1px rgba(255,255,255,.75);
-cursor: default;
-background-color: #ddd;
-background-image: none;
-border-color: #ccc;
-filter: alpha(opacity=65);
-opacity: .65;
 }

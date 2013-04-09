@@ -3,20 +3,27 @@ document.addEventListener('DOMContentLoaded',function(){
     var postInput = tweetBox.find('[name=post]');
     var oPostInput = postInput.get(0);
     var toolbar = tweetBox.find(".toolbar");
-    var tweetButton = tweetBox.find(".tweet-button button");
+    var tweetButton = toolbar.find("button");
     var msgtips = $(".tweet-counter");
     var condensed = function(){
         postInput.val() == "" && tweetBox.removeClass("uncondensed");
     }
+
+    var tbutton = new tUtil.ButtonStatus(tweetButton,"btn-primary")
     var textTips = function(val){
         var msglen = tUtil.msglen(val),
             tips = 140-msglen;
-        if (msglen<=140) {
-            tweetButton.removeClass("disabled").removeAttr("disabled")
+        if (val == "") {
+            tbutton.disable().remove();
+            msgtips.removeClass("text-warn");
+        }
+        else if (msglen<=140) {
+
+            tbutton.active().add();
             msgtips.removeClass("text-warn");
         } else {
             msgtips.addClass("text-warn");
-            tweetButton.addClass("disabled").attr("disabled",true)
+            tbutton.disable().remove();
         }
         msgtips.text(tips);
     }
@@ -45,12 +52,6 @@ document.addEventListener('DOMContentLoaded',function(){
     }).blur(condensed).keyup(function(e){
             storePostText.set();
             var val = postInput.val();
-            if (val != "") {
-                tweetButton.removeClass("disabled").removeAttr("disabled")
-            }
-            else {
-                tweetButton.addClass("disabled").attr("disabled",true)
-            }
             textTips(val);
         }).keydown(function(e){
             //Mac习惯用command
@@ -68,7 +69,8 @@ document.addEventListener('DOMContentLoaded',function(){
             var length = postInput.val().length;
             oPostInput.setSelectionRange(length ,length );
             oPostInput.focus();
-            tweetButton.removeClass("disabled").removeAttr("disabled");
+
+            tbutton.active().add();
             textTips(postInput.val());
         }
     }();

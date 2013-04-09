@@ -63,7 +63,11 @@ $(".postlist").delegate(".icon-edit","click",function(e){
         $.post('/edit/'+postEditor.parents('.media').attr('id'),{post:postEditor.text()},function(res){
             if (res) {
                 postEditor.find("a").each(function(){
-                    //修改anchor href title
+                    var anchor = $(this);
+                    var oText = anchor.text();
+                    var text = oText.replace(/(http(s?):\/\/)?(www\.)?/, "");
+                    text.length > 19 && (text = text.slice(0,19) + "...");
+                    anchor.attr({href:oText,title:oText}).text(text);
                 })
                 saveButton.toggleClass("hide");
                 var savelabel;

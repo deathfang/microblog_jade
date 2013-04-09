@@ -6,3 +6,22 @@ tUtil.msglen = function (text) {
     return Math.ceil(($.trim(text.replace(/[^\u0000-\u00ff]/g,"aa")).length)/2);
 }
 
+
+tUtil.ButtonStatus = function (button,style) {
+    this.active = function(){
+        button.removeClass("disabled").removeAttr("disabled");
+        return this
+    }
+    this.disable = function(){
+        button.addClass("disabled").attr("disabled",true);
+        return this
+    }
+    if (style) {
+        this.add = function(){
+            button.addClass(style)
+        }
+        this.remove = function(){
+            button.removeClass(style)
+        }
+    }
+}

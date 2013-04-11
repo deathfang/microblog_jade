@@ -3,6 +3,7 @@ var mongodb = require('./db');
 function User(user) {
     this.name = user.name;
     this.password = user.password;
+    this.count = user.count;
 };
 module.exports = User;
 
@@ -11,6 +12,7 @@ User.prototype.save = function save(callback) {
     var user = {
         name: this.name,
         password: this.password,
+        count: 0
     };
     mongodb.open(function(err, db) {
         if (err) {
@@ -56,5 +58,6 @@ User.get = function get(username, callback) {
                 }
             });
         });
+
     });
 };

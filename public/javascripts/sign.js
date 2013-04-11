@@ -2,7 +2,7 @@ var regexpPw =  function($el, val, callback){
     callback({
         value: val,
         valid: /^[a-zA-Z0-9_]{6,}$/.test(val) && /[a-z]/i.test(val) && /\d/.test(val),
-        message: "密码不能小于6位且必须包含一个数字或字母"
+        message: "密码不能小于6位且必须包含一个数字和字母"
     });
 }
 $.backstretch([

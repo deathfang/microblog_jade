@@ -6,9 +6,8 @@
                 strong.fullname #{user.name}
                 small.metadata View my profile page
         ul.stats
-            - var Tweets = posts.filter(function(i){return i.user == user.name}).length
             li: a(href="" + user.name)
-                strong #{Tweets}
+                strong #{user.count}
                 | 话题
             li: a(href="")
                 strong 30
@@ -18,8 +17,6 @@
                 | 听众
         include say
 .content-main
-    .content-header: .header-inner: h2 全部广播
-    .stream-container
-        include  posts
+    include  posts
 
 

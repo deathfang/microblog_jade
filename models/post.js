@@ -1,4 +1,5 @@
 var mongodb = require('./db'),
+    jade =  require('jade'),
     ObjectId = require('mongodb').ObjectID;
 
 function Post(username, post, time,id) {
@@ -12,19 +13,20 @@ function Post(username, post, time,id) {
     this.id = id
 };
 module.exports = Post;
-
+var postLInkTemplate = 'a(href=url,title=url,target="_blank",rel="nofollow") #{text}'
 var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://)?(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
-var tmplTool = {}
-tmplTool.NAMETAG = '<a href="{url}" title="{url}" target="_blank" rel="nofollow">{text}</a>';
-tmplTool.SUBREGEX = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
-tmplTool.isUndefined = function(o) {
-    return typeof o === 'undefined';
-};
-tmplTool.sub = function(s, o) {
-    return s.replace ? s.replace(tmplTool.SUBREGEX, function (match, key) {
-        return tmplTool.isUndefined(o[key]) ? match : o[key];
-    }) : s;
-};
+
+//var tmplTool = {}
+//tmplTool.NAMETAG = '<a href="{url}" title="{url}" target="_blank" rel="nofollow">{text}</a>';
+//tmplTool.SUBREGEX = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
+//tmplTool.isUndefined = function(o) {
+//    return typeof o === 'undefined';
+//};
+//tmplTool.sub = function(s, o) {
+//    return s.replace ? s.replace(tmplTool.SUBREGEX, function (match, key) {
+//        return tmplTool.isUndefined(o[key]) ? match : o[key];
+//    }) : s;
+//};
 
 
 function PostFormat(post,time){
@@ -39,7 +41,9 @@ function PostFormat(post,time){
             tokens.url = match;
             tokens.text = tokens.url.replace(/(http(s?):\/\/)?(www\.)?/, "");
             tokens.text.length > 19 && (tokens.text = tokens.text.slice(0,19) + "...")
-            return tmplTool.sub(tmplTool.NAMETAG, tokens);
+//            return tmplTool.sub(tmplTool.NAMETAG, tokens);
+            return jade.compile(postLInkTemplate)(tokens)
+
         }
     }
     return hasUrl ? post.replace(urlRxp,links) : post;
@@ -66,11 +70,21 @@ Post.prototype.save = function (callback) {
             // 为 user 属性添加索引
             collection.ensureIndex('user');
             // 写入 post 文档
-            collection.insert(post, {
-                safe: true
-            }, function(err, post) {
-                mongodb.close();
-                callback(err);
+            collection.insert(post, {safe: true}, function(err, post) {
+                db.collection('users',function(err,collection){
+                    if(err) {
+                        mongodb.close();
+                        return callback(err);
+                    }
+                    //insert后的post是一个单数组
+                    collection.update({name:post[0].user},{$inc:{count:1}},{safe:true},function(err,inc){
+                        if(err) {
+                            return callback(err);
+                        }
+                        mongodb.close();
+                        callback(err,inc);
+                    })
+                })
             });
         });
     });

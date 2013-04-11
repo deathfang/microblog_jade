@@ -3,6 +3,7 @@
         textarea(placeholder="来，说说你在做什么，想什么",name="post")
         .toolbar
             .tweet-button
+                i.icon-spinner.icon-spin.hide
                 span.tweet-counter 140
                 button.btn.disabled(type="submit",disabled) 广播
 script(src="/javascripts/store.min.js")

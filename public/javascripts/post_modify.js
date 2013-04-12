@@ -23,6 +23,15 @@ $(".postlist").delegate(".icon-edit","click",function(e){
         if (saveButton.is(":hidden")) {
             saveButton.toggleClass("hide");
         }
+        [].map.call(postEditor.get(0).childNodes,function(i){
+            if(i instanceof HTMLAnchorElement){
+                return i.outerHTML
+            }
+            else {
+                return $(i).text()
+            }
+        }).join("")
+
     });
     saveButton.click(function(e){
         e.preventDefault();
@@ -46,7 +55,7 @@ $(".postlist").delegate(".icon-edit","click",function(e){
         }
     });
     function postTextChange(){
-        return postText !== postEditor.text() && postEditor.text() != "undefined";
+        return postText !== postEditor.text() && postEditor.text() !== "undefined";
     }
 
     function textTips(){

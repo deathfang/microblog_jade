@@ -14,7 +14,7 @@ function Post(username, post, time,id) {
 };
 module.exports = Post;
 var postLInkTemplate = 'a(href=url,title=url,target="_blank",rel="nofollow") #{text}'
-var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://)?(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
+var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://){1}(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
 
 //var tmplTool = {}
 //tmplTool.NAMETAG = '<a href="{url}" title="{url}" target="_blank" rel="nofollow">{text}</a>';
@@ -34,10 +34,6 @@ function PostFormat(post,time){
         hasUrl = post.match(urlRxp);
     if (hasUrl) {
         links = function(match) {
-
-            if (!match.match("://")) {
-                match = "http://" + match
-            }
             tokens.url = match;
             tokens.text = tokens.url.replace(/(http(s?):\/\/)?(www\.)?/, "");
             tokens.text.length > 19 && (tokens.text = tokens.text.slice(0,19) + "...")
@@ -90,7 +86,7 @@ Post.prototype.save = function (callback) {
     });
 };
 
-Post.handle = function (getpost,username,id,text,callback) {
+Post.handle = function (getpost,username,id,post,callback) {
     mongodb.open(function(err, db) {
         function error(err){
             if (err) {
@@ -122,15 +118,15 @@ Post.handle = function (getpost,username,id,text,callback) {
                     callback(null, posts);
                 });
             }
-            else if (!text && id) {
+            else if (!post && id) {
                 collection.remove({_id : ObjectId(id)},function(err){
                     error(err);
                     mongodb.close();
                     callback(null,true)
                 })
             }
-            else if (text && id) {
-                collection.update({_id : ObjectId(id)},{$set:{post:text}},{safe:true},function(err){
+            else if (post && id) {
+                collection.update({_id : ObjectId(id)},{$set:{post:post}},{safe:true},function(err){
                     error(err);
                     mongodb.close();
                     callback(null,true)

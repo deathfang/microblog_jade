@@ -15,7 +15,6 @@ tUtil.sub = function(s, o) {
         return tUtil.isUndefined(o[key]) ? match : o[key];
     }) : s;
 };
-
 tUtil.ButtonStatus = function (button,style) {
     this.active = function(){
         button.removeClass("disabled").removeAttr("disabled");

@@ -137,11 +137,11 @@ module.exports = function(app) {
         })
     });
     app.post('/edit/:id',function(req,res){
-        Post.handle(null,null,req.params.id,req.body.post,function(err,success){
+        Post.handle(null,null,req.params.id,req.body.post,function(err,postHTML){
             if (err) {
                 return res.redirect('/');
             }
-            res.send(success)
+            res.send(postHTML)
         })
     });
     //route test

@@ -129,7 +129,7 @@ Post.handle = function (getpost,username,id,post,callback) {
                 collection.update({_id : ObjectId(id)},{$set:{post:post}},{safe:true},function(err){
                     error(err);
                     mongodb.close();
-                    callback(null,true)
+                    callback(null,PostFormat(post))
                 })
             }
         })

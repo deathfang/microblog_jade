@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded',function(){
             tbutton.disable().remove();
             msgtips.removeClass("text-warn");
         }
-        else if (msglen<=140) {
+        else if (msglen < 130) {
 
             tbutton.active().add();
             msgtips.removeClass("text-warn");

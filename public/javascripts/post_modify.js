@@ -24,27 +24,30 @@ $(".postlist").delegate(".icon-edit","click",function(e){
             saveButton.removeClass("hide");
         }
     }).blur(function(){
-        var clone = postEditor.clone(true),
-            postHTML = postEditor.html(),
-            newHTML,feedLine,
+        var postHTML = postEditor.html(),
+            feedLine,
+            range = document.createRange(),
+            startPoint,endPoint,text,url
             hasLine = postHTML.match(/<div>|<br>/g);//火狐换行是 <br>
         if (hasLine) {
-            feedLine = postHTML.replace(/<div>/g,"").replace(/<\/div>|<br>/g,"&#10;");
-            clone.html(feedLine)
+            feedLine = postHTML.replace("<div>","&#10;").replace(/<div>/g,"").replace(/<\/div>|<br>/g,"&#10;");
+            postEditor.html(feedLine)
         }
-        clone.find("a").remove();
-        if (clone.text().match(tUtil.urlRxp)) {
-            newHTML = [].map.call(postEditor.get(0).childNodes,function(i){
-                if(i instanceof HTMLAnchorElement){
-                    return i.outerHTML
+        if (postEditor.text().match(tUtil.urlRxp)) {
+            [].map.call(postEditor.get(0).childNodes,function(i){
+                if(i.nodeType == 3 || i.nodeType == 4){
+                    text = $(i).text();
+                    url  = text.match(tUtil.urlRxp);
+                    if (url) {
+                        startPoint = text.indexOf(url);
+                        endPoint = url[0].length + startPoint;
+                        range.setStart(i,startPoint);
+                        range.setEnd(i,endPoint);
+                        var anchor = $(wrapLinks(url)).get(0)
+                        range.surroundContents(anchor);
+                    }
                 }
-                else {
-                    return $(i).text().replace(tUtil.urlRxp,wrapLinks)
-                }
-            }).join("");
-            postEditor.html(newHTML)
-        }else if (hasLine) {
-            postEditor.html(feedLine);
+            });
         }
     });
     saveButton.click(function(e){

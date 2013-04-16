@@ -12,6 +12,7 @@ $(".postlist").delegate(".icon-remove","click",function(e){
 $(".postlist").delegate(".icon-edit","click",function(e){
     e.preventDefault();
     var postEditor = $(this).parents(".media").find(".post p"),
+        o_posEditor = postEditor.get(0),
         saveButton = $(this).next(),
         postText = postEditor.text();
     postEditor.attr("contenteditable",true).focus(function(){
@@ -26,26 +27,30 @@ $(".postlist").delegate(".icon-edit","click",function(e){
     }).blur(function(){
         var postHTML = postEditor.html(),
             feedLine,
-            range = document.createRange(),
-            startPoint,endPoint,text,url
+            startPoint,endPoint,text,url,
+            newIndex = 0,newChild,
             hasLine = postHTML.match(/<div>|<br>/g);//火狐换行是 <br>
         if (hasLine) {
             feedLine = postHTML.replace("<div>","&#10;").replace(/<div>/g,"").replace(/<\/div>|<br>/g,"&#10;");
             postEditor.html(feedLine)
         }
         if (postEditor.text().match(tUtil.urlRxp)) {
-            [].map.call(postEditor.get(0).childNodes,function(i){
-                if(i.nodeType == 3 || i.nodeType == 4){
-                    text = $(i).text();
+            [].map.call(o_posEditor.childNodes,function(child,index){
+                if(child.nodeType == 3 || child.nodeType == 4){
+                    text = $(child).text();
                     url  = text.match(tUtil.urlRxp);
-                    if (url) {
-                        startPoint = text.indexOf(url);
-                        endPoint = url[0].length + startPoint;
-                        range.setStart(i,startPoint);
-                        range.setEnd(i,endPoint);
-                        var anchor = $(wrapLinks(url)).get(0)
+                    url && url.forEach(function(item,index2){
+                        newChild = o_posEditor.childNodes[index + index2 + newIndex];
+                        text = $(newChild).text();
+                        startPoint = text.indexOf(item);
+                        endPoint = item.length + startPoint;
+                        var range = document.createRange();
+                        range.setStart(newChild,startPoint);
+                        range.setEnd(newChild,endPoint);
+                        var anchor = $(wrapLinks(item)).get(0)
                         range.surroundContents(anchor);
-                    }
+                        newIndex++;
+                    })
                 }
             });
         }

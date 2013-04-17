@@ -6,6 +6,7 @@ $(".postlist").delegate(".icon-remove","click",function(e){
             $(this).animate({width:"toggle",height:"toggle"},"normal",function(){
                 post.remove();
                 $(".tweet-box [name=post]").val(store.get("backup").id1).get(0).select();
+                // button disabled remove
             })
         })
     });
@@ -82,7 +83,7 @@ $(".postlist").delegate(".icon-edit","click",function(e){
         tokens.url = tokens.text = match;
 //        tokens.text = tokens.url.replace(/(http(s?):\/\/)?(www\.)?/, "");
 //        tokens.text.length > 19 && (tokens.text = tokens.text.slice(0,19) + "...")
-        return tUtil.sub(tUtil.linkTemp, tokens);
+        return tUtil.sub(tUtil.linkTmpl, tokens);
     }
     function postTextChange(){
         return postText !== postEditor.text() && postEditor.text() !== "undefined";

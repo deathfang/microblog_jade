@@ -5,7 +5,7 @@ tUtil.msglen = function (text) {
     text = text.replace(tUtil.urlRxp,'填充填充填充填充填充填充填充填二十个汉字');
     return Math.ceil(($.trim(text.replace(/[^\u0000-\u00ff]/g,"aa")).length)/2);
 }
-tUtil.linkTemp = '<a href="{url}" title="{url}" target="_blank" rel="nofollow">{text}</a>';
+tUtil.linkTmpl = '<a href="{url}" title="{url}" target="_blank" rel="nofollow">{text}</a>';
 tUtil.SUBREGEX = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 tUtil.isUndefined = function(o) {
     return typeof o === 'undefined';

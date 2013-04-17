@@ -99,13 +99,17 @@ module.exports = function(app) {
     app.post('/post', function(req, res) {
         var currentUser = req.session.user;
         var post = new Post(currentUser.name, req.body.post);
-        post.save(function(err,inc) {
+        post.save(function(err,postHTML,inc) {
             if (err) {
                 req.flash('error', err);
                 return res.redirect('/');
             }
             req.session.user.count += inc;
-            res.redirect('/' + currentUser.name);
+//            res.redirect('/' + currentUser.name);
+            res.send({
+                inc:inc,
+                postHTML:postHTML
+            });
         });
     });
 

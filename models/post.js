@@ -13,21 +13,12 @@ function Post(username, post, time,id) {
     this.id = id
 };
 module.exports = Post;
-var postLInkTemplate = 'a(href=url,title=url,target="_blank",rel="nofollow") #{text}'
+var postLInkTemplate = 'a(href=url,title=url,target="_blank",rel="nofollow") #{text}';
+
 var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://){1}(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
 
-//var tmplTool = {}
-//tmplTool.NAMETAG = '<a href="{url}" title="{url}" target="_blank" rel="nofollow">{text}</a>';
-//tmplTool.SUBREGEX = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
-//tmplTool.isUndefined = function(o) {
-//    return typeof o === 'undefined';
-//};
-//tmplTool.sub = function(s, o) {
-//    return s.replace ? s.replace(tmplTool.SUBREGEX, function (match, key) {
-//        return tmplTool.isUndefined(o[key]) ? match : o[key];
-//    }) : s;
-//};
-
+//在此处readFile会报错 手动提取jade字符串
+var postTemplate = '.media(id=_id)\n    a.pull-left(href="#")\n        img.media-object.avatar(src="../img/avatar.png")\n    .media-body\n        h4.media-heading\n            a(href="/" + user) #{user}\n            | 说\n            a(href="",title="关闭").icon-remove.fade\n            a(href="",title="编辑").icon-edit.fade\n            a(href="",title="Enter保存").icon-save.fade.hide\n        .post: p !{post}\n        p: small #{time}'
 
 function PostFormat(post,time){
     var tokens = {}, links = null,
@@ -37,21 +28,21 @@ function PostFormat(post,time){
             tokens.url = match;
             tokens.text = tokens.url.replace(/(http(s?):\/\/)?(www\.)?/, "");
             tokens.text.length > 19 && (tokens.text = tokens.text.slice(0,19) + "...")
-//            return tmplTool.sub(tmplTool.NAMETAG, tokens);
             return jade.compile(postLInkTemplate)(tokens)
-
         }
     }
     return hasUrl ? post.replace(urlRxp,links) : post;
 }
 
 
+//jade.compile(postTemplate)(post[0]);
 Post.prototype.save = function (callback) {
     // 存入 Mongodb 的文档
     var post = {
         user: this.user,
         post: this.post,
         time: this.time,
+        _id:ObjectId(Math.random())
     };
     mongodb.open(function(err, db) {
         if(err) {
@@ -78,7 +69,7 @@ Post.prototype.save = function (callback) {
                             return callback(err);
                         }
                         mongodb.close();
-                        callback(err,inc);
+                        callback(err,jade.compile(postTemplate)(post[0]),inc);
                     })
                 })
             });
@@ -110,7 +101,7 @@ Post.handle = function (getpost,username,id,post,callback) {
                     mongodb.close();
                     // 封裝 posts 爲 Post 對象
                     var posts = [];
-                    docs.forEach(function(doc, index) {
+                    docs.forEach(function(doc) {
                         var post = new Post(doc.user, doc.post, doc.time,doc._id);
                         post.post = PostFormat(post.post);
                         posts.push(post);

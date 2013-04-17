@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded',function(){
+    var tweetCount = $(".stats li:first strong");
     var tweetBox = $(".tweet-box");
     var postInput = tweetBox.find('[name=post]');
     var oPostInput = postInput.get(0);
     var toolbar = tweetBox.find(".toolbar");
     var tweetButton = toolbar.find("button");
     var msgtips = $(".tweet-counter");
+    var postList = $(".postlist");
     var overstepPoint;
     var condensed = function(){
         postInput.val() == "" && tweetBox.removeClass("uncondensed");
@@ -36,7 +38,7 @@ document.addEventListener('DOMContentLoaded',function(){
             },
             apply:function (){
                 typeof store.get('postText') !== 'undefined' && postInput.val(store.get('postText'));
-                store.remove('backup')
+//                store.remove('backup')
             },
             clear:function(item){
                 arguments.length > 0 ? store.remove(item) : store.clear();
@@ -70,7 +72,11 @@ document.addEventListener('DOMContentLoaded',function(){
         storePostText.backup();
         storePostText.clear("postText");
         if (!tweetButton.attr("disabled")) {
-            $(this).get(0).submit();
+//            $(this).get(0).submit();
+            $.post("/post",{post:postInput.val()},function(res){
+                postList.prepend($(res.postHTML));
+                tweetCount.text(parseInt(tweetCount.text()) + res.inc);
+            })
         }
         else {
             oPostInput.setSelectionRange(overstepPoint,postInput.val().length)

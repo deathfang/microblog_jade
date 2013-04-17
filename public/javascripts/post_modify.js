@@ -5,6 +5,7 @@ $(".postlist").delegate(".icon-remove","click",function(e){
         res && post.fadeTo("normal",0,function(){
             $(this).animate({width:"toggle",height:"toggle"},"normal",function(){
                 post.remove();
+                $(".tweet-box [name=post]").val(store.get("backup").id1).get(0).select();
             })
         })
     });

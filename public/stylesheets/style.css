@@ -144,7 +144,7 @@ footer {
   background-color: #f5f5f5;
   border-radius: 0 0 5px 5px;
 }
-.tweet-user textarea {
+.tweet-user [name=post] {
   width: 258px;
   padding: 6px 8px 5px;
   line-height: 18px;
@@ -183,7 +183,7 @@ footer {
 .tweet-user .toolbar .text-warn {
   color: #d40d12;
 }
-.tweet-user.uncondensed textarea {
+.tweet-user.uncondensed [name=post] {
   height: 80px;
   color: #333;
   margin-bottom: 8px;

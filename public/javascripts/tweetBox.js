@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var toolbar = tweetBox.find(".toolbar");
     var tweetButton = toolbar.find("button");
     var msgtips = $(".tweet-counter");
+    var overstepPoint;
     var condensed = function(){
         postInput.val() == "" && tweetBox.removeClass("uncondensed");
     }
@@ -22,6 +23,7 @@ document.addEventListener('DOMContentLoaded',function(){
             tbutton.active().add();
             msgtips.removeClass("text-warn");
         } else {
+            typeof overstepPoint === "undefined" && (overstepPoint = oPostInput.selectionStart);
             msgtips.addClass("text-warn");
             tbutton.disable().remove();
         }
@@ -33,10 +35,14 @@ document.addEventListener('DOMContentLoaded',function(){
                 store.set('postText',postInput.val());
             },
             apply:function (){
-                typeof store.get('postText') != 'undefined' && postInput.val(store.get('postText'));
+                typeof store.get('postText') !== 'undefined' && postInput.val(store.get('postText'));
+                store.remove('backup')
             },
-            clear:function(){
-                store.clear('postText');
+            clear:function(item){
+                arguments.length > 0 ? store.remove(item) : store.clear();
+            },
+            backup:function(){
+                store.set('backup',{id1:postInput.val()});
             }
         }
     }
@@ -44,7 +50,8 @@ document.addEventListener('DOMContentLoaded',function(){
         storePostText = {
             set:function(){},
             apply:function(){},
-            clear:function(){}
+            clear:function(){},
+            back:function(){}
         }
     }
     postInput.focus(function(){
@@ -60,8 +67,15 @@ document.addEventListener('DOMContentLoaded',function(){
     storePostText.apply();
     postInput.parent('form').submit(function(e){
         e.preventDefault();
-        storePostText.clear();
-        $(this).get(0).submit();
+        storePostText.backup();
+        storePostText.clear("postText");
+        if (!tweetButton.attr("disabled")) {
+            $(this).get(0).submit();
+        }
+        else {
+            oPostInput.setSelectionRange(overstepPoint,postInput.val().length)
+            //有问题 用处不大
+        }
     });
     !function(){
         if (postInput.val() != "") {
@@ -69,7 +83,6 @@ document.addEventListener('DOMContentLoaded',function(){
             var length = postInput.val().length;
             oPostInput.setSelectionRange(length ,length );
             oPostInput.focus();
-
             tbutton.active().add();
             textTips(postInput.val());
         }

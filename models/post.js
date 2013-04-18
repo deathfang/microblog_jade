@@ -69,7 +69,7 @@ Post.prototype.save = function (callback) {
                             return callback(err);
                         }
                         mongodb.close();
-                        callback(err,jade.compile(postTemplate)(post[0]),inc);
+                        callback(err,post[0]._id,jade.compile(postTemplate)(post[0]),inc);
                     })
                 })
             });

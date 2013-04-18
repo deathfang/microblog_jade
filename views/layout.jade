@@ -32,7 +32,9 @@ html
         #container.page-container
             .container-inner.clearfix
                 if error
-                    .alert.alert-error.fade.in #{error}
+                    .alert.alert-error.alert-messages.fade.in
+                        button.close(type="button",data-dismiss="alert") &times;
+                        | #{error}
                 block container
                 block user
         footer
@@ -42,13 +44,13 @@ html
         script(src="/javascripts/jquery.min.js")
         script(src="/javascripts/util.js")
         script(src="/bootstrap/js/bootstrap.min.js")
+        script(src="/javascripts/store.min.js")
         script
-            if ($(".alert").text()) {
+            if ($(".alert-error").length > 0) {
                 setTimeout(function(){
                     $(".alert").alert("close")
                 },2000)
             }
-        if user
-            script(src="/javascripts/post_modify.js")
+        script(src="/javascripts/post.js")
 
 

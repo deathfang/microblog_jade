@@ -85,3 +85,21 @@ border-color: #096eb3;
 color: #777;
 background-color: #ddd;
 }
+
+.alert-messages{width:500px;border-radius: 6px;font-size: 12px;
+line-height: 16px;height: 16px;color:#ccc;
+text-align: center;border:none;
+position:fixed;top:47px;left:0;right:0;z-index: 7000;
+margin: 0 auto;padding:10px 12px;
+text-shadow:0 -1px 1px rgba(0,0,0,.5);background:#111;background:rgba(20,20,20,.9);
+box-shadow:0 2px 4px rgba(0,0,0,.25);text-overflow: ellipsis;
+}
+.alert-messages .close{color:#FFF;display:none;
+font-size: 18px;opacity:.5;right: 0;text-shadow: rgba(0, 0, 0, 0.498039) 0px -1px 1px;
+}
+.alert-messages.fade{
+	-webkit-transition: opacity 1s linear;
+	-moz-transition: opacity 1s linear;
+	-o-transition: opacity 1s linear;
+	transition: opacity 1s linear;
+}

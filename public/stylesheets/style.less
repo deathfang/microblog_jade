@@ -31,8 +31,8 @@ body{
 }
 @media (min-width: 979px) {
   .container-inner {
-        padding-top: 60px;
-        padding-bottom: 20px;
+        padding-top: 54px;
+        padding-bottom: 15px;
     }
 }
 .page-container{width: 865px;margin-right: auto;margin-left: auto;}
@@ -163,6 +163,7 @@ border-radius: 0 0 5px 5px;
       font-size: 16px;
       vertical-align: middle;
       margin-right: 3px;
+      display:none;
     }
     .tweet-button{float:right;}
     .tweet-counter{
@@ -188,6 +189,14 @@ border-radius: 0 0 5px 5px;
     margin-bottom: 8px
   }
   .toolbar{display:block;}
+}
+&.tweeting {
+  .icon-spinner{
+    display:inline;
+  }
+  .tweet-counter{
+    display:none;
+  }
 }
 }
 .postlist {

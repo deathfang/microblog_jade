@@ -1,4 +1,5 @@
 var tUtil = {};
+tUtil.body = $("body");
 // 微博字数计算规则 汉字 1 英文 0.5 网址 20 后台截取 除去首尾空白
 tUtil.urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://){1}(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
 tUtil.msglen = function (text) {
@@ -6,6 +7,23 @@ tUtil.msglen = function (text) {
     return Math.ceil(($.trim(text.replace(/[^\u0000-\u00ff]/g,"aa")).length)/2);
 }
 tUtil.linkTmpl = '<a href="{url}" title="{url}" target="_blank" rel="nofollow">{text}</a>';
+
+tUtil.messagesTips= function() {
+    var messagesTmpl = '<div class="alert alert-messages fade in"><button type="button" data-dismiss="alert" class="close">&times;</button>{text}</div>';
+    return function(text,duration,className) {
+        var alertMessages = $(tUtil.sub(messagesTmpl, {
+            text: text
+        }))
+        alertMessages.appendTo(tUtil.body)
+        if (className) {
+            alertMessages.addClass(className);
+        }
+        setTimeout(function() {
+            alertMessages.alert("close")
+        }, duration)
+    }
+}()
+
 tUtil.SUBREGEX = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 tUtil.isUndefined = function(o) {
     return typeof o === 'undefined';

@@ -94,9 +94,10 @@ margin: 0 auto;padding:10px 12px;
 text-shadow:0 -1px 1px rgba(0,0,0,.5);background:#111;background:rgba(20,20,20,.9);
 box-shadow:0 2px 4px rgba(0,0,0,.25);text-overflow: ellipsis;
 }
-.alert-messages .close{color:#FFF;display:none;
+.alert-messages .close{color:#FFF;
 font-size: 18px;opacity:.5;right: 0;text-shadow: rgba(0, 0, 0, 0.498039) 0px -1px 1px;
 }
+.alert-error .close{display:none;}
 .alert-messages.fade{
 	-webkit-transition: opacity 1s linear;
 	-moz-transition: opacity 1s linear;

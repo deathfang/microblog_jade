@@ -69,7 +69,8 @@ Post.prototype.save = function (callback) {
                             return callback(err);
                         }
                         mongodb.close();
-                        callback(err,post[0]._id,jade.compile(postTemplate)(post[0]),inc);
+                        post[0].post = PostFormat(post[0].post);
+                        callback(null,post[0]._id,jade.compile(postTemplate)(post[0]),inc);
                     })
                 })
             });
@@ -109,11 +110,20 @@ Post.handle = function (getpost,username,id,post,callback) {
                     callback(null, posts);
                 });
             }
-            else if (!post && id) {
+            else if (username && id) {
                 collection.remove({_id : ObjectId(id)},function(err){
                     error(err);
-                    mongodb.close();
-                    callback(null,true)
+                    db.collection('users',function(err,collection){
+                        if(err) {
+                            mongodb.close();
+                            return callback(err);
+                        }
+                        collection.update({name:username},{$inc:{count:-1}},{safe:true},function(err,dec){
+                            error(err);
+                            mongodb.close();
+                            callback(null,JSON.stringify(-dec))
+                        })
+                    })
                 })
             }
             else if (post && id) {

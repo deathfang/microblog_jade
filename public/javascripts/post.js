@@ -31,36 +31,26 @@
         }
         msgtips.text(tips);
     }
-    if( store.enabled ) {
-        storePostText = {
-            set:function(){
-                store.set('postText',postInput.val());
-            },
-            apply:function (){
-                typeof store.get('postText') !== 'undefined' && postInput.val(store.get('postText'));
-                store.remove('backup')
-            },
-            clear:function(item){
-                arguments.length > 0 ? store.remove(item) : store.clear();
-            },
-            backup:function(id,val){
-                tweetBack[id] = val;
-                store.set('backup',tweetBack);
-            }
-        }
-    }
-    else {
-        storePostText = {
-            set:function(){},
-            apply:function(){},
-            clear:function(){},
-            back:function(){}
+    storePostText = {
+        set:function(item){
+            localStorage.setItem('postText',item);
+        },
+        apply:function (){
+            typeof localStorage.getItem('postText') !== 'undefined' && postInput.val(localStorage.getItem('postText'));
+            localStorage.removeItem('backup')
+        },
+        clear:function(item){
+            arguments.length > 0 ? localStorage.removeItem(item) : localStorage.clear();
+        },
+        backup:function(id,val){
+            tweetBack[id] = val;
+            localStorage.setItem('backup',JSON.stringify(tweetBack));
         }
     }
     postInput.focus(function(){
         tweetBox.addClass("uncondensed");
     }).blur(condensed).keyup(function(e){
-            storePostText.set();
+            storePostText.set(postInput.val());
             var val = postInput.val();
             textTips(val);
         }).keydown(function(e){
@@ -74,12 +64,14 @@
             tweetBox.addClass("tweeting");
             $.post("/post",{post:postInput.val()},function(res){
                 tweetBox.removeClass("tweeting");
+                typeof res == "string" && (res = JSON.parse(res));
                 storePostText.backup(res.id,postInput.val());
                 postInput.blur().val("");
                 condensed();
                 storePostText.clear("postText");
                 postList.prepend($(res.postHTML));
                 tweetCount.text(parseInt(tweetCount.text()) + res.inc);
+                tUtil.messagesTips("Your tweet was posted",1000,"alert-tips")
             })
         }
         else {
@@ -101,12 +93,17 @@
     postList.delegate(".icon-remove","click",function(e){
         e.preventDefault();
         var post = $(this).parents(".media");
-        $.get("/del/" + post.attr("id"),function(res){
-            res && post.fadeTo("normal",0,function(){
+        $.get("/del/" + post.attr("id"),function(dec){
+            dec && post.fadeTo("normal",0,function(){
                 $(this).animate({height:"toggle"},"normal",function(){
                     post.remove();
-                    typeof store.get("backup") !== "undefined" && postInput.val(store.get("backup")[post.attr("id")]).get(0).select();
+                    if (localStorage.getItem("backup")){
+                        var backPost = JSON.parse(localStorage.getItem("backup"))[post.attr("id")];
+                        postInput.val(backPost).get(0).select();
+                        storePostText.set(backPost);
+                    }
                     tbutton.active().add();
+                    tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
                 })
             })
         });

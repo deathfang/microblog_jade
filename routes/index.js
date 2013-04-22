@@ -133,11 +133,13 @@ module.exports = function(app) {
         });
     });
     app.get('/del/:id',function(req,res){
-        Post.handle(null,null,req.params.id,null,function(err,success){
+        Post.handle(null,req.session.user.name,req.params.id,null,function(err,dec){
             if (err) {
                 return res.redirect('/');
             }
-            res.send(success)
+            req.session.user.count += parseInt(dec);
+            //不能send Number类型
+            res.send(dec)
         })
     });
     app.post('/edit/:id',function(req,res){

@@ -71,7 +71,7 @@
                 storePostText.clear("postText");
                 postList.prepend($(res.postHTML));
                 tweetCount.text(parseInt(tweetCount.text()) + res.inc);
-                tUtil.messagesTips("Your tweet was posted",1000,"alert-tips")
+                tUtil.messagesTips("你的推文已发布!",1000,"alert-tips")
             })
         }
         else {
@@ -93,20 +93,27 @@
     postList.delegate(".icon-remove","click",function(e){
         e.preventDefault();
         var post = $(this).parents(".media");
-        $.get("/del/" + post.attr("id"),function(dec){
-            dec && post.fadeTo("normal",0,function(){
-                $(this).animate({height:"toggle"},"normal",function(){
-                    post.remove();
-                    if (localStorage.getItem("backup")){
-                        var backPost = JSON.parse(localStorage.getItem("backup"))[post.attr("id")];
-                        postInput.val(backPost).get(0).select();
-                        storePostText.set(backPost);
-                    }
-                    tbutton.active().add();
-                    tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
-                })
-            })
-        });
+        var itemHTML = function(){
+            var clonePost = post.clone();
+            clonePost.find(".tweet-actions").remove();
+            return clonePost.html()
+        }();
+        tUtil.tweetDialog("delete-tweet-dialog","确定要删除这条推文吗?",itemHTML,"删除");
+//        $.get("/del/" + post.attr("id"),function(dec){
+//            dec && post.fadeTo("normal",0,function(){
+//                $(this).animate({height:"toggle"},"normal",function(){
+//                    post.remove();
+//                    if (localStorage.getItem("backup")){
+//                        var backPost = JSON.parse(localStorage.getItem("backup"))[post.attr("id")];
+//                        postInput.val(backPost).get(0).select();
+//                        storePostText.set(backPost);
+//                    }
+//                    tbutton.active().add();
+//                    tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
+//                    tUtil.messagesTips("你的推文已删除。",1000,"alert-tips")
+//                })
+//            })
+//        });
     })
     postList.delegate(".icon-edit","click",function(e){
         e.preventDefault();

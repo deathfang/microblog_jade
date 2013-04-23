@@ -121,7 +121,7 @@ Post.handle = function (getpost,username,id,post,callback) {
                         collection.update({name:username},{$inc:{count:-1}},{safe:true},function(err,dec){
                             error(err);
                             mongodb.close();
-                            callback(null,JSON.stringify(-dec))
+                            callback(null,(-dec).toString())
                         })
                     })
                 })

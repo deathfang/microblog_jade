@@ -199,26 +199,68 @@ footer {
   display: none;
 }
 .postlist {
+  margin-left: 0;
   background: #FFF;
 }
 .postlist [class^=icon-] {
-  font-size: 18px;
-  margin-left: 10px;
-  vertical-align: 2px;
+  font-size: 14px;
+  margin-right: 8px;
+  width: auto;
 }
-.postlist .media:hover [class^=icon-] {
+.postlist [class^=icon-]::after {
+  content: attr(title);
+  font-size: 12px;
+  margin-left: 2px;
+  vertical-align: 1px;
+}
+.postlist .media {
+  margin-top: 0;
+  padding: 9px 12px;
+  line-height: inherit;
+  border-bottom: 1px solid #e8e8e8;
+}
+.postlist .media:hover {
+  background-color: #f5f5f5;
+}
+.postlist .media:hover .tweet-actions [class^=icon-] {
   opacity: 0.8;
   filter: alpha(opacity=80);
 }
-.postlist .media [class^=icon-]:hover {
+.postlist .media:hover .tweet-actions [class^=icon-]:hover {
   text-decoration: none;
 }
+.postlist .media:hover .tweet-actions [class^=icon-]:hover::after {
+  text-decoration: underline;
+}
+.postlist .media > a .avatar {
+  margin-top: 3px;
+}
+.postlist .media > a .fullname {
+  position: absolute;
+  color: #333;
+  margin-left: 58px;
+  font-size: 14px;
+}
+.postlist .media > a:hover .fullname {
+  color: #0084b4;
+  text-decoration: underline;
+}
+.postlist .media .time {
+  float: right;
+}
+.postlist .media .time a {
+  color: #999;
+}
+.postlist .media .time a:hover {
+  color: #0084b4;
+}
 .postlist .media .post {
+  margin-top: 16px;
   position: relative;
 }
 .postlist .media .post p {
-  padding-top: 4px;
-  padding-bottom: 4px;
+  padding-top: 2px;
+  padding-bottom: 2px;
   border: 1px solid rgba(82, 168, 236, 0);
   border-radius: 4px;
   word-wrap: break-word;
@@ -253,12 +295,6 @@ footer {
 }
 .postlist .media .modal.fade.in {
   top: 30%;
-}
-.postlist .icon-remove {
-  margin-left: 40px;
-}
-.postlist .icon-edit {
-  vertical-align: 1px;
 }
 .postlist .tooltip-inner {
   background-color: #f89406;

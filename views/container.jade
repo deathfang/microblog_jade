@@ -4,17 +4,17 @@
             img.avatar.pull-left(src="../img/avatar.png")
             .media-body
                 strong.fullname #{user.name}
-                small.metadata View my profile page
+                small.metadata 查看我的个人资料页
         ul.stats
             li: a(href="" + user.name)
                 strong #{user.count}
-                | 话题
+                | 推文
             li: a(href="")
                 strong 30
-                | 收听
+                | 正在关注
             li: a(href="")
                 strong 30
-                | 听众
+                | 关注者
         include say
 .content-main
     include  posts

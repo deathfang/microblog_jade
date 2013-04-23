@@ -22,13 +22,7 @@
   -ms-word-break: @word-break;
     word-break: @word-break;
 }
-body{
-  background-position: 0 40px;
-  background-attachment: fixed;
-  background-repeat: repeat;
-  background-repeat: no-repeat;
-  background-image:url(../img/page_bg.png);
-}
+body{background-position:0 40px;background-attachment:fixed;background-repeat:repeat;background-repeat:no-repeat;background-image:url(../img/page_bg.png)}
 @media (min-width: 979px) {
   .container-inner {
         padding-top: 54px;
@@ -200,26 +194,61 @@ border-radius: 0 0 5px 5px;
 }
 }
 .postlist {
+  margin-left: 0;
   background:#FFF;
   [class^=icon-] {
-    font-size: 18px;
-    margin-left: 10px;
-    vertical-align: 2px;
+    font-size: 14px;
+    margin-right: 8px;
+    width: auto;
+    &::after{
+      content: attr(title);
+      font-size: 12px;
+      margin-left: 2px;
+      vertical-align: 1px;
+    }
   }
   .media {
+    margin-top: 0;
+    padding: 9px 12px;
+    line-height: inherit;
+    border-bottom: 1px solid #e8e8e8;
     &:hover{
-      [class^=icon-]{
-        .opacity(80);
+      background-color: #f5f5f5;
+      .tweet-actions {
+        [class^=icon-]{
+          .opacity(80);
+        }
+        [class^=icon-]:hover {
+          text-decoration: none;
+          &::after{
+            text-decoration: underline;
+          }
+        }
       }
     }
-    [class^=icon-]:hover {
-      text-decoration: none;
+    > a{
+      .avatar{margin-top: 3px}
+      .fullname{
+        position: absolute;color: #333;
+        margin-left: 58px;font-size: 14px;
+      }
+      &:hover .fullname{
+        color: #0084b4;
+        text-decoration: underline;
+      }
+    }
+    .time{
+      float: right;
+      a{
+        color: #999;
+        &:hover{color:#0084B4}
+      }
     }
     .post {
+      margin-top: 16px;
       position: relative;
       p {
-        padding-top: 4px;
-        padding-bottom: 4px;
+        padding-top: 2px;padding-bottom: 2px;
         border: 1px solid rgba(82,168,236,0);
         border-radius: 4px;
         word-wrap: break-word;
@@ -250,12 +279,6 @@ border-radius: 0 0 5px 5px;
         }
       }
 
-  }
-  .icon-remove {
-    margin-left: 40px;
-  }
-  .icon-edit {
-    vertical-align: 1px;
   }
   .tooltip-inner{
     background-color: @orange;

@@ -24,6 +24,25 @@ tUtil.messagesTips= function() {
     }
 }()
 
+tUtil.tweetDialog = function(){
+    var modalTmpl = '<div id="{id}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="{id}Label" aria-hidden="true">\
+                      <div class="modal-header">\
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>\
+                        <h3>{title}</h3>\
+                      </div>\
+                      <div class="modal-body">{itemHTML}</div>\
+                      <div class="modal-footer">\
+                        <button class="btn" data-dismiss="modal">取消</button>\
+                        <button class="btn btn-primary">{action}</button>\
+                      </div>\
+                    </div>';
+    return function(id,title,itemHTML,action){
+        $(tUtil.sub(modalTmpl,{
+            id:id,title:title,itemHTML:itemHTML,action:action
+        })).modal()
+    }
+}();
+
 tUtil.SUBREGEX = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 tUtil.isUndefined = function(o) {
     return typeof o === 'undefined';

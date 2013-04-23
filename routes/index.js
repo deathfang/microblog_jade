@@ -127,7 +127,7 @@ module.exports = function(app) {
                 res.render('user', {
                     title: user.name,
                     posts: posts,
-                    header_title:req.session.user.name === req.params.user ? "我的广播" : "Ta的广播"
+                    header_title:req.session.user.name === req.params.user ? "我的推文" : "Ta的推文"
                 });
             });
         });

@@ -8,6 +8,9 @@ html
         link(rel='stylesheet', href='/stylesheets/font-awesome.css')
         link(rel='stylesheet', href='/stylesheets/twitter.css')
         link(rel='stylesheet', href='/stylesheets/style.css')
+        script
+            navigator.userAgent.indexOf("Macintosh") !== -1 &&
+                document.documentElement.classList.add("os_mac")
     body
         .navbar.navbar-inverse.navbar-fixed-top
             .navbar-inner

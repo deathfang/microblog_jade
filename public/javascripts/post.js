@@ -98,7 +98,7 @@
             clonePost.find(".tweet-actions").remove();
             return clonePost.html()
         }();
-        tUtil.tweetDialog("delete-tweet-dialog","确定要删除这条推文吗?",itemHTML,"删除");
+        var deleteDialog = tUtil.tweetDialog("delete-tweet-dialog","确定要删除这条推文吗?",itemHTML,"删除");
 //        $.get("/del/" + post.attr("id"),function(dec){
 //            dec && post.fadeTo("normal",0,function(){
 //                $(this).animate({height:"toggle"},"normal",function(){
@@ -153,7 +153,7 @@
                                 var range = document.createRange();
                                 range.setStart(newChild,startPoint);
                                 range.setEnd(newChild,endPoint);
-                                var anchor = $(wrapLinks(item)).get(0)
+                                var anchor = $(tUtil.wrapLinks(item)).get(0)
                                 range.surroundContents(anchor);
                                 newIndex++;
                             })
@@ -182,13 +182,7 @@
                 }
             }
         });
-        function wrapLinks(match){
-            var tokens = {};
-            tokens.url = tokens.text = match;
-//        tokens.text = tokens.url.replace(/(http(s?):\/\/)?(www\.)?/, "");
-//        tokens.text.length > 19 && (tokens.text = tokens.text.slice(0,19) + "...")
-            return tUtil.sub(tUtil.linkTmpl, tokens);
-        }
+
         function postTextChange(){
             return postText !== postEditor.text() && postEditor.text() !== "undefined";
         }

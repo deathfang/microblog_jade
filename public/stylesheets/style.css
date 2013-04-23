@@ -1,3 +1,9 @@
+.os_mac {
+  font-family: "ff-tisa-web-pro-1", "ff-tisa-web-pro-2", "Lucida Grande", "Hiragino Sans GB", "Hiragino Sans GB W3";
+}
+.os_mac body {
+  font-family: inherit;
+}
 body {
   background-position: 0 40px;
   background-attachment: fixed;
@@ -212,6 +218,8 @@ footer {
   font-size: 12px;
   margin-left: 2px;
   vertical-align: 1px;
+  font-family: "ff-tisa-web-pro-1", "ff-tisa-web-pro-2", "Lucida Grande", "Hiragino Sans GB", "Hiragino Sans GB W3";
+  -webkit-font-smoothing: auto;
 }
 .postlist .media {
   margin-top: 0;
@@ -223,8 +231,8 @@ footer {
   background-color: #f5f5f5;
 }
 .postlist .media:hover .tweet-actions [class^=icon-] {
-  opacity: 0.8;
-  filter: alpha(opacity=80);
+  opacity: 1;
+  filter: alpha(opacity=100);
 }
 .postlist .media:hover .tweet-actions [class^=icon-]:hover {
   text-decoration: none;

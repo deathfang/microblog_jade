@@ -22,6 +22,13 @@
   -ms-word-break: @word-break;
     word-break: @word-break;
 }
+.mac_font(){
+  font-family: "ff-tisa-web-pro-1","ff-tisa-web-pro-2","Lucida Grande","Hiragino Sans GB","Hiragino Sans GB W3";
+}
+.os_mac {
+  .mac_font()
+}
+.os_mac body{font-family: inherit}
 body{background-position:0 40px;background-attachment:fixed;background-repeat:repeat;background-repeat:no-repeat;background-image:url(../img/page_bg.png)}
 @media (min-width: 979px) {
   .container-inner {
@@ -205,6 +212,8 @@ border-radius: 0 0 5px 5px;
       font-size: 12px;
       margin-left: 2px;
       vertical-align: 1px;
+      .mac_font();
+      -webkit-font-smoothing: auto;
     }
   }
   .media {
@@ -216,7 +225,7 @@ border-radius: 0 0 5px 5px;
       background-color: #f5f5f5;
       .tweet-actions {
         [class^=icon-]{
-          .opacity(80);
+          .opacity(100);
         }
         [class^=icon-]:hover {
           text-decoration: none;

@@ -16,7 +16,7 @@ module.exports = function(app) {
                             title: '首頁',
                             posts:posts,
                             user:user,
-                            header_title:"全部广播"
+                            header_title:"推文"
                         });
                     });
                 }
@@ -24,7 +24,7 @@ module.exports = function(app) {
                     res.render('index', {
                         title: '首頁',
                         posts:posts,
-                        header_title:"全部广播"
+                        header_title:"推文"
                     });
                 }
             });

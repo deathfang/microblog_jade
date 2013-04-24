@@ -21,9 +21,9 @@
             tbutton.disable().remove();
             msgtips.removeClass("text-warn");
         }
-        else if (msglen < 130) {
+        else if (msglen <= 140) {
             tbutton.active().add();
-            msgtips.removeClass("text-warn");
+            msglen >= 130 ? msgtips.addClass("text-warn") : msgtips.removeClass("text-warn");
         } else {
             typeof overstepPoint === "undefined" && (overstepPoint = oPostInput.selectionStart);
             msgtips.addClass("text-warn");
@@ -89,31 +89,32 @@
             textTips(postInput.val());
         }
     }();
-
+    var deleteDialog;
     postList.delegate(".icon-remove","click",function(e){
         e.preventDefault();
         var post = $(this).parents(".media");
-        var itemHTML = function(){
-            var clonePost = post.clone();
-            clonePost.find(".tweet-actions").remove();
-            return clonePost.html()
-        }();
-        var deleteDialog = tUtil.tweetDialog("delete-tweet-dialog","确定要删除这条推文吗?",itemHTML,"删除");
-//        $.get("/del/" + post.attr("id"),function(dec){
-//            dec && post.fadeTo("normal",0,function(){
-//                $(this).animate({height:"toggle"},"normal",function(){
-//                    post.remove();
-//                    if (localStorage.getItem("backup")){
-//                        var backPost = JSON.parse(localStorage.getItem("backup"))[post.attr("id")];
-//                        postInput.val(backPost).get(0).select();
-//                        storePostText.set(backPost);
-//                    }
-//                    tbutton.active().add();
-//                    tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
-//                    tUtil.messagesTips("你的推文已删除。",1000,"alert-tips")
-//                })
-//            })
-//        });
+        deleteDialog = tUtil.tweetDialog("delete-tweet-dialog","确定要删除这条推文吗?",post.html(),"删除");
+        deleteDialog.find(".btn-primary").click(function(){
+            $.get("/del/" + post.attr("id"),function(dec){
+                if(dec) {
+                    deleteDialog.modal('hide');
+                        post.animate({height:"toggle"},30,function(){
+                            post.remove();
+                            if (localStorage.getItem("backup")){
+                                var backPost = JSON.parse(localStorage.getItem("backup"))[post.attr("id")];
+                                postInput.val(backPost).get(0).select();
+                                storePostText.set(backPost);
+                            }
+                            tbutton.active().add();
+                            tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
+                            tUtil.messagesTips("你的推文已删除。",1000,"alert-tips");
+                            deleteDialog.remove();
+                            deleteDialog = null;
+                        })
+                }
+            });
+        })
+
     })
     postList.delegate(".icon-edit","click",function(e){
         e.preventDefault();
@@ -204,7 +205,7 @@
                     saveButton.toggleClass("hide");
                     var savelabel;
                     if (postEditor.find('.modal').length < 1) {
-                        savelabel = $('<span class="modal label-success hide fade">保存成功</span>').appendTo(postEditor.parent());
+                        savelabel = $('<span class="modal hide fade">保存成功</span>').appendTo(postEditor.parent());
                     }else {
                         savelabel = postEditor.find('.modal');
                     }
@@ -214,7 +215,7 @@
                         postEditor.unbind('keydown');
                         setTimeout(function(){
                             savelabel.modal('hide');
-                        },500)
+                        },1000)
                     })
                 }
             });

@@ -18,7 +18,7 @@ var postLInkTemplate = 'a(href=url,title=url,target="_blank",rel="nofollow") #{t
 var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://){1}(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
 
 //在此处readFile会报错 手动提取jade字符串
-var postTemplate = '.media(id=_id)\n    a.pull-left(href="#")\n        img.media-object.avatar(src="../img/avatar.png")\n    .media-body\n        h4.media-heading\n            a(href="/" + user) #{user}\n            | 说\n            a(href="",title="关闭").icon-remove.fade\n            a(href="",title="编辑").icon-edit.fade\n            a(href="",title="Enter保存").icon-save.fade.hide\n        .post: p !{post}\n        p: small #{time}'
+var postTemplate = 'li.media(id=_id)\n    a.pull-left(href="/" + user)\n        strong.fullname #{user}\n        img.media-object.avatar(src="../img/avatar.png")\n    .media-body\n        small.time: a #{time}\n        .post: p !{post}\n        .tweet-actions\n            a(href="",title="删除").icon-remove.fade\n            a(href="",title="编辑").icon-edit.fade\n            a(href="",title="保存").icon-save.fade.hide';
 
 function PostFormat(post,time){
     var tokens = {}, links = null,

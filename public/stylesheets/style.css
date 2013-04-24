@@ -11,6 +11,11 @@ body {
   background-repeat: no-repeat;
   background-image: url(../img/page_bg.png);
 }
+.modal-enabled {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 @media (min-width: 979px) {
   .container-inner {
     padding-top: 54px;
@@ -222,9 +227,6 @@ footer {
   -webkit-font-smoothing: auto;
 }
 .postlist .media {
-  margin-top: 0;
-  padding: 9px 12px;
-  line-height: inherit;
   border-bottom: 1px solid #e8e8e8;
 }
 .postlist .media:hover {
@@ -240,68 +242,43 @@ footer {
 .postlist .media:hover .tweet-actions [class^=icon-]:hover::after {
   text-decoration: underline;
 }
-.postlist .media > a .avatar {
-  margin-top: 3px;
-}
-.postlist .media > a .fullname {
-  position: absolute;
-  color: #333;
-  margin-left: 58px;
-  font-size: 14px;
-}
-.postlist .media > a:hover .fullname {
-  color: #0084b4;
-  text-decoration: underline;
-}
-.postlist .media .time {
-  float: right;
-}
-.postlist .media .time a {
-  color: #999;
-}
-.postlist .media .time a:hover {
-  color: #0084b4;
-}
-.postlist .media .post {
-  margin-top: 16px;
-  position: relative;
-}
 .postlist .media .post p {
   padding-top: 2px;
   padding-bottom: 2px;
   border: 1px solid rgba(82, 168, 236, 0);
   border-radius: 4px;
-  word-wrap: break-word;
-  white-space: pre-wrap;
 }
-.postlist .media [contenteditable] {
+.postlist .media .post [contenteditable] {
   -webkit-transition: border linear .2s,box-shadow linear .2s;
   -moz-transition: border linear .2s,box-shadow linear .2s;
   -o-transition: border linear .2s,box-shadow linear .2s;
   transition: border linear .2s,box-shadow linear .2s;
 }
-.postlist .media [contenteditable]:focus {
+.postlist .media .post [contenteditable]:focus {
   border-color: rgba(82, 168, 236, 0.8);
   outline: 0;
   outline: thin dotted \9;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
 }
-.postlist .media .modal {
+.postlist .media .post .modal {
   position: absolute;
   left: 40%;
   color: #FFF;
   padding: 6px 8px;
-  font-weight: bold;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   border-radius: 3px;
   width: auto;
   margin-left: 0;
-  background-color: #468847;
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.5);
+  background: #111;
+  background: rgba(20, 20, 20, 0.9);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  text-overflow: ellipsis;
+  font-size: 12px;
 }
-.postlist .media .modal.fade {
+.postlist .media .post .modal.fade {
   top: -50%;
 }
-.postlist .media .modal.fade.in {
+.postlist .media .post .modal.fade.in {
   top: 30%;
 }
 .postlist .tooltip-inner {
@@ -314,4 +291,48 @@ footer {
 .postlist .tooltip.in {
   opacity: 1;
   filter: alpha(opacity=100);
+}
+.postlist .media,
+.tweet-dialog .media {
+  margin-top: 0;
+  padding: 9px 12px;
+  line-height: inherit;
+}
+.postlist .media > a .avatar,
+.tweet-dialog .media > a .avatar {
+  margin-top: 3px;
+}
+.postlist .media > a .fullname,
+.tweet-dialog .media > a .fullname {
+  position: absolute;
+  color: #333;
+  margin-left: 58px;
+  font-size: 14px;
+}
+.postlist .media > a:hover .fullname,
+.tweet-dialog .media > a:hover .fullname {
+  color: #0084b4;
+  text-decoration: underline;
+}
+.postlist .media .time,
+.tweet-dialog .media .time {
+  float: right;
+}
+.postlist .media .time a,
+.tweet-dialog .media .time a {
+  color: #999;
+}
+.postlist .media .time a:hover,
+.tweet-dialog .media .time a:hover {
+  color: #0084b4;
+}
+.postlist .media .post,
+.tweet-dialog .media .post {
+  margin-top: 16px;
+  position: relative;
+}
+.postlist .media .post p,
+.tweet-dialog .media .post p {
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }

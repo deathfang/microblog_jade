@@ -13,17 +13,19 @@ var tUtil = function(){
 
     var messagesTmpl = '<div class="alert alert-messages fade in"><button type="button" data-dismiss="alert" class="close">&times;</button>{text}</div>';
 
-    var modalTmpl = '<div id="{id}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="{id}Label" aria-hidden="true">\
-                      <div class="modal-header">\
+    var modalTmpl = '<div id="{id}" class="modal tweet-dialog hide" tabindex="-1" role="dialog" aria-labelledby="{id}Label" aria-hidden="true">\
+                      <div class="modal-header" id="{id}-header">\
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>\
                         <h3>{title}</h3>\
                       </div>\
-                      <div class="modal-body">{itemHTML}</div>\
+                      <div class="modal-body media">{itemHTML}</div>\
                       <div class="modal-footer">\
                         <button class="btn" data-dismiss="modal">取消</button>\
                         <button class="btn btn-primary">{action}</button>\
                       </div>\
                     </div>';
+
+    var actionHTML = '<div class="tweet-actions"><a href="" title="删除" class="icon-remove fade"></a><a href="" title="编辑" class="icon-edit fade"></a><a href="" title="保存" class="icon-save fade hide"></a></div>';
 
      var messagesTips = function(text,duration,className) {
         var alertMessages = $(sub(messagesTmpl, {
@@ -39,9 +41,19 @@ var tUtil = function(){
     }
 
     var tweetDialog = function(id,title,itemHTML,action){
-        return $(sub(modalTmpl,{
+        itemHTML.replace(actionHTML,"").replace(/<span.+保存成功.+\/span>/,"");
+        $(id).length && $(id).remove();
+        var dialog = $(sub(modalTmpl,{
             id:id,title:title,itemHTML:itemHTML,action:action
-        })).modal()
+        }));
+        //测试初次显示时监听show shown有问题
+        dialog.modal().css({marginTop:-dialog.outerHeight()/2 + "px"})
+            .addClass('fade_in').dragdrop({anchor: id + "-header"});
+        dialog.on("hidden",function(){
+            body.removeClass('modal-enabled')
+        })
+        body.addClass('modal-enabled');
+        return dialog;
     }
 
 

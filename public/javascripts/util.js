@@ -21,7 +21,7 @@ var tUtil = function(){
                       <div class="modal-body media">{itemHTML}</div>\
                       <div class="modal-footer">\
                         <button class="btn" data-dismiss="modal">取消</button>\
-                        <button class="btn btn-primary">{action}</button>\
+                        <button class="btn btn-primary" data-action="active">{action}</button>\
                       </div>\
                     </div>';
 
@@ -40,7 +40,7 @@ var tUtil = function(){
         }, duration)
     }
 
-    var tweetDialog = function(id,title,itemHTML,action){
+    var tweetDialog = function(id,title,itemHTML,action,callback){
         itemHTML.replace(actionHTML,"").replace(/<span.+保存成功.+\/span>/,"");
         $(id).length && $(id).remove();
         var dialog = $(sub(modalTmpl,{
@@ -53,6 +53,10 @@ var tUtil = function(){
             body.removeClass('modal-enabled')
         })
         body.addClass('modal-enabled');
+        var actionButton = dialog.find('[data-action]').on('click.delDialog',callback);
+        dialog.keyup(function(e){
+            e.keyCode === 13 && actionButton.trigger('click.delDialog');
+        })
         return dialog;
     }
 

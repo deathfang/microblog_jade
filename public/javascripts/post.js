@@ -89,30 +89,36 @@
             textTips(postInput.val());
         }
     }();
-    var deleteDialog;
+    var deleteDialog = {};
     postList.delegate(".icon-remove","click",function(e){
         e.preventDefault();
-        var post = $(this).parents(".media");
-        deleteDialog = tUtil.tweetDialog("delete-tweet-dialog","确定要删除这条推文吗?",post.html(),"删除",function(){
-            $.get("/del/" + post.attr("id"),function(dec){
-                if(dec) {
-                    deleteDialog.modal('hide');
-                    post.animate({height:"toggle"},30,function(){
-                        post.remove();
-                        if (localStorage.getItem("backup")){
-                            var backPost = JSON.parse(localStorage.getItem("backup"))[post.attr("id")];
-                            postInput.val(backPost).get(0).select();
-                            storePostText.set(backPost);
-                        }
-                        tbutton.active().add();
-                        tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
-                        tUtil.messagesTips("你的推文已删除。",1000,"alert-tips");
-                        deleteDialog.remove();
-                        deleteDialog = null;
-                    })
-                }
+        var post = $(this).parents(".media"),
+            postID = post.attr("id");
+        if (!deleteDialog[postID]) {
+            deleteDialog[postID] = tUtil.tweetDialog("delete-tweet-dialog-" + postID,"确定要删除这条推文吗?",post.html(),"删除",function(){
+                $.get("/del/" + postID,function(dec){
+                    if(dec) {
+                        deleteDialog[postID].modal("hide");
+                        post.animate({height:"toggle"},30,function(){
+                            post.remove();
+                            if (localStorage.getItem("backup")){
+                                var backPost = JSON.parse(localStorage.getItem("backup"))[postID];
+                                postInput.val(backPost).get(0).select();
+                                storePostText.set(backPost);
+                            }
+                            tbutton.active().add();
+                            tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
+                            tUtil.messagesTips("你的推文已删除。",1000,"alert-tips");
+                            deleteDialog[postID].remove();
+                            deleteDialog[postID] = null;
+                        })
+                    }
+                });
             });
-        });
+        }else {
+            deleteDialog[postID].modal();
+        }
+
     })
     postList.delegate(".icon-edit","click",function(e){
         e.preventDefault();

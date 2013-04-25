@@ -5,11 +5,23 @@
 	<title>Document</title>
 </head>
 <body>
+	<div id="time"></div>
 	<script src="moment.min.js">
 		
 	</script>
 	<script src="moment.twitter.js">
 		
+	</script>
+	<script>
+		var time = document.getElementById("time");
+		var date = moment();
+		function renderTime(){
+			time.innerHTML = date.twitter();
+			setTimeout(renderTime,5000);			
+		}
+		renderTime();
+		//13年4月25日, 1:45 下午
+		//moment().format('L, h:mm a').replace(/\d\d/,'')
 	</script>
 </body>
 </html>

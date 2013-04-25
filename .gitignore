@@ -167,3 +167,4 @@ projectFilesBackup/
 node_modules/
 post_modify_style.css
 *.log
+*.js___jb_old___

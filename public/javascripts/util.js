@@ -13,7 +13,7 @@ var tUtil = function(){
 
     var messagesTmpl = '<div class="alert alert-messages fade in"><button type="button" data-dismiss="alert" class="close">&times;</button>{text}</div>';
 
-    var modalTmpl = '<div id="{id}" class="modal tweet-dialog hide" tabindex="-1" role="dialog" aria-labelledby="{id}Label" aria-hidden="true">\
+    var modalTmpl = '<div id="{id}" class="modal tweet-dialog hide" tabindex="-1" role="dialog" aria-hidden="true">\
                       <div class="modal-header" id="{id}-header">\
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>\
                         <h3>{title}</h3>\
@@ -42,17 +42,20 @@ var tUtil = function(){
 
     var tweetDialog = function(id,title,itemHTML,action,callback){
         itemHTML.replace(actionHTML,"").replace(/<span.+保存成功.+\/span>/,"");
-        $(id).length && $(id).remove();
         var dialog = $(sub(modalTmpl,{
             id:id,title:title,itemHTML:itemHTML,action:action
         }));
-        //测试初次显示时监听show shown有问题
+        //测试初次弹层显示时监听show shown无效
         dialog.modal().css({marginTop:-dialog.outerHeight()/2 + "px"})
             .addClass('fade_in').dragdrop({anchor: id + "-header"});
+        body.addClass('modal-enabled');
+        dialog.on("shown",function(){
+            dialog.css({marginTop:-dialog.outerHeight()/2 + "px"});
+            body.addClass('modal-enabled');
+        })
         dialog.on("hidden",function(){
             body.removeClass('modal-enabled')
         })
-        body.addClass('modal-enabled');
         var actionButton = dialog.find('[data-action]').on('click.delDialog',callback);
         dialog.keyup(function(e){
             e.keyCode === 13 && actionButton.trigger('click.delDialog');
@@ -105,4 +108,3 @@ var tUtil = function(){
       ,ButtonStatus:ButtonStatus
    }
 }()
-

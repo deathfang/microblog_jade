@@ -25,7 +25,7 @@ twitterFormat = (format) ->
         else
             return @format 'M/D/YY'
     else
-        return @format 'MMM D'
+        return @format 'MMMD日'
 
     unless num and unit
         # Format the number
@@ -46,14 +46,14 @@ week = 6048e5
 
 formats =
     seconds:
-        short: 's'
-        long: ' sec'
+        short: '秒'
+        long: '秒'
     minutes:
-        short: 'm'
-        long: ' min'
+        short: '分'
+        long: '分'
     hours:
-        short: 'h'
-        long: ' hr'
+        short: '时'
+        long: '时'
     days:
-        short: 'd'
-        long: ' day'
+        short: '日'
+        long: '日'

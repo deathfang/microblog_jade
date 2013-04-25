@@ -40,7 +40,8 @@ var tUtil = function(){
         }, duration)
     }
 
-    var tweetDialog = function(id,title,itemHTML,action,callback){
+    var tweetDialog = function(id,title,itemHTML,action,resize,callback){
+        var callback = typeof resize === "function" ? resize : callback;
         itemHTML.replace(actionHTML,"").replace(/<span.+保存成功.+\/span>/,"");
         var dialog = $(sub(modalTmpl,{
             id:id,title:title,itemHTML:itemHTML,action:action
@@ -50,7 +51,8 @@ var tUtil = function(){
             .addClass('fade_in').dragdrop({anchor: id + "-header"});
         body.addClass('modal-enabled');
         dialog.on("shown",function(){
-            dialog.css({marginTop:-dialog.outerHeight()/2 + "px"});
+            //tweet编辑时 内容改变 重新计算
+            resize === true && dialog.css({marginTop:-dialog.outerHeight()/2 + "px"});
             body.addClass('modal-enabled');
         })
         dialog.on("hidden",function(){

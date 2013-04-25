@@ -8,8 +8,7 @@
                         strong.fullname #{post.user}
                         img.media-object.avatar(src="../img/avatar.png")
                     .media-body
-                        - var time = post.time.getMonth() + '月' + post.time.getDay() + '日' + ' '+ post.time.getHours() + ":"+ post.time.getMinutes();
-                        small.time: a #{time}
+                        a.time #{post.time}
                         .post: p !{post.post}
                         if user && user.name == post.user
                             .tweet-actions

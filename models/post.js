@@ -1,6 +1,9 @@
 var mongodb = require('./db'),
     jade =  require('jade'),
-    ObjectId = require('mongodb').ObjectID;
+    ObjectId = require('mongodb').ObjectID,
+    moment = require('moment');
+moment.lang('zh-cn');
+require('./moment.twitter');
 
 function Post(username, post, time,id) {
     this.user = username;
@@ -18,10 +21,11 @@ var postLInkTemplate = 'a(href=url,title=url,target="_blank",rel="nofollow") #{t
 var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://){1}(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
 
 //在此处readFile会报错 手动提取jade字符串
-var postTemplate = 'li.media(id=_id)\n    a.pull-left(href="/" + user)\n        strong.fullname #{user}\n        img.media-object.avatar(src="../img/avatar.png")\n    .media-body\n        small.time: a #{time}\n        .post: p !{post}\n        .tweet-actions\n            a(href="",title="删除").icon-remove.fade\n            a(href="",title="编辑").icon-edit.fade\n            a(href="",title="保存").icon-save.fade.hide';
+var postTemplate = 'li.media(id=_id)\n    a.pull-left(href="/" + user)\n        strong.fullname #{user}\n        img.media-object.avatar(src="../img/avatar.png")\n    .media-body\n        a.time #{time}\n        .post: p !{post}\n        .tweet-actions\n            a(href="",title="删除").icon-remove.fade\n            a(href="",title="编辑").icon-edit.fade\n            a(href="",title="保存").icon-save.fade.hide';
 
 function PostFormat(post,time){
     var tokens = {}, links = null,
+        newPost = {},
         hasUrl = post.match(urlRxp);
     if (hasUrl) {
         links = function(match) {
@@ -31,7 +35,9 @@ function PostFormat(post,time){
             return jade.compile(postLInkTemplate)(tokens)
         }
     }
-    return hasUrl ? post.replace(urlRxp,links) : post;
+    newPost.post = hasUrl ? post.replace(urlRxp,links) : post;
+    newPost.time = moment(time).twitter();
+    return newPost;
 }
 
 
@@ -63,14 +69,17 @@ Post.prototype.save = function (callback) {
                         mongodb.close();
                         return callback(err);
                     }
-                    //insert后的post是一个单数组
                     collection.update({name:post[0].user},{$inc:{count:1}},{safe:true},function(err,inc){
                         if(err) {
                             return callback(err);
                         }
                         mongodb.close();
-                        post[0].post = PostFormat(post[0].post);
-                        callback(null,post[0]._id,jade.compile(postTemplate)(post[0]),inc);
+                        //insert后的post是一个单数组
+                        var dbPost = post[0];
+                        var sessionPost = PostFormat(dbPost.post,dbPost.time);
+                        sessionPost.user = dbPost.user;
+                        sessionPost._id = dbPost._id;
+                        callback(null,sessionPost._id,jade.compile(postTemplate)(sessionPost),inc);
                     })
                 })
             });
@@ -78,7 +87,7 @@ Post.prototype.save = function (callback) {
     });
 };
 
-Post.handle = function (getpost,username,id,post,callback) {
+Post.handle = function (getpost,post,callback) {
     mongodb.open(function(err, db) {
         function error(err){
             if (err) {
@@ -94,8 +103,8 @@ Post.handle = function (getpost,username,id,post,callback) {
             if (getpost){
                 // 查找 user 屬性爲 username 的文檔，如果 username 是 null 則匹配全部
                 var query = {};
-                if (username) {
-                    query.user = username;
+                if (post && post.username) {
+                    query.user = post.username;
                 }
                 collection.find(query).sort({time: -1}).toArray(function(err, docs) {
                     error(err);
@@ -104,34 +113,38 @@ Post.handle = function (getpost,username,id,post,callback) {
                     var posts = [];
                     docs.forEach(function(doc) {
                         var post = new Post(doc.user, doc.post, doc.time,doc._id);
-                        post.post = PostFormat(post.post);
-                        posts.push(post);
+                        var sessionPost = PostFormat(post.post,post.time);
+                        sessionPost.user = post.user;
+                        sessionPost.id = post.id;
+                        posts.push(sessionPost);
                     });
-                    callback(null, posts);
+                    callback(null,posts);
                 });
             }
-            else if (username && id) {
-                collection.remove({_id : ObjectId(id)},function(err){
-                    error(err);
-                    db.collection('users',function(err,collection){
-                        if(err) {
-                            mongodb.close();
-                            return callback(err);
-                        }
-                        collection.update({name:username},{$inc:{count:-1}},{safe:true},function(err,dec){
-                            error(err);
-                            mongodb.close();
-                            callback(null,(-dec).toString())
+            else if (!getpost) {
+                if (post.id && post.usernmae) {
+                    collection.remove({_id : ObjectId(post.id)},function(err){
+                        error(err);
+                        db.collection('users',function(err,collection){
+                            if(err) {
+                                mongodb.close();
+                                return callback(err);
+                            }
+                            collection.update({name:post.username},{$inc:{count:-1}},{safe:true},function(err){
+                                error(err);
+                                mongodb.close();
+                                callback(null,(-1).toString())
+                            })
                         })
+                    });
+                }
+                else if (post.post){
+                    collection.update({_id : ObjectId(post.id)},{$set:{post:post.post}},{safe:true},function(err){
+                        error(err);
+                        mongodb.close();
+                        callback(null,PostFormat(post.post,post.time))
                     })
-                })
-            }
-            else if (post && id) {
-                collection.update({_id : ObjectId(id)},{$set:{post:post}},{safe:true},function(err){
-                    error(err);
-                    mongodb.close();
-                    callback(null,PostFormat(post))
-                })
+                }
             }
         })
     })

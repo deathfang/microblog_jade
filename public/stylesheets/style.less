@@ -111,20 +111,21 @@ border-radius: 5px;
     overflow: hidden;
     border-top: 1px solid #e8e8e8;
     border-bottom: 1px solid #e8e8e8;
+    li{display: inline}
     li:first-child a{border-left:none;}
     a {
       float: left;
-      width: ~'calc(100%/3 - 100%/8 - 1px)';
       color: #999;
       font-size: 10px;
       line-height: 16px;
       border-left: 1px solid #e8e8e8;
-      padding: 7px 0 7px 100%/8;
+      padding: 7px 12px;
     &:hover,&:focus{text-decoration: none;color: #0084B4;}
       strong{
         display: block;
         color: #333;
         font-size: 14px;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       }
     &:hover strong{color: #0084B4;}
     }
@@ -296,10 +297,8 @@ box-shadow:0 2px 4px rgba(0,0,0,.25);text-overflow: ellipsis;font-size: 12px;
     }
     .time{
       float: right;
-      a{
-        color: #999;
-        &:hover{color:#0084B4}
-      }
+      color: #999;
+      &:hover{color:#0084B4}
     }
     .post {
       margin-top: 16px;

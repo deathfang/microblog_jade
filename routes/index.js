@@ -5,7 +5,7 @@ var Post = require('../models/post')
 module.exports = function(app) {
     app.get('/', function(req, res) {
         if (req.session.user || req.cookies.user) {
-            Post.handle(true,null,null,null, function(err, posts) {
+            Post.handle(true,null,function(err, posts) {
                 if (err) {
                     posts = []
                 }
@@ -119,7 +119,7 @@ module.exports = function(app) {
             if (!user) {
                 return res.sendfile('views/Page not found.html')
             }
-            Post.handle(true,user.name,null,null, function(err, posts) {
+            Post.handle(true,{username:user.name}, function(err, posts) {
                 if (err) {
                     req.flash('error', err);
                     return res.redirect('/');
@@ -133,7 +133,8 @@ module.exports = function(app) {
         });
     });
     app.get('/del/:id',function(req,res){
-        Post.handle(null,req.session.user.name,req.params.id,null,function(err,dec){
+//        console.log({usernmae:req.session.user.name,id:req.params.id});
+        Post.handle(false,{usernmae:req.session.user.name,id:req.params.id},function(err,dec){
             if (err) {
                 return res.redirect('/');
             }
@@ -143,11 +144,11 @@ module.exports = function(app) {
         })
     });
     app.post('/edit/:id',function(req,res){
-        Post.handle(null,null,req.params.id,req.body.post,function(err,postHTML){
+        Post.handle(false,{id:req.params.id,post:req.body.post,time:req.body.time},function(err,newPost){
             if (err) {
                 return res.redirect('/');
             }
-            res.send(postHTML)
+            res.send(newPost)
         })
     });
     //route test

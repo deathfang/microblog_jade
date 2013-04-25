@@ -108,17 +108,19 @@ footer {
   border-top: 1px solid #e8e8e8;
   border-bottom: 1px solid #e8e8e8;
 }
+.mini-profile .stats li {
+  display: inline;
+}
 .mini-profile .stats li:first-child a {
   border-left: none;
 }
 .mini-profile .stats a {
   float: left;
-  width: calc(100%/3 - 100%/8 - 1px);
   color: #999;
   font-size: 10px;
   line-height: 16px;
   border-left: 1px solid #e8e8e8;
-  padding: 7px 0 7px 12.5%;
+  padding: 7px 12px;
 }
 .mini-profile .stats a:hover,
 .mini-profile .stats a:focus {
@@ -129,6 +131,7 @@ footer {
   display: block;
   color: #333;
   font-size: 14px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .mini-profile .stats a:hover strong {
   color: #0084B4;
@@ -315,13 +318,10 @@ footer {
 .postlist .media .time,
 .tweet-dialog .media .time {
   float: right;
-}
-.postlist .media .time a,
-.tweet-dialog .media .time a {
   color: #999;
 }
-.postlist .media .time a:hover,
-.tweet-dialog .media .time a:hover {
+.postlist .media .time:hover,
+.tweet-dialog .media .time:hover {
   color: #0084b4;
 }
 .postlist .media .post,

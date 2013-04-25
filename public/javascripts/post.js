@@ -89,43 +89,55 @@
             textTips(postInput.val());
         }
     }();
-    var deleteDialog = {};
+    var deleteDialog = {},
+        updatePOST,
+        actionCallback = function(post,id,dialog){
+            $.get("/del/" + id,function(dec){
+                if(dec) {
+                    dialog.modal("hide");
+                    post.animate({height:"toggle"},30,function(){
+                        post.remove();
+                        tbutton.active().add();
+                        tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
+                        tUtil.messagesTips("你的推文已删除。",1000,"alert-tips");
+                        dialog.remove();
+                        dialog = null;
+                        if (localStorage.getItem("backup")){
+                            setTimeout(function(){
+                                var backPost = JSON.parse(localStorage.getItem("backup"))[id];
+                                postInput.val(backPost).get(0).select();
+                                storePostText.set(backPost);
+                            //alert tips消失后再恢复
+                            },2000)
+                        }
+                    })
+                }
+            });
+        }
     postList.delegate(".icon-remove","click",function(e){
         e.preventDefault();
         var post = $(this).parents(".media"),
             postID = post.attr("id");
         if (!deleteDialog[postID]) {
             deleteDialog[postID] = tUtil.tweetDialog("delete-tweet-dialog-" + postID,"确定要删除这条推文吗?",post.html(),"删除",function(){
-                $.get("/del/" + postID,function(dec){
-                    if(dec) {
-                        deleteDialog[postID].modal("hide");
-                        post.animate({height:"toggle"},30,function(){
-                            post.remove();
-                            if (localStorage.getItem("backup")){
-                                var backPost = JSON.parse(localStorage.getItem("backup"))[postID];
-                                postInput.val(backPost).get(0).select();
-                                storePostText.set(backPost);
-                            }
-                            tbutton.active().add();
-                            tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
-                            tUtil.messagesTips("你的推文已删除。",1000,"alert-tips");
-                            deleteDialog[postID].remove();
-                            deleteDialog[postID] = null;
-                        })
-                    }
-                });
+                actionCallback(post,postID,deleteDialog[postID])
             });
-        }else {
+        }else if(updatePOST){
+            deleteDialog[postID] = tUtil.tweetDialog("delete-tweet-dialog-" + postID,"确定要删除这条推文吗?",post.html(),"删除",true,function(){
+                actionCallback(post,postID,deleteDialog[postID])
+            });
+        }else{
             deleteDialog[postID].modal();
         }
-
     })
     postList.delegate(".icon-edit","click",function(e){
         e.preventDefault();
         var postEditor = $(this).parents(".media").find(".post p"),
             o_posEditor = postEditor.get(0),
             saveButton = $(this).next(),
-            postText = postEditor.text();
+            postText = postEditor.text(),
+            postID = postEditor.parents('.media').attr('id'),
+            postTime = postEditor.parent('post').prev('.time');
         postEditor.attr("contenteditable",true).focus(function(){
             postEditor.find("a").each(function(){
                 $(this).text($(this).attr("href"))
@@ -189,7 +201,7 @@
         });
 
         function postTextChange(){
-            return postText !== postEditor.text() && postEditor.text() !== "undefined";
+            return updatePOST = (postText !== postEditor.text() && postEditor.text() !== "undefined");
         }
 
         function textTips(){
@@ -203,9 +215,12 @@
         }
 
         function savePost(){
-            $.post('/edit/'+postEditor.parents('.media').attr('id'),{post:postEditor.text()},function(postHTML){
-                if (postHTML) {
-                    postEditor.html(postHTML);
+            $.post('/edit/'+ postID,{post:postEditor.text(),time:new Date()},function(newPost){
+                //Mac Chrome下 newPost 是string类型
+                typeof newPost === 'string' && (newPost = JSON.parse(newPost));
+                if (newPost.post) {
+                    postEditor.html(newPost.post);
+                    postTime.html(newPost.time);
                     saveButton.toggleClass("hide");
                     var savelabel;
                     if (postEditor.find('.modal').length < 1) {
@@ -220,7 +235,8 @@
                         setTimeout(function(){
                             savelabel.modal('hide');
                         },1000)
-                    })
+                    });
+                    storePostText.backup(postID,postEditor.text());
                 }
             });
         }

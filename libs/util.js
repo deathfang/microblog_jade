@@ -5,7 +5,7 @@ require('./moment.twitter.js');
 
 exports.postFormat = function(post,time){
     var postLInkTmpl = 'a(href=url,title=url,target="_blank",rel="nofollow") #{text}';
-    var postTimeTmpl = 'a.time(href="",title=longtime) #{time}';
+    var postTimeTmpl = 'a.time(href="",title=longtime,data-time=dateTime) #{time}';
     var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://){1}(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
     var tokens = {}, links = null,
         sessionPost = {},
@@ -21,7 +21,8 @@ exports.postFormat = function(post,time){
     sessionPost.post = hasUrl ? post.replace(urlRxp,links) : post;
     sessionPost.time = jade.compile(postTimeTmpl)({
         time:moment(time).twitter(),
-        longtime:moment(time).format('L, h:mm a').replace(/\d\d/,'')
+        longtime:moment(time).format('L, h:mm a').replace(/\d\d/,''),
+        dateTime:+time
     })
     return sessionPost;
 }

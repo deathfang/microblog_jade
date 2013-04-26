@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="time"></div>
+	<script src="moment.min.js">
+		
+	</script>
+	<script src="moment.twitter.js">
+		
+	</script>
+	<script>
+		var time = document.getElementById("time");
+		var date = moment();
+		var second = 1e3
+
+		  ,minute = 6e4
+
+		  ,hour = 36e5
+
+		  ,day = 864e5
+		  ,interval = 5000		
+		  ,inc = 2
+		function renderTime(){
+			time.innerHTML = date.twitter();
+			setTimeout(renderTime,interval);
+			if (inc && interval < 30000) {
+                interval = interval *inc;
+                inc++;
+
+            }else if(interval == 30000){
+                interval = 15000;
+                inc = 0;
+            }
+            else{
+                moment().diff(date)/minute > 1 && (interval = minute);
+
+            }
+		}
+        renderTime();
+
+		//13年4月25日, 1:45 下午
+		//moment().format('L, h:mm a').replace(/\d\d/,'')
+		var now = moment();
+		console.log(now.twitter());
+		
+		  // console.log(now.add(1,'m').twitter());
+
+
+
+	</script>
+</body>
+</html>

@@ -221,6 +221,29 @@
                 if (newPost.post) {
                     postEditor.html(newPost.post);
                     postTime.replaceWith(newPost.time);
+//                    var time = moment(parseInt(newPost.time.match(/data-time.+c/).toString().match(/\d+/).toString()));
+//                    var second = 1e3
+//                        ,minute = 6e4
+//                        ,hour = 36e5
+//                        ,day = 864e5
+//                        ,interval = 5000
+//                        ,inc = 2;
+//                    function renderTime(){
+//                        if (moment().diff(time)/day > 1) return;
+//                        postTime.html(time.twitter());
+//                        setTimeout(renderTime,interval);
+//                        if (inc && interval < 30000) {
+//                            interval = interval *inc;
+//                            inc++;
+//                        }else if(interval == 30000){
+//                            interval = 15000;
+//                            inc = 0;
+//                        }
+//                        else{
+//                            moment().diff(time)/minute > 1 && (interval = minute);
+//                        }
+//                    }
+//                    renderTime()
                     saveButton.toggleClass("hide");
                     var savelabel;
                     if (postEditor.find('.modal').length < 1) {
@@ -240,5 +263,33 @@
                 }
             });
         }
+    });
+
+
+    postList.find(".time").each(function(){
+        var postTime = $(this);
+        var time = moment(postTime.data('time'));
+        var second = 1e3
+            ,minute = 6e4
+            ,hour = 36e5
+            ,day = 864e5
+            ,interval = 5000
+            ,inc = 2;
+        function renderTime(){
+            if (moment().diff(time)/day > 1) return;
+            postTime.html(time.twitter());
+            setTimeout(renderTime,interval);
+            if (inc && interval < 30000) {
+                interval = interval *inc;
+                inc++;
+            }else if(interval == 30000){
+                interval = 15000;
+                inc = 0;
+            }
+            else{
+                moment().diff(time)/minute > 1 && (interval = minute);
+            }
+        }
+        renderTime()
     })
 }(jQuery)

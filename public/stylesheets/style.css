@@ -4,6 +4,9 @@
 .os_mac body {
   font-family: inherit;
 }
+.os_mac .mini-profile .stats a strong {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 body {
   background-position: 0 40px;
   background-attachment: fixed;
@@ -131,7 +134,6 @@ footer {
   display: block;
   color: #333;
   font-size: 14px;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .mini-profile .stats a:hover strong {
   color: #0084B4;

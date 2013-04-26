@@ -14,7 +14,7 @@ var tUtil = function(){
     var messagesTmpl = '<div class="alert alert-messages fade in"><button type="button" data-dismiss="alert" class="close">&times;</button>{text}</div>';
 
     var modalTmpl = '<div id="{id}" class="modal tweet-dialog hide" tabindex="-1" role="dialog" aria-hidden="true">\
-                      <div class="modal-header" id="{id}-header">\
+                      <div class="modal-header" data-toggle="draggable" data-target="#{id}">\
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>\
                         <h3>{title}</h3>\
                       </div>\
@@ -47,8 +47,7 @@ var tUtil = function(){
             id:id,title:title,itemHTML:itemHTML,action:action
         }));
         //测试初次弹层显示时监听show shown无效
-        dialog.modal().css({marginTop:-dialog.outerHeight()/2 + "px"})
-            .addClass('fade_in').dragdrop({anchor: id + "-header"});
+        dialog.modal().css({marginTop:-dialog.outerHeight()/2 + "px"}).addClass('fade_in');
         body.addClass('modal-enabled');
         dialog.on("shown",function(){
             //tweet编辑时 内容改变 重新计算

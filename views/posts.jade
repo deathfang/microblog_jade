@@ -8,7 +8,7 @@
                         strong.fullname #{post.user}
                         img.media-object.avatar(src="../img/avatar.png")
                     .media-body
-                        a.time #{post.time}
+                        | !{post.time}
                         .post: p !{post.post}
                         if user && user.name == post.user
                             .tweet-actions

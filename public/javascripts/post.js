@@ -137,7 +137,7 @@
             saveButton = $(this).next(),
             postText = postEditor.text(),
             postID = postEditor.parents('.media').attr('id'),
-            postTime = postEditor.parent('post').prev('.time');
+            postTime = postEditor.parent('.post').prev('.time');
         postEditor.attr("contenteditable",true).focus(function(){
             postEditor.find("a").each(function(){
                 $(this).text($(this).attr("href"))
@@ -215,12 +215,12 @@
         }
 
         function savePost(){
-            $.post('/edit/'+ postID,{post:postEditor.text(),time:new Date()},function(newPost){
+            $.post('/edit/'+ postID,{post:postEditor.text()},function(newPost){
                 //Mac Chrome下 newPost 是string类型
                 typeof newPost === 'string' && (newPost = JSON.parse(newPost));
                 if (newPost.post) {
                     postEditor.html(newPost.post);
-                    postTime.html(newPost.time);
+                    postTime.replaceWith(newPost.time);
                     saveButton.toggleClass("hide");
                     var savelabel;
                     if (postEditor.find('.modal').length < 1) {

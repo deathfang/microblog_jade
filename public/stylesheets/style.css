@@ -319,6 +319,7 @@ footer {
 .tweet-dialog .media .time {
   float: right;
   color: #999;
+  font-size: 12px;
 }
 .postlist .media .time:hover,
 .tweet-dialog .media .time:hover {

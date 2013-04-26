@@ -133,7 +133,6 @@ module.exports = function(app) {
         });
     });
     app.get('/del/:id',function(req,res){
-//        console.log({usernmae:req.session.user.name,id:req.params.id});
         Post.handle(false,{usernmae:req.session.user.name,id:req.params.id},function(err,dec){
             if (err) {
                 return res.redirect('/');
@@ -144,20 +143,13 @@ module.exports = function(app) {
         })
     });
     app.post('/edit/:id',function(req,res){
-        Post.handle(false,{id:req.params.id,post:req.body.post,time:req.body.time},function(err,newPost){
+        Post.handle(false,{id:req.params.id,post:req.body.post},function(err,newPost){
             if (err) {
                 return res.redirect('/');
             }
             res.send(newPost)
         })
     });
-    //route test
-    app.get('/ua',function(req,res){
-//        res.send(req.headers)
-    });
-    app.get('/ut/:user_test',function(req,res){
-        res.send(req.params.user_test)
-    })
 }
 
 function checkLogin(req, res, next) {

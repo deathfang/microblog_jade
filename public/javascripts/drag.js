@@ -81,6 +81,7 @@
     $(document).on('mouseenter.draggable.data-api', '[data-toggle="draggable"]', function (e) {
         target = $(this).attr('data-target');
         target ? $(target).draggable({handle:'[data-toggle]'}) : $(this).draggable();
-        // $(this).off(e) 全部mouseenter事件关闭
+        //按需配置 遮罩情况下 一次只有一个modal drag
+        $(this).off(e)
       })    
 }(window.jQuery)

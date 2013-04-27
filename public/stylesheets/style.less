@@ -287,6 +287,25 @@ box-shadow:0 2px 4px rgba(0,0,0,.25);text-overflow: ellipsis;font-size: 12px;
     margin-top: 0;
     padding: 9px 12px;
     line-height: inherit;
+    -webkit-transition: .8s;
+    -moz-transition: .8s;
+    -ms-transition: .8s;
+    -o-transition: .8s;
+    transition: .8s;
+    &.fast_hide{
+      -webkit-transition-duration:  .4s;
+      -moz-transition-duration:  .4s;
+      -ms-transition-duration:  .4s;
+      -o-transition-duration:  .4s;
+      transition-duration:  .4s;
+    }
+    &.animate-hide{
+      height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      opacity: 0;
+      visibility: hidden;
+    }
     > a{
       .avatar{margin-top: 3px}
       .fullname{

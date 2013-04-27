@@ -1,3 +1,9 @@
+var TimesMS = {
+    day: 864e5,
+    hour: 36e5,
+    minute: 6e4,
+    second: 1e3
+}
 !function($){
     var tweetCount = $(".stats li:first strong");
     var tweetBox = $(".tweet-box");
@@ -26,6 +32,7 @@
             msglen >= 130 ? msgtips.addClass("text-warn") : msgtips.removeClass("text-warn");
         } else {
             typeof overstepPoint === "undefined" && (overstepPoint = oPostInput.selectionStart);
+            console.log(overstepPoint);
             msgtips.addClass("text-warn");
             tbutton.disable().remove();
         }
@@ -65,13 +72,42 @@
             $.post("/post",{post:postInput.val()},function(res){
                 tweetBox.removeClass("tweeting");
                 typeof res == "string" && (res = JSON.parse(res));
+                var newPost = $(res.postHTML);
+                postList.prepend(newPost);
+                tweetCount.text(parseInt(tweetCount.text()) + res.inc);
+                var time = moment(res.now);
+                if (moment.isMoment(time)) {
+                    var interval = 5000,inc = 2,
+                        newPostTime = newPost.find(".time");
+                    function renderTime(){
+                        if (moment().diff(time)/(TimesMS.day) > 1) return;
+                        newPostTime.html(time.twitter());
+                        setTimeout(renderTime,interval);
+                        if (inc && interval < 30000) {
+                            interval = interval *inc;
+                            inc++;
+                        }else if(interval == 30000){
+                            interval = 15000;
+                            inc = 0;
+                        }
+                        else{
+                            $.each(TimesMS,function(k,v){
+                                moment().diff(time)/v > 1 && (interval = v);
+                            })
+                        }
+                    }
+                    renderTime()
+                }
+                setTimeout(function(){
+                    newPost.removeClass('animate-hide');
+                },500)
                 storePostText.backup(res.id,postInput.val());
                 postInput.blur().val("");
                 condensed();
                 storePostText.clear("postText");
-                postList.prepend($(res.postHTML));
-                tweetCount.text(parseInt(tweetCount.text()) + res.inc);
-                tUtil.messagesTips("你的推文已发布!",1000,"alert-tips")
+                setTimeout(function(){
+                    tUtil.messagesTips("你的推文已发布!",1000,"alert-tips")
+                },1000)
             })
         }
         else {
@@ -95,22 +131,26 @@
             $.get("/del/" + id,function(dec){
                 if(dec) {
                     dialog.modal("hide");
-                    post.animate({height:"toggle"},30,function(){
+                    setTimeout(function(){
+                        post.addClass('animate-hide fast_hide');
+                        //弹层 遮罩消失后的视觉误差 放个延迟
+                    },500)
+                    tbutton.active().add();
+                    tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
+                    dialog.remove();
+                    dialog = null;
+                    setTimeout(function(){
                         post.remove();
-                        tbutton.active().add();
-                        tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
                         tUtil.messagesTips("你的推文已删除。",1000,"alert-tips");
-                        dialog.remove();
-                        dialog = null;
-                        if (localStorage.getItem("backup")){
-                            setTimeout(function(){
-                                var backPost = JSON.parse(localStorage.getItem("backup"))[id];
-                                postInput.val(backPost).get(0).select();
-                                storePostText.set(backPost);
-                            //alert tips消失后再恢复
-                            },2000)
-                        }
-                    })
+                    },1000)
+                    if (localStorage.getItem("backup")){
+                        setTimeout(function(){
+                            var backPost = JSON.parse(localStorage.getItem("backup"))[id];
+                            postInput.val(backPost).get(0).select();
+                            storePostText.set(backPost);
+                        //alert tips消失后再恢复
+                        },2000)
+                    }
                 }
             });
         }
@@ -137,7 +177,7 @@
             saveButton = $(this).next(),
             postText = postEditor.text(),
             postID = postEditor.parents('.media').attr('id'),
-            postTime = postEditor.parent('.post').prev('.time');
+            postTime = $("#" + postID + ' .time');
         postEditor.attr("contenteditable",true).focus(function(){
             postEditor.find("a").each(function(){
                 $(this).text($(this).attr("href"))
@@ -215,35 +255,40 @@
         }
 
         function savePost(){
-            $.post('/edit/'+ postID,{post:postEditor.text()},function(newPost){
-                //Mac Chrome下 newPost 是string类型
-                typeof newPost === 'string' && (newPost = JSON.parse(newPost));
-                if (newPost.post) {
-                    postEditor.html(newPost.post);
-                    postTime.replaceWith(newPost.time);
-//                    var time = moment(parseInt(newPost.time.match(/data-time.+c/).toString().match(/\d+/).toString()));
-//                    var second = 1e3
-//                        ,minute = 6e4
-//                        ,hour = 36e5
-//                        ,day = 864e5
-//                        ,interval = 5000
-//                        ,inc = 2;
-//                    function renderTime(){
-//                        if (moment().diff(time)/day > 1) return;
-//                        postTime.html(time.twitter());
-//                        setTimeout(renderTime,interval);
-//                        if (inc && interval < 30000) {
-//                            interval = interval *inc;
-//                            inc++;
-//                        }else if(interval == 30000){
-//                            interval = 15000;
-//                            inc = 0;
-//                        }
-//                        else{
-//                            moment().diff(time)/minute > 1 && (interval = minute);
-//                        }
-//                    }
-//                    renderTime()
+            $.post('/edit/'+ postID,{post:postEditor.text()},function(res){
+                //Mac Chrome下 res 是string类型
+                typeof res === 'string' && (res = JSON.parse(res));
+                if (res.newPost.post) {
+                    postEditor.html(res.newPost.post);
+                    postTime.replaceWith(res.newPost.time);
+                    var time = moment(res.now);
+                    if (moment.isMoment(time)) {
+                        var interval = 5000,inc = 2,
+                            newPostTime = $('#' + postID + ' .time');
+                        function renderTime(){
+                            if (moment().diff(time)/(TimesMS.day) > 1) return;
+                            newPostTime.html(time.twitter());
+                            setTimeout(renderTime,interval);
+                            if (inc && interval < 30000) {
+                                interval = interval *inc;
+                                inc++;
+                            }else if(interval == 30000){
+                                interval = 15000;
+                                inc = 0;
+                            }
+                            else{
+                                $.each(TimesMS,function(k,v){
+                                    moment().diff(time)/v > 1 && (interval = v);
+                                })
+                            }
+                        }
+                        renderTime()
+                    }
+                    postEditor.html(res.newPost.post);
+                    postTime.replaceWith(res.newPost.time);
+                    var time = moment(res.now);
+                        dataTime = time.valueOf();
+
                     saveButton.toggleClass("hide");
                     var savelabel;
                     if (postEditor.find('.modal').length < 1) {
@@ -265,18 +310,12 @@
         }
     });
 
-
     postList.find(".time").each(function(){
         var postTime = $(this);
         var time = moment(postTime.data('time'));
-        var second = 1e3
-            ,minute = 6e4
-            ,hour = 36e5
-            ,day = 864e5
-            ,interval = 5000
-            ,inc = 2;
+        var interval = 5000,inc = 2;
         function renderTime(){
-            if (moment().diff(time)/day > 1) return;
+            if (moment().diff(time)/(TimesMS.day) > 1) return;
             postTime.html(time.twitter());
             setTimeout(renderTime,interval);
             if (inc && interval < 30000) {
@@ -287,7 +326,9 @@
                 inc = 0;
             }
             else{
-                moment().diff(time)/minute > 1 && (interval = minute);
+                $.each(TimesMS,function(k,v){
+                    moment().diff(time)/v > 1 && (interval = v);
+                })
             }
         }
         renderTime()

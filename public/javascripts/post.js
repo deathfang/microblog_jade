@@ -30,9 +30,9 @@ var TimesMS = {
         else if (msglen <= 140) {
             tbutton.active().add();
             msglen >= 130 ? msgtips.addClass("text-warn") : msgtips.removeClass("text-warn");
+            overstepPoint = undefined;
         } else {
             typeof overstepPoint === "undefined" && (overstepPoint = oPostInput.selectionStart);
-            console.log(overstepPoint);
             msgtips.addClass("text-warn");
             tbutton.disable().remove();
         }
@@ -56,7 +56,7 @@ var TimesMS = {
     }
     postInput.focus(function(){
         tweetBox.addClass("uncondensed");
-    }).blur(condensed).keyup(function(e){
+    }).blur(condensed).on("input",function(e){
             storePostText.set(postInput.val());
             var val = postInput.val();
             textTips(val);
@@ -77,26 +77,31 @@ var TimesMS = {
                 tweetCount.text(parseInt(tweetCount.text()) + res.inc);
                 var time = moment(res.now);
                 if (moment.isMoment(time)) {
-                    var interval = 5000,inc = 2,
+                    var interval = 5000,inc = 1,diff,
                         newPostTime = newPost.find(".time");
                     function renderTime(){
                         if (moment().diff(time)/(TimesMS.day) > 1) return;
                         newPostTime.html(time.twitter());
-                        setTimeout(renderTime,interval);
-                        if (inc && interval < 30000) {
-                            interval = interval *inc;
-                            inc++;
-                        }else if(interval == 30000){
-                            interval = 15000;
-                            inc = 0;
+                        if (moment().diff(time)/6e4 < 1) {
+                            diff = (60 - parseInt(newPostTime.html()))*1000;
+                            if (diff > interval) {
+                                interval = interval *inc;
+                                inc++;
+                            }else {
+                                interval = diff;
+                            }
                         }
                         else{
                             $.each(TimesMS,function(k,v){
-                                moment().diff(time)/v > 1 && (interval = v);
+                                if (moment().diff(time)/v > 1){
+                                    interval = v;
+                                    return false;
+                                }
                             })
                         }
+                        setTimeout(renderTime,interval);
                     }
-                    renderTime()
+                    renderTime();
                 }
                 setTimeout(function(){
                     newPost.removeClass('animate-hide');
@@ -112,7 +117,6 @@ var TimesMS = {
         }
         else {
             oPostInput.setSelectionRange(overstepPoint,postInput.val().length)
-            //有问题 用处不大
         }
     });
     !function(){
@@ -173,9 +177,9 @@ var TimesMS = {
     postList.delegate(".icon-edit","click",function(e){
         e.preventDefault();
         var postEditor = $(this).parents(".media").find(".post p"),
-            o_posEditor = postEditor.get(0),
+            o_postEditor = postEditor.get(0),
             saveButton = $(this).next(),
-            postText = postEditor.text(),
+            postText = postEditor.text().trim(),
             postID = postEditor.parents('.media').attr('id'),
             postTime = $("#" + postID + ' .time');
         postEditor.attr("contenteditable",true).focus(function(){
@@ -187,37 +191,49 @@ var TimesMS = {
             if (saveButton.is(":hidden")) {
                 saveButton.removeClass("hide");
             }
-        }).blur(function(){
-                var postHTML = postEditor.html(),
-                    feedLine,
-                    startPoint,endPoint,text,url,
-                    newIndex = 0,newChild,
-                    hasLine = postHTML.match(/<div>|<br>/g);//火狐换行是 <br>
-                if (hasLine) {
-                    feedLine = postHTML.replace("<div>","&#10;").replace(/<div>/g,"").replace(/<\/div>|<br>/g,"&#10;");
-                    postEditor.html(feedLine)
-                }
-                if (postEditor.text().match(tUtil.urlRxp)) {
-                    [].map.call(o_posEditor.childNodes,function(child,index){
-                        if(child.nodeType == 3 || child.nodeType == 4){
-                            text = $(child).text();
-                            url  = text.match(tUtil.urlRxp);
-                            url && url.forEach(function(item,index2){
-                                newChild = o_posEditor.childNodes[index + index2 + newIndex];
-                                text = $(newChild).text();
-                                startPoint = text.indexOf(item);
-                                endPoint = item.length + startPoint;
-                                var range = document.createRange();
-                                range.setStart(newChild,startPoint);
-                                range.setEnd(newChild,endPoint);
-                                var anchor = $(tUtil.wrapLinks(item)).get(0)
-                                range.surroundContents(anchor);
-                                newIndex++;
-                            })
-                        }
-                    });
-                }
-            });
+        }).on("keyup",function(){
+                //http://stackoverflow.com/questions/2213961/selection-ranges-in-webkit-safari-chrome
+                //Range Selection ranges
+//                var postHTML = postEditor.html(),
+//                    feedLine,
+//                    startPoint,endPoint,text,url,
+//                    newIndex = 0,newChild,
+//                    hasLine = postHTML.match(/<div>|<br>/g);//火狐换行是 <br>
+//                if (hasLine) {
+//                    feedLine = postHTML.replace("<div>","&#10;").replace(/<div>/g,"").replace(/<\/div>|<br>/g,"&#10;");
+//                    postEditor.html(feedLine)
+//                }
+//                if (postEditor.text().match(tUtil.urlRxp)) {
+//                    [].map.call(o_posEditor.childNodes,function(child,index){
+//                        if(child.nodeType == 3 || child.nodeType == 4){
+//                            text = $(child).text();
+//                            url  = text.match(tUtil.urlRxp);
+//                            url && url.forEach(function(item,index2){
+//                                newChild = o_posEditor.childNodes[index + index2 + newIndex];
+//                                text = $(newChild).text();
+//                                startPoint = text.indexOf(item);
+//                                endPoint = item.length + startPoint;
+//                                var range = document.createRange();
+//                                range.setStart(newChild,startPoint);
+//                                range.setEnd(newChild,endPoint);
+//                                var anchor = $(tUtil.wrapLinks(item)).get(0)
+//                                range.surroundContents(anchor);
+//                                var sel = window.getSelection();
+//                                var range2 = sel.getRangeAt(0);
+//                                range2.setStartAfter(anchor);
+//                                var txt = document.createTextNode('哈哈')
+//                                anchor.appendChild(txt);
+//                                range2.insertNode(txt);
+//                                sel.removeAllRanges();
+//                                sel.addRange(range2);
+//                                newIndex++;
+//                            })
+//                        }
+//                    });
+//                }
+            }).keyup(function(){
+                postEditor.html().replace('<br>',"&#10;")
+        })
         saveButton.click(function(e){
             e.preventDefault();
             if (postTextChange()) {
@@ -241,7 +257,7 @@ var TimesMS = {
         });
 
         function postTextChange(){
-            return updatePOST = (postText !== postEditor.text() && postEditor.text() !== "undefined");
+            return updatePOST = (postText !== postEditor.text().trim() && postEditor.text().trim() !== "undefined");
         }
 
         function textTips(){
@@ -255,7 +271,11 @@ var TimesMS = {
         }
 
         function savePost(){
-            $.post('/edit/'+ postID,{post:postEditor.text()},function(res){
+            //contenteditable下换行有div innerText有换行 jQuery text()和textContent无
+            $.post('/edit/'+ postID,{
+                //Firefox不支持innerText 单独处理
+                post:o_postEditor.innerText ? o_postEditor.innerText.trim() : postEditor.html().replace(/<br>/g,"&#10;").replace(/<\S[^><]*>/g,'').trim()
+            },function(res){
                 //Mac Chrome下 res 是string类型
                 typeof res === 'string' && (res = JSON.parse(res));
                 if (res.newPost.post) {
@@ -263,26 +283,30 @@ var TimesMS = {
                     postTime.replaceWith(res.newPost.time);
                     var time = moment(res.now);
                     if (moment.isMoment(time)) {
-                        var interval = 5000,inc = 2,
-                            newPostTime = $('#' + postID + ' .time');
+                        var interval = 5000,inc = 1,diff;
                         function renderTime(){
                             if (moment().diff(time)/(TimesMS.day) > 1) return;
-                            newPostTime.html(time.twitter());
-                            setTimeout(renderTime,interval);
-                            if (inc && interval < 30000) {
-                                interval = interval *inc;
-                                inc++;
-                            }else if(interval == 30000){
-                                interval = 15000;
-                                inc = 0;
+                            postTime.html(time.twitter());
+                            if (moment().diff(time)/6e4 < 1) {
+                                diff = (60 - parseInt(postTime.html()))*1000;
+                                if (diff > interval) {
+                                    interval = interval *inc;
+                                    inc++;
+                                }else {
+                                    interval = diff;
+                                }
                             }
                             else{
                                 $.each(TimesMS,function(k,v){
-                                    moment().diff(time)/v > 1 && (interval = v);
+                                    if (moment().diff(time)/v > 1){
+                                        interval = v;
+                                        return false;
+                                    }
                                 })
                             }
+                            setTimeout(renderTime,interval);
                         }
-                        renderTime()
+                        renderTime();
                     }
                     postEditor.html(res.newPost.post);
                     postTime.replaceWith(res.newPost.time);
@@ -313,24 +337,32 @@ var TimesMS = {
     postList.find(".time").each(function(){
         var postTime = $(this);
         var time = moment(postTime.data('time'));
-        var interval = 5000,inc = 2;
+        var interval = 5000,inc = 1,diff;
         function renderTime(){
             if (moment().diff(time)/(TimesMS.day) > 1) return;
             postTime.html(time.twitter());
-            setTimeout(renderTime,interval);
-            if (inc && interval < 30000) {
-                interval = interval *inc;
-                inc++;
-            }else if(interval == 30000){
-                interval = 15000;
-                inc = 0;
+            //时差小于1min定时
+            if (moment().diff(time)/6e4 < 1) {
+                diff = (60 - parseInt(postTime.html()))*1000;
+                if (diff > interval) {
+                    interval = interval *inc;
+                    inc++;
+                }else {
+                    // 剩余到达1min的时长小于间隔时长时 需要按时更新到min  如：显示39s interval = 30s时要将interval = 60 -39
+                    interval = diff;
+                }
             }
+            //根据当前设置定时器间隔
             else{
                 $.each(TimesMS,function(k,v){
-                    moment().diff(time)/v > 1 && (interval = v);
+                   if (moment().diff(time)/v > 1){
+                       interval = v;
+                       return false;
+                   }
                 })
             }
+            setTimeout(renderTime,interval);
         }
-        renderTime()
+        renderTime();
     })
 }(jQuery)

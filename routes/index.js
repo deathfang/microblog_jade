@@ -5,7 +5,7 @@ var Post = require('../models/post')
 module.exports = function(app) {
     app.get('/', function(req, res) {
         if (req.session.user || req.cookies.user) {
-            Post.handle(true,null,function(err, posts) {
+            Post.handle(true,null,null,function(err, posts) {
                 if (err) {
                     posts = []
                 }
@@ -120,7 +120,7 @@ module.exports = function(app) {
             if (!user) {
                 return res.sendfile('views/Page not found.html')
             }
-            Post.handle(true,{username:user.name}, function(err, posts) {
+            Post.handle(true,{username:user.name}, null,function(err, posts) {
                 if (err) {
                     req.flash('error', err);
                     return res.redirect('/');
@@ -133,18 +133,23 @@ module.exports = function(app) {
             });
         });
     });
-    app.get('/del/:id',function(req,res){
-        Post.handle(false,{usernmae:req.session.user.name,id:req.params.id},function(err,dec){
-            if (err) {
-                return res.redirect('/');
-            }
-            req.session.user.count += parseInt(dec);
-            //不能send Number类型
-            res.send(dec)
-        })
+    app.post('/del/:id',function(req,res){
+        Post.handle(
+            false,
+            {username:req.session.user.name,id:req.params.id},
+            {name:req.session.user.name,count:req.body.count},
+            function(err){
+                if (err) {
+                    return res.redirect('/');
+                }
+                req.session.user.count--;
+                //不能send Number类型
+                res.send(true)
+            })
     });
+
     app.post('/edit/:id',function(req,res){
-        Post.handle(false,{id:req.params.id,post:req.body.post},function(err,newPost,now){
+        Post.handle(false,{id:req.params.id,post:req.body.post},null,function(err,newPost,now){
             if (err) {
                 return res.redirect('/');
             }

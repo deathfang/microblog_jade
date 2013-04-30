@@ -3,6 +3,8 @@ var mongodb = require('./db'),
     ObjectId = require('mongodb').ObjectID,
     Util = require('../libs/util');
 
+var User = require('../models/user');
+
 function Post(username, post, time,id) {
     this.user = username;
     this.post = post;
@@ -63,21 +65,20 @@ Post.prototype.save = function (callback) {
     });
 };
 
-Post.handle = function (getpost,post,callback) {
+Post.handle = function (getpost,post,user,callback) {
     mongodb.open(function(err, db) {
         function error(err){
             if (err) {
                 return callback(err);
             }
         }
-        // 讀取 posts 集合
         db.collection('posts', function(err, collection) {
             if (err) {
                 mongodb.close();
                 return callback(err);
             }
             if (getpost){
-                // 查找 user 屬性爲 username 的文檔，如果 username 是 null 則匹配全部
+                // 查找 user ?性? username 的文?，如果 username 是 null ?匹配全部
                 var query = {};
                 if (post && post.username) {
                     query.user = post.username;
@@ -85,7 +86,6 @@ Post.handle = function (getpost,post,callback) {
                 collection.find(query).sort({time: -1}).toArray(function(err, docs) {
                     error(err);
                     mongodb.close();
-                    // 封裝 posts 爲 Post 對象
                     var posts = [];
                     docs.forEach(function(doc) {
                         var post = new Post(doc.user, doc.post, doc.time,doc._id);
@@ -98,20 +98,15 @@ Post.handle = function (getpost,post,callback) {
                 });
             }
             else if (!getpost) {
-                if (post.id && post.usernmae) {
+                if (post.id && post.username) {
                     collection.remove({_id : ObjectId(post.id)},function(err){
-                        error(err);
-                        db.collection('users',function(err,collection){
-                            if(err) {
-                                mongodb.close();
-                                return callback(err);
-                            }
-                            collection.update({name:post.username},{$inc:{count:-1}},{safe:true},function(err){
-                                error(err);
-                                mongodb.close();
-                                callback(null,(-1).toString())
-                            })
-                        })
+                        if(err) {
+                            mongodb.close();
+                            return callback(err);
+                        }
+                        mongodb.close();
+                        callback(null)
+//                        User.handle(mongodb,db,user,callback)
                     });
                 }
                 else if (post.post){
@@ -127,7 +122,7 @@ Post.handle = function (getpost,post,callback) {
                             error(err);
                             mongodb.close();
                             callback(null,Util.postFormat(post.post,now),now)
-                        })
+                    })
                 }
             }
         })

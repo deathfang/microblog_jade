@@ -1,10 +1,10 @@
-var TimesMS = {
-    day: 864e5,
-    hour: 36e5,
-    minute: 6e4,
-    second: 1e3
-}
 !function($){
+    var TimesMS = {
+        day: 864e5,
+        hour: 36e5,
+        minute: 6e4,
+        second: 1e3
+    }
     var tweetCount = $(".stats li:first strong");
     var tweetBox = $(".tweet-box");
     var postInput = tweetBox.find('[name=post]');
@@ -132,20 +132,20 @@ var TimesMS = {
     var deleteDialog = {},
         updatePOST,
         actionCallback = function(post,id,dialog){
-            $.get("/del/" + id,function(dec){
-                if(dec) {
+            $.post("/del/" + id,{count:parseInt(tweetCount.text()) - 1},function(res){
+                if(res) {
                     dialog.modal("hide");
                     setTimeout(function(){
                         post.addClass('animate-hide fast_hide');
                         //弹层 遮罩消失后的视觉误差 放个延迟
                     },500)
                     tbutton.active().add();
-                    tweetCount.text(parseInt(tweetCount.text()) + parseInt(dec));
                     dialog.remove();
                     dialog = null;
                     setTimeout(function(){
                         post.remove();
                         tUtil.messagesTips("你的推文已删除。",1000,"alert-tips");
+                        tweetCount.text(parseInt(tweetCount.text()) - 1);
                     },1000)
                     if (localStorage.getItem("backup")){
                         setTimeout(function(){
@@ -173,7 +173,7 @@ var TimesMS = {
         }else{
             deleteDialog[postID].modal();
         }
-    })
+    });
     postList.delegate(".icon-edit","click",function(e){
         e.preventDefault();
         var postEditor = $(this).parents(".media").find(".post p"),
@@ -185,55 +185,10 @@ var TimesMS = {
         postEditor.attr("contenteditable",true).focus(function(){
             postEditor.find("a").each(function(){
                 $(this).text($(this).attr("href"))
-            })
+            });
+            tUtil.setFocusLast(o_postEditor);
         }).focus();
-        postEditor.on("keyup paste",function(){
-            if (saveButton.is(":hidden")) {
-                saveButton.removeClass("hide");
-            }
-        }).on("keyup",function(){
-                //http://stackoverflow.com/questions/2213961/selection-ranges-in-webkit-safari-chrome
-                //Range Selection ranges
-//                var postHTML = postEditor.html(),
-//                    feedLine,
-//                    startPoint,endPoint,text,url,
-//                    newIndex = 0,newChild,
-//                    hasLine = postHTML.match(/<div>|<br>/g);//火狐换行是 <br>
-//                if (hasLine) {
-//                    feedLine = postHTML.replace("<div>","&#10;").replace(/<div>/g,"").replace(/<\/div>|<br>/g,"&#10;");
-//                    postEditor.html(feedLine)
-//                }
-//                if (postEditor.text().match(tUtil.urlRxp)) {
-//                    [].map.call(o_posEditor.childNodes,function(child,index){
-//                        if(child.nodeType == 3 || child.nodeType == 4){
-//                            text = $(child).text();
-//                            url  = text.match(tUtil.urlRxp);
-//                            url && url.forEach(function(item,index2){
-//                                newChild = o_posEditor.childNodes[index + index2 + newIndex];
-//                                text = $(newChild).text();
-//                                startPoint = text.indexOf(item);
-//                                endPoint = item.length + startPoint;
-//                                var range = document.createRange();
-//                                range.setStart(newChild,startPoint);
-//                                range.setEnd(newChild,endPoint);
-//                                var anchor = $(tUtil.wrapLinks(item)).get(0)
-//                                range.surroundContents(anchor);
-//                                var sel = window.getSelection();
-//                                var range2 = sel.getRangeAt(0);
-//                                range2.setStartAfter(anchor);
-//                                var txt = document.createTextNode('哈哈')
-//                                anchor.appendChild(txt);
-//                                range2.insertNode(txt);
-//                                sel.removeAllRanges();
-//                                sel.addRange(range2);
-//                                newIndex++;
-//                            })
-//                        }
-//                    });
-//                }
-            }).keyup(function(){
-                postEditor.html().replace('<br>',"&#10;")
-        })
+
         saveButton.click(function(e){
             e.preventDefault();
             if (postTextChange()) {
@@ -274,7 +229,9 @@ var TimesMS = {
             //contenteditable下换行有div innerText有换行 jQuery text()和textContent无
             $.post('/edit/'+ postID,{
                 //Firefox不支持innerText 单独处理
-                post:o_postEditor.innerText ? o_postEditor.innerText.trim() : postEditor.html().replace(/<br>/g,"&#10;").replace(/<\S[^><]*>/g,'').trim()
+                post:o_postEditor.innerText ?
+                    o_postEditor.innerText.trim() :
+                    postEditor.html().replace(/<br>/g,"&#10;").replace(/<\S[^><]*>/g,'').trim()
             },function(res){
                 //Mac Chrome下 res 是string类型
                 typeof res === 'string' && (res = JSON.parse(res));
@@ -283,10 +240,11 @@ var TimesMS = {
                     postTime.replaceWith(res.newPost.time);
                     var time = moment(res.now);
                     if (moment.isMoment(time)) {
-                        var interval = 5000,inc = 1,diff;
+                        var interval = 5000,inc = 1,diff,
+                            newPostTime = $('#' + postID + ' .time');
                         function renderTime(){
                             if (moment().diff(time)/(TimesMS.day) > 1) return;
-                            postTime.html(time.twitter());
+                            newPostTime.html(time.twitter());
                             if (moment().diff(time)/6e4 < 1) {
                                 diff = (60 - parseInt(postTime.html()))*1000;
                                 if (diff > interval) {
@@ -308,10 +266,6 @@ var TimesMS = {
                         }
                         renderTime();
                     }
-                    postEditor.html(res.newPost.post);
-                    postTime.replaceWith(res.newPost.time);
-                    var time = moment(res.now);
-                        dataTime = time.valueOf();
 
                     saveButton.toggleClass("hide");
                     var savelabel;
@@ -333,6 +287,30 @@ var TimesMS = {
             });
         }
     });
+    postList.delegate(".post p","keyup paste",function(){
+        var saveButton = $(this).parent('.post').siblings(".tweet-actions").find(".icon-save");
+        if (saveButton.is(":hidden")) {
+            saveButton.removeClass("hide");
+        }
+    });
+    function wrapUrl (e){
+        var postEditor = $(this),o_postEditor = this;
+        var html = postEditor.html();
+        if (html.match(tUtil.urlRxp)) {
+            //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
+            postEditor.html(
+                html.replace(/<a[^><]*>|<\/a>/g,"").replace(tUtil.urlRxp,function(match){
+                    return tUtil.wrapLinks(match);
+                })
+            );
+            tUtil.setFocusLast(o_postEditor);
+        }
+        e.keyCode === 32 && postEditor.off(e);
+    }
+    postList.delegate(".post p","keyup.urlFormat",wrapUrl);
+    postList.delegate(".post p","keyup.onUrlFormat",function(e){
+        e.shiftKey && e.keyCode === 32 && postList.on("keyup.urlFormat",".post p",wrapUrl);
+    })
 
     postList.find(".time").each(function(){
         var postTime = $(this);

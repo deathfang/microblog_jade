@@ -71,6 +71,8 @@ $("#usernamesignup").on('keyup paste',function(){
             $that.addClass('check_loading');
         },
         success:function(data){
+            //Mac Chrome下data是string
+            typeof data === "string" && (data = JSON.parse(data));
             if (!data) {
                 $that.parent('.control-group')
                     .addClass('warning').removeClass('success')

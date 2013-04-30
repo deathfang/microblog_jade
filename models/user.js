@@ -3,7 +3,7 @@ var mongodb = require('./db');
 function User(user) {
     this.name = user.name;
     this.password = user.password;
-    this.count = user.count;
+    this.count = user.count || 0;
 };
 module.exports = User;
 
@@ -61,3 +61,23 @@ User.get = function get(username, callback) {
 
     });
 };
+User.handle = function(mongodb,db,user,callback){
+    db.collection('users',function(err,collection){
+        if(err) {
+            mongodb.close();
+            return callback(err);
+        }
+        collection.update(
+            {name:user.name},
+            {$set:{count:user.count}},
+            {safe:true},
+            function(err){
+                if (err) {
+                    return callback(err);
+                }
+                mongodb.close();
+                callback(null)
+            }
+        )
+    })
+}

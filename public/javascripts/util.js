@@ -100,6 +100,24 @@ var tUtil = function(){
             }
         }
     }
+
+    function setFocusLast(node){
+        var selection = window.getSelection();
+        if (UA.webkit) {
+            range = document.createRange();
+            range.setStartAfter(node.childNodes[node.childNodes.length - 1]);
+            range.insertNode(document.createTextNode(''));
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+        else{
+            //Firefox测试需selection.getRangeAt(0) 且 先insert 再set
+            range = selection.getRangeAt(0);
+            range.insertNode(document.createTextNode(''));
+            range.setStartAfter(node.childNodes[node.childNodes.length - 1]);
+        }
+    }
+
    return {
        urlRxp:urlRxp
       ,msglen:msglen
@@ -107,5 +125,6 @@ var tUtil = function(){
       ,messagesTips:messagesTips
       ,tweetDialog:tweetDialog
       ,ButtonStatus:ButtonStatus
+      ,setFocusLast:setFocusLast
    }
 }()

@@ -192,7 +192,7 @@
         saveButton.click(function(e){
             e.preventDefault();
             if (postTextChange()) {
-                postEditor.attr("contenteditable",false);
+                o_postEditor.contentEditable = false;
                 savePost();
             }
             else {
@@ -203,7 +203,8 @@
         postEditor.keydown(function(e){
             if ((e.metaKey || e.ctrlKey) && e.keyCode === 13){
                 if (postTextChange()) {
-                    postEditor.blur().attr("contenteditable",false);
+                    o_postEditor.contentEditable = false;
+                    o_postEditor.blur();
                     savePost();
                 }else {
                     textTips()
@@ -229,9 +230,10 @@
             //contenteditable下换行有div innerText有换行 jQuery text()和textContent无
             $.post('/edit/'+ postID,{
                 //Firefox不支持innerText 单独处理
+                //mongoose 可设置trim
                 post:o_postEditor.innerText ?
-                    o_postEditor.innerText.trim() :
-                    postEditor.html().replace(/<br>/g,"&#10;").replace(/<\S[^><]*>/g,'').trim()
+                    o_postEditor.innerText :
+                    postEditor.html().replace(/<br>/g,"&#10;").replace(/<\S[^><]*>/g,'')
             },function(res){
                 //Mac Chrome下 res 是string类型
                 typeof res === 'string' && (res = JSON.parse(res));
@@ -305,13 +307,15 @@
             );
             tUtil.setFocusLast(o_postEditor);
         }
-        e.keyCode === 32 && postEditor.off(e);
     }
-    postList.delegate(".post p","keyup.urlFormat",wrapUrl);
-    postList.delegate(".post p","keyup.onUrlFormat",function(e){
-        e.shiftKey && e.keyCode === 32 && postList.on("keyup.urlFormat",".post p",wrapUrl);
-    })
+    postList.on("keyup.urlFormat",".post p",wrapUrl);
 
+    $(document).on("compositionstart", function(e){
+        postList.off("keyup.urlFormat")
+    });
+    $(document).on("compositionend", function(e){
+        postList.on("keyup.urlFormat",".post p",wrapUrl);
+    });
     postList.find(".time").each(function(){
         var postTime = $(this);
         var time = moment(postTime.data('time'));
@@ -330,7 +334,7 @@
                     interval = diff;
                 }
             }
-            //根据当前设置定时器间隔
+            //根据当前时间单位设置定时器间隔
             else{
                 $.each(TimesMS,function(k,v){
                    if (moment().diff(time)/v > 1){

@@ -105,7 +105,7 @@ var tUtil = function(){
         var selection = window.getSelection();
         if (UA.webkit) {
             range = document.createRange();
-            range.setStartAfter(node.childNodes[node.childNodes.length - 1]);
+            range.setStartAfter(node.lastChild);
             range.insertNode(document.createTextNode(''));
             selection.removeAllRanges();
             selection.addRange(range);
@@ -114,7 +114,7 @@ var tUtil = function(){
             //Firefox测试需selection.getRangeAt(0) 且 先insert 再set
             range = selection.getRangeAt(0);
             range.insertNode(document.createTextNode(''));
-            range.setStartAfter(node.childNodes[node.childNodes.length - 1]);
+            range.setStartAfter(node.lastChild);
         }
     }
 

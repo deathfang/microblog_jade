@@ -1,6 +1,6 @@
 var crypto = require('crypto');
-var User = require('../models/user');
-var Post = require('../models/post')
+var User = require('../proxy/user');
+var Post = require('../proxy/post')
 
 module.exports = function(app) {
     app.get('/', function(req, res) {

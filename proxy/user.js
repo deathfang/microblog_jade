@@ -1,4 +1,4 @@
-var mongodb = require('./db');
+var mongodb = require('./../models/db');
 
 function User(user) {
     this.name = user.name;

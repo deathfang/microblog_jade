@@ -1,9 +1,9 @@
-var mongodb = require('./db'),
+var mongodb = require('./../models/db'),
     jade =  require('jade'),
     ObjectId = require('mongodb').ObjectID,
     Util = require('../libs/util');
 
-var User = require('../models/user');
+var User = require('user');
 
 function Post(username, post, time,id) {
     this.user = username;
@@ -97,8 +97,8 @@ Post.handle = function (getpost,post,user,callback) {
                     callback(null,posts);
                 });
             }
-            else if (!getpost) {
-                if (post.id && post.username) {
+//            else if (!getpost) {
+                else if (post.id && post.username) {
                     collection.remove({_id : ObjectId(post.id)},function(err){
                         if(err) {
                             mongodb.close();
@@ -124,7 +124,7 @@ Post.handle = function (getpost,post,user,callback) {
                             callback(null,Util.postFormat(post.post,now),now)
                     })
                 }
-            }
+//            }
         })
     })
 }

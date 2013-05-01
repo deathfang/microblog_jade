@@ -6,7 +6,8 @@
 var express = require('express');
 var http = require('http');
 var flash = require('connect-flash');
-var settings = require('./settings');
+//var settings = require('./settings');
+var config = require('./config').config;
 var lessToCSS = require('./lessToCSS');
 var MongoStore = require('connect-mongo')(express);
 var fs = require('fs');
@@ -30,12 +31,7 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session({
-    secret: settings.cookieSecret
-    , store: new MongoStore({
-        db: settings.db
-    },function(){
-          console.log('connect mongodb success...')
-      })
+    secret: config.session_secret
   }));
     app.use(function(req,res,next){
         res.locals.user = req.session.user;
@@ -47,7 +43,7 @@ app.configure(function(){
 });
 
 app.configure('development', function(){
-  app.use(express.errorHandler());
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function(){
@@ -56,6 +52,7 @@ app.configure('production', function(){
         errorLogfile.write(meta + err.stack + '\n');
         next();
     });
+    app.set('view cache', true);
 });
 //lessToCSS();
 require('./routes')(app);

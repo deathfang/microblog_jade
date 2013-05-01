@@ -289,7 +289,7 @@
             });
         }
     });
-    postList.delegate(".post p","keyup paste",function(){
+    postList.delegate(".post p","input paste",function(){
         var saveButton = $(this).parent('.post').siblings(".tweet-actions").find(".icon-save");
         if (saveButton.is(":hidden")) {
             saveButton.removeClass("hide");
@@ -308,13 +308,13 @@
             tUtil.setFocusLast(o_postEditor);
         }
     }
-    postList.on("keyup.urlFormat",".post p",wrapUrl);
+    postList.on("input.urlFormat",".post p",wrapUrl);
 
     $(document).on("compositionstart", function(e){
-        postList.off("keyup.urlFormat")
+        postList.off("input.urlFormat")
     });
     $(document).on("compositionend", function(e){
-        postList.on("keyup.urlFormat",".post p",wrapUrl);
+        postList.on("input.urlFormat",".post p",wrapUrl);
     });
     postList.find(".time").each(function(){
         var postTime = $(this);

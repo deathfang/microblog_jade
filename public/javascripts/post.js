@@ -182,11 +182,14 @@
             postText = postEditor.text().trim(),
             postID = postEditor.parents('.media').attr('id'),
             postTime = $("#" + postID + ' .time');
+        var rich = htmlText(o_postEditor,UA);
+
         postEditor.attr("contenteditable",true).focus(function(){
             postEditor.find("a").each(function(){
                 $(this).text($(this).attr("href"))
             });
-            tUtil.setFocusLast(o_postEditor);
+//            tUtil.setFocusLast(o_postEditor.lastChild);
+            rich.setSelectionOffsets([postEditor.text().length]);
         }).focus();
 
         saveButton.click(function(e){
@@ -312,10 +315,11 @@
 //        }
         var currentRange = window.getSelection().getRangeAt(0);
         var currentNode = currentRange.endContainer;
-        var previousHTML = currentNode.previousSibling && currentNode.previousSibling.innerHTML;
-        var parentLink = currentNode.parentElement.innnerHTML;
+        var currentHTML = currentNode.previousSibling && currentNode.previousSibling.innerHTML || currentNode.data;
 
-        if (twitterText.extractUrls(previousHTML || currentNode.data).length > 0){
+        if (twitterText.extractUrls(currentHTML).length > 0){
+            var rich = htmlText(o_postEditor,UA);
+            var cursorPosition = rich.getSelectionOffsets();
             //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
             html = html.replace(/<a[^><]*>|<\/a>/g,"");
             postEditor.html(
@@ -323,10 +327,9 @@
                     html,twitterText.extractUrlsWithIndices(html), tUtil.wraplinkAttrs
                 )
             )
-            //获取当前转换成链接 在所有链接里的index 再把焦点range放到那后面
-            var linkIndex = twitterText.extractUrls(postEditor.text()).indexOf(previousHTML || currentNode.data);
-            console.log(currentNode.data)
-            tUtil.setFocusLast(o_postEditor);
+
+            rich.setSelectionOffsets([parseInt(cursorPosition ) + 1])
+//            tUtil.setFocusLast(o_postEditor.querySelectorAll('a')[linkIndex]);
         }
     }
     postList.on("input.urlFormat",".post p",wrapUrl);

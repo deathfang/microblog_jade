@@ -117,22 +117,22 @@ var tUtil = function(){
         }
     }
 
-    function setFocusLast(node){
-        var selection = window.getSelection();
-        if (UA.webkit) {
-            range = document.createRange();
-            range.setStartAfter(node.lastChild);
-            range.insertNode(document.createTextNode(''));
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
-        else{
-            //Firefox测试需selection.getRangeAt(0) 且 先insert 再set
-            range = selection.getRangeAt(0);
-            range.insertNode(document.createTextNode(''));
-            range.setStartAfter(node.lastChild);
-        }
-    }
+//    function setFocusLast(node){
+//        var selection = window.getSelection();
+//        if (UA.webkit) {
+//            range = document.createRange();
+//            range.setStartAfter(node);
+//            range.insertNode(document.createTextNode(''));
+//            selection.removeAllRanges();
+//            selection.addRange(range);
+//        }
+//        else{
+//            //Firefox测试需selection.getRangeAt(0) 且 先insert 再set
+//            range = selection.getRangeAt(0);
+//            range.insertNode(document.createTextNode(''));
+//            range.setStartAfter(node);
+//        }
+//    }
 
    return {
 //       urlRxp:urlRxp
@@ -141,6 +141,6 @@ var tUtil = function(){
       ,messagesTips:messagesTips
       ,tweetDialog:tweetDialog
       ,ButtonStatus:ButtonStatus
-      ,setFocusLast:setFocusLast
+//      ,setFocusLast:setFocusLast
    }
 }()

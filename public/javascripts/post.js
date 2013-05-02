@@ -227,6 +227,9 @@
         }
 
         function savePost(){
+            postEditor.find("a").each(function(){
+                $(this).text($(this).attr("href"))
+            });
             //contenteditable下换行有div innerText有换行 jQuery text()和textContent无
             $.post('/edit/'+ postID,{
                 //Firefox不支持innerText 单独处理
@@ -298,13 +301,31 @@
     function wrapUrl (e){
         var postEditor = $(this),o_postEditor = this;
         var html = postEditor.html();
-        if (html.match(tUtil.urlRxp)) {
+//        if (html.match(tUtil.urlRxp)) {
+//            //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
+//            postEditor.html(
+//                html.replace(/<a[^><]*>|<\/a>/g,"").replace(tUtil.urlRxp,function(match){
+//                    return tUtil.wrapLinks(match);
+//                })
+//            );
+//            tUtil.setFocusLast(o_postEditor);
+//        }
+        var currentRange = window.getSelection().getRangeAt(0);
+        var currentNode = currentRange.endContainer;
+        var previousHTML = currentNode.previousSibling && currentNode.previousSibling.innerHTML;
+        var parentLink = currentNode.parentElement.innnerHTML;
+
+        if (twitterText.extractUrls(previousHTML || currentNode.data).length > 0){
             //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
+            html = html.replace(/<a[^><]*>|<\/a>/g,"");
             postEditor.html(
-                html.replace(/<a[^><]*>|<\/a>/g,"").replace(tUtil.urlRxp,function(match){
-                    return tUtil.wrapLinks(match);
-                })
-            );
+                twitterText.autoLinkEntities(
+                    html,twitterText.extractUrlsWithIndices(html), tUtil.wraplinkAttrs
+                )
+            )
+            //获取当前转换成链接 在所有链接里的index 再把焦点range放到那后面
+            var linkIndex = twitterText.extractUrls(postEditor.text()).indexOf(previousHTML || currentNode.data);
+            console.log(currentNode.data)
             tUtil.setFocusLast(o_postEditor);
         }
     }

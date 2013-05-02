@@ -1,7 +1,7 @@
 var tUtil = function(){
     var body = $("body");
 // 微博字数计算规则 汉字 1 英文 0.5 网址 20 后台截取 除去首尾空白
-    var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://){1}(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
+//    var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://){1}(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
 
     var SUBREGEX = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 
@@ -9,7 +9,7 @@ var tUtil = function(){
         text = text.replace(urlRxp,'填充填充填充填充填充填充填充填二十个汉字');
         return Math.ceil((text.replace(/[^\u0000-\u00ff]/g,"aa").trim().length)/2);
     }
-    var linkTmpl = '<a href="{url}" title="{url}" target="_blank" rel="nofollow">{text}</a>';
+//    var linkTmpl = '<a href="{url}" title="{url}" target="_blank" rel="nofollow">{text}</a>';
 
     var messagesTmpl = '<div class="alert alert-messages fade in"><button type="button" data-dismiss="alert" class="close">&times;</button>{text}</div>';
 
@@ -74,14 +74,30 @@ var tUtil = function(){
         }) : s;
     };
 
-    function wrapLinks(match){
-        var tokens = {};
-        tokens.url = tokens.text = match;
-//        tokens.text = tokens.url.replace(/(http(s?):\/\/)?(www\.)?/, "");
-//        tokens.text.length > 19 && (tokens.text = tokens.text.slice(0,19) + "...")
-        return sub(linkTmpl, tokens);
-    }
+//    function wrapLinks(match){
+//        var tokens = {};
+//        tokens.url = tokens.text = match;
+////        tokens.text = tokens.url.replace(/(http(s?):\/\/)?(www\.)?/, "");
+////        tokens.text.length > 19 && (tokens.text = tokens.text.slice(0,19) + "...")
+//        return sub(linkTmpl, tokens);
+//    }
 
+    var wraplinkAttrs = {
+//        hashtagClass: "twitter-hashtag pretty-link",
+//        hashtagUrlBase: "/search?q=%23",
+//        symbolTag: "s",
+//        textWithSymbolTag: "b",
+//        cashtagClass: "twitter-cashtag pretty-link",
+//        cashtagUrlBase: "/search?q=%24",
+//        usernameClass: "twitter-atreply pretty-link",
+//        usernameUrlBase: "/",
+//        usernameIncludeSymbol: !0,
+//        listClass: "twitter-listname pretty-link",
+        urlTarget: "_blank",
+        rel:"nofollow",
+//        suppressNoFollow: !0,
+//        htmlEscapeNonEntities: !0
+    }
     function ButtonStatus(button,style) {
         this.active = function(){
             button.removeClass("disabled").removeAttr("disabled");
@@ -119,9 +135,9 @@ var tUtil = function(){
     }
 
    return {
-       urlRxp:urlRxp
-      ,msglen:msglen
-      ,wrapLinks:wrapLinks
+//       urlRxp:urlRxp
+      msglen:msglen
+      ,wraplinkAttrs:wraplinkAttrs
       ,messagesTips:messagesTips
       ,tweetDialog:tweetDialog
       ,ButtonStatus:ButtonStatus

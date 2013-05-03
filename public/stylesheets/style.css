@@ -182,22 +182,10 @@ footer {
   float: right;
 }
 .tweet-user .toolbar .tweet-counter {
-  background-color: transparent;
-  color: #999;
   display: inline-block;
-  width: 35px;
-  border: 0;
-  padding: 0 3px;
-  position: relative;
-  vertical-align: top;
-  top: 7px;
-  text-align: right;
+  vertical-align: -3px;
   font-size: 14px;
   margin-right: 5px;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
-}
-.tweet-user .toolbar .text-warn {
-  color: #d40d12;
 }
 .tweet-user.uncondensed [name=post] {
   height: 80px;
@@ -212,6 +200,18 @@ footer {
 }
 .tweet-user.tweeting .tweet-counter {
   display: none;
+}
+.tweet-user .toolbar .tweet-counter,
+.postlist .tweet-actions .tweet-counter {
+  color: #999;
+  width: 35px;
+  padding: 0 3px;
+  text-align: right;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+}
+.tweet-user .toolbar .tweet-counter.text-warn,
+.postlist .tweet-actions .tweet-counter.text-warn {
+  color: #d40d12;
 }
 .postlist {
   margin-left: 0;
@@ -245,6 +245,10 @@ footer {
 }
 .postlist .media:hover .tweet-actions [class^=icon-]:hover::after {
   text-decoration: underline;
+}
+.postlist .media .tweet-actions .tweet-counter {
+  float: right;
+  font-size: 12px;
 }
 .postlist .media .post p {
   padding-top: 2px;

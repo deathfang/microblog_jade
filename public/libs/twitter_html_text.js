@@ -111,7 +111,20 @@ htmlText = function(a,b) {
 					f.removeAllRanges(), f.addRange(c)
 				
 			}
-		}		
+		},
+        emphasizeText: function(b) {
+            var f = [];
+            b && b.length > 1 && e() && (c(a, function(a, c, d, e, g) {
+                if (c) {
+                    var h = Math.max(e, b[0]),
+                        i = Math.min(g, b[1]);
+                    i > h && f.push([h, i])
+                }
+            }), f.forEach(function(b) {
+                var c = d(a, b);
+                c && c.surroundContents(document.createElement("em"))
+            }))
+        }
 	}
 	
 }

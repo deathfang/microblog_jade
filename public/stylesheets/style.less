@@ -172,20 +172,10 @@ border-radius: 0 0 5px 5px;
     }
     .tweet-button{float:right;}
     .tweet-counter{
-      background-color: transparent;
-      color: #999;
       display: inline-block;
-      width: 35px;
-      border: 0;
-      padding: 0 3px;
-      position: relative;
-      vertical-align: top;
-      top: 7px;
-      text-align: right;
+      vertical-align: -3px;
       font-size: 14px;margin-right: 5px;
-      text-shadow: 0 1px 1px rgba(255,255,255,.75);
     }
-    .text-warn{color: #d40d12;}
   }
 &.uncondensed{
   [name=post] {
@@ -203,6 +193,16 @@ border-radius: 0 0 5px 5px;
     .hide()
   }
 }
+}
+.tweet-user .toolbar,.postlist .tweet-actions{
+    .tweet-counter{
+      color: #999;
+      width: 35px;
+      padding: 0 3px;
+      text-align: right;
+      text-shadow: 0 1px 1px rgba(255,255,255,.75);
+      &.text-warn{color: #d40d12;}
+    }
 }
 .postlist {
   margin-left: 0;
@@ -234,6 +234,12 @@ border-radius: 0 0 5px 5px;
             text-decoration: underline;
           }
         }
+      }
+    }
+    .tweet-actions {
+      .tweet-counter{
+        float: right;
+        font-size: 12px;
       }
     }
     .post {

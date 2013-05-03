@@ -6,8 +6,12 @@ var tUtil = function(){
     var SUBREGEX = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 
     var msglen = function (text) {
-        text = text.replace(urlRxp,'填充填充填充填充填充填充填充填二十个汉字');
-        return Math.ceil((text.replace(/[^\u0000-\u00ff]/g,"aa").trim().length)/2);
+        twitterText.extractUrls(text).forEach(function(i){
+            return text.replace(i.toString(),'填充填充填充填充填充填充填充填二十个汉字').length
+        })
+//        text = text.replace(urlRxp,'填充填充填充填充填充填充填充填二十个汉字');
+//        return Math.ceil((text.replace(/[^\u0000-\u00ff]/g,"aa").trim().length)/2);
+//        twitter的 空白也算字符
     }
 //    var linkTmpl = '<a href="{url}" title="{url}" target="_blank" rel="nofollow">{text}</a>';
 

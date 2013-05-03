@@ -10,31 +10,29 @@
     var postInput = tweetBox.find('[name=post]');
     var oPostInput = postInput.get(0);
     var toolbar = tweetBox.find(".toolbar");
+    var tweetLength = toolbar.find('.tweet-counter')
     var tweetButton = toolbar.find("button");
-    var msgtips = $(".tweet-counter");
     var postList = $(".postlist");
-    var overstepPoint;
+//    var overstepPoint;
     var tweetBack = {};
     var condensed = function(){
         postInput.val() === "" && tweetBox.removeClass("uncondensed");
     }
 
     var tbutton = new tUtil.ButtonStatus(tweetButton,"btn-primary")
-    var textTips = function(val){
+    var textLengthTips = function(msgtips,val,fn1,fn2){
         var msglen = tUtil.msglen(val),
             tips = 140-msglen;
         if (val == "") {
-            tbutton.disable().remove();
+            fn1();
             msgtips.removeClass("text-warn");
         }
         else if (msglen <= 140) {
-            tbutton.active().add();
+            fn2();
             msglen >= 130 ? msgtips.addClass("text-warn") : msgtips.removeClass("text-warn");
-            overstepPoint = undefined;
         } else {
-            typeof overstepPoint === "undefined" && (overstepPoint = oPostInput.selectionStart);
             msgtips.addClass("text-warn");
-            tbutton.disable().remove();
+            fn1()
         }
         msgtips.text(tips);
     }
@@ -59,7 +57,11 @@
     }).blur(condensed).on("input",function(e){
             storePostText.set(postInput.val());
             var val = postInput.val();
-            textTips(val);
+            textLengthTips(tweetLength,val,function(){
+                tbutton.disable().remove();
+            },function(){
+                tbutton.active().add();
+            });
         }).keydown(function(e){
             //Mac习惯用command
             (e.metaKey || e.ctrlKey) && e.keyCode === 13 && postInput.parent('form').trigger('submit');
@@ -115,9 +117,9 @@
                 },1000)
             })
         }
-        else {
-            oPostInput.setSelectionRange(overstepPoint,postInput.val().length)
-        }
+//        else {
+//            oPostInput.setSelectionRange(overstepPoint,postInput.val().length)
+//        }
     });
     !function(){
         if (postInput.val() !== "") {
@@ -126,7 +128,11 @@
             oPostInput.setSelectionRange(length ,length );
             oPostInput.focus();
             tbutton.active().add();
-            textTips(postInput.val());
+            textLengthTips(tweetLength,postInput.val(),function(){
+                tbutton.disable().remove();
+            },function(){
+                tbutton.active().add();
+            });
         }
     }();
     var deleteDialog = {},
@@ -179,39 +185,30 @@
         var postEditor = $(this).parents(".media").find(".post p"),
             o_postEditor = postEditor.get(0),
             saveButton = $(this).next(),
+            tweetLength = saveButton.next(),
             postText = postEditor.text().trim(),
             postID = postEditor.parents('.media').attr('id'),
             postTime = $("#" + postID + ' .time');
-        var rich = htmlText(o_postEditor,UA);
+        var htmlRich = htmlText(o_postEditor,UA);
 
         postEditor.attr("contenteditable",true).focus(function(){
             postEditor.find("a").each(function(){
-                $(this).text($(this).attr("href"))
+                var anchor = $(this),emTxt = anchor.find("em")
+                anchor.html(
+                    anchor.html().replace(anchor.text(),anchor.attr("href")).replace(emTxt,"<em"> + emTxt + "</em>")
+                )
             });
 //            tUtil.setFocusLast(o_postEditor.lastChild);
-            rich.setSelectionOffsets([postEditor.text().length]);
+            htmlRich.setSelectionOffsets([postEditor.text().length]);
         }).focus();
 
         saveButton.click(function(e){
             e.preventDefault();
-            if (postTextChange()) {
-                o_postEditor.contentEditable = false;
-                savePost();
-            }
-            else {
-                textTips()
-            }
-
+           postTextChange() ? savePost() : textWarn();
         });
         postEditor.keydown(function(e){
             if ((e.metaKey || e.ctrlKey) && e.keyCode === 13){
-                if (postTextChange()) {
-                    o_postEditor.contentEditable = false;
-                    o_postEditor.blur();
-                    savePost();
-                }else {
-                    textTips()
-                }
+                postTextChange() && saveButton.is(':visible') ? savePost() : textWarn()
             }
         });
 
@@ -219,7 +216,7 @@
             return updatePOST = (postText !== postEditor.text().trim() && postEditor.text().trim() !== "undefined");
         }
 
-        function textTips(){
+        function textWarn(){
             postEditor.parent().tooltip({
                 title:"修改了才能提交( ´◔ ‸◔`)！",
                 trigger:"manual"
@@ -236,7 +233,6 @@
             //contenteditable下换行有div innerText有换行 jQuery text()和textContent无
             $.post('/edit/'+ postID,{
                 //Firefox不支持innerText 单独处理
-                //mongoose 可设置trim
                 post:o_postEditor.innerText ?
                     o_postEditor.innerText :
                     postEditor.html().replace(/<br>/g,"&#10;").replace(/<\S[^><]*>/g,'')
@@ -274,8 +270,10 @@
                         }
                         renderTime();
                     }
-
-                    saveButton.toggleClass("hide");
+                    o_postEditor.contentEditable = false;
+                    o_postEditor.blur();
+                    saveButton.addClass("hide");
+                    tweetLength.addClass("hide");
                     var savelabel;
                     if (postEditor.find('.modal').length < 1) {
                         savelabel = $('<span class="modal hide fade">保存成功</span>').appendTo(postEditor.parent());
@@ -295,11 +293,16 @@
             });
         }
     });
-    postList.delegate(".post p","input paste",function(){
-        var saveButton = $(this).parent('.post').siblings(".tweet-actions").find(".icon-save");
-        if (saveButton.is(":hidden")) {
-            saveButton.removeClass("hide");
-        }
+    postList.delegate(".post p","input",function(){
+        var tweetLength = $(this).parent('.post').siblings(".tweet-actions").find(".tweet-counter");
+        var saveButton = tweetLength.prev();
+        tweetLength.is(":hidden") && tweetLength.removeClass("hide");
+        saveButton.is(":hidden") && saveButton.removeClass("hide");
+        textLengthTips(tweetLength,$(this).text(),function(){
+            saveButton.addClass('hide')
+        },function(){
+            saveButton.removeClass('hide')
+        });
     });
     function wrapUrl (e){
         var postEditor = $(this),o_postEditor = this;
@@ -318,8 +321,8 @@
         var currentHTML = currentNode.previousSibling && currentNode.previousSibling.innerHTML || currentNode.data;
 
         if (twitterText.extractUrls(currentHTML).length > 0){
-            var rich = htmlText(o_postEditor,UA);
-            var cursorPosition = rich.getSelectionOffsets();
+            var htmlRich = htmlText(o_postEditor,UA);
+            var cursorPosition = htmlRich.getSelectionOffsets();
             //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
             html = html.replace(/<a[^><]*>|<\/a>/g,"");
             postEditor.html(
@@ -327,9 +330,7 @@
                     html,twitterText.extractUrlsWithIndices(html), tUtil.wraplinkAttrs
                 )
             )
-
-            rich.setSelectionOffsets([parseInt(cursorPosition ) + 1])
-//            tUtil.setFocusLast(o_postEditor.querySelectorAll('a')[linkIndex]);
+            htmlRich.setSelectionOffsets([parseInt(cursorPosition ) + 1])
         }
     }
     postList.on("input.urlFormat",".post p",wrapUrl);

@@ -288,10 +288,6 @@ footer {
 .postlist .media .post .modal.fade.in {
   top: 30%;
 }
-.postlist .tooltip-inner {
-  background-color: #f89406;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-}
 .postlist .tooltip-arrow {
   display: none;
 }

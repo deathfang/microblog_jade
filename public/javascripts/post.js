@@ -20,19 +20,20 @@
     }
 
     var tbutton = new tUtil.ButtonStatus(tweetButton,"btn-primary")
-    var textLengthTips = function(msgtips,val,fn1,fn2){
+    var textLengthTips = function(msgtips,val,disable,enable,emphasizeText){
         var msglen = tUtil.msglen(val),
             tips = 140-msglen;
         if (val == "") {
-            fn1();
+            disable();
             msgtips.removeClass("text-warn");
         }
         else if (msglen <= 140) {
-            fn2();
+            enable();
             msglen >= 130 ? msgtips.addClass("text-warn") : msgtips.removeClass("text-warn");
         } else {
             msgtips.addClass("text-warn");
-            fn1()
+            disable();
+            emphasizeText && emphasizeText();
         }
         msgtips.text(tips);
     }
@@ -213,17 +214,17 @@
         });
 
         function postTextChange(){
-            return updatePOST = (postText !== postEditor.text().trim() && postEditor.text().trim() !== "undefined");
+            return updatePOST = (postText !== postEditor.text() && postEditor.text().trim());
         }
 
         function textWarn(){
             postEditor.parent().tooltip({
-                title:"修改了才能提交( ´◔ ‸◔`)！",
+                title:"不能为空白( ´◔ ‸◔`)！",
                 trigger:"manual"
             }).tooltip('show');
             setTimeout(function(){
                 postEditor.parent().tooltip('hide');
-            },2000)
+            },1500)
         }
 
         function savePost(){
@@ -293,19 +294,31 @@
             });
         }
     });
-    postList.delegate(".post p","input",function(){
-        var tweetLength = $(this).parent('.post').siblings(".tweet-actions").find(".tweet-counter");
-        var saveButton = tweetLength.prev();
-        tweetLength.is(":hidden") && tweetLength.removeClass("hide");
+    postList.on("input",".post p",function(e){
+        var postEditor = $(this);
+        var tweetCount = postEditor.parent('.post').siblings(".tweet-actions").find(".tweet-counter");
+        var saveButton = tweetCount.prev();
+        tweetCount.is(":hidden") && tweetCount.removeClass("hide");
         saveButton.is(":hidden") && saveButton.removeClass("hide");
-        textLengthTips(tweetLength,$(this).text(),function(){
+        textLengthTips(tweetCount,postEditor.text(),function(){
             saveButton.addClass('hide')
         },function(){
             saveButton.removeClass('hide')
         });
     });
+    function emphasizePost(){
+        var postEditor = $(this);
+        var textLength = postEditor.text().length;
+        if (postEditor.parent().parent().find(".tweet-counter").text() < 0) {
+            var htmlRich = htmlText(this,UA);
+            //仅创建一个em 焦点需要定位到em后面
+            postEditor.find("em").length < 1 && htmlRich.emphasizeText([140,textLength]);
+            htmlRich.setSelectionOffsets([textLength]);
+        }
+    }
+    postList.on("input.emphasizeText",".post p",emphasizePost);
     function wrapUrl (e){
-        var postEditor = $(this),o_postEditor = this;
+        var postEditor = $(this);
         var html = postEditor.html();
 //        if (html.match(tUtil.urlRxp)) {
 //            //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
@@ -321,7 +334,7 @@
         var currentHTML = currentNode.previousSibling && currentNode.previousSibling.innerHTML || currentNode.data;
 
         if (twitterText.extractUrls(currentHTML).length > 0){
-            var htmlRich = htmlText(o_postEditor,UA);
+            var htmlRich = htmlText(this,UA);
             var cursorPosition = htmlRich.getSelectionOffsets();
             //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
             html = html.replace(/<a[^><]*>|<\/a>/g,"");
@@ -336,10 +349,11 @@
     postList.on("input.urlFormat",".post p",wrapUrl);
 
     $(document).on("compositionstart", function(e){
-        postList.off("input.urlFormat")
+        postList.off("input.urlFormat input.emphasizeText")
     });
     $(document).on("compositionend", function(e){
         postList.on("input.urlFormat",".post p",wrapUrl);
+        postList.on("input.emphasizeText",".post p",emphasizePost);
     });
     postList.find(".time").each(function(){
         var postTime = $(this);

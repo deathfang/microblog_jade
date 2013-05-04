@@ -255,6 +255,10 @@ footer {
   padding-bottom: 2px;
   border: 1px solid rgba(82, 168, 236, 0);
 }
+.postlist .media .post p em {
+  font-style: normal;
+  background: #fcc;
+}
 .postlist .media .post [contenteditable] {
   -webkit-transition: border linear .2s,box-shadow linear .2s;
   -moz-transition: border linear .2s,box-shadow linear .2s;

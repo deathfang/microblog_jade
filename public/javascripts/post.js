@@ -300,60 +300,56 @@
         var saveButton = tweetCount.prev();
         tweetCount.is(":hidden") && tweetCount.removeClass("hide");
         saveButton.is(":hidden") && saveButton.removeClass("hide");
-        textLengthTips(tweetCount,postEditor.text(),function(){
+        !postEditor.attr("data-in-composition") && textLengthTips(tweetCount,postEditor.text(),function(){
             saveButton.addClass('hide')
         },function(){
             saveButton.removeClass('hide')
         });
     });
-    function emphasizePost(){
+
+    function withRichEditor (e){
         var postEditor = $(this);
-        var textLength = postEditor.text().length;
-        if (postEditor.parent().parent().find(".tweet-counter").text() < 0) {
-            var htmlRich = htmlText(this,UA);
-            //仅创建一个em 焦点需要定位到em后面
-            postEditor.find("em").length < 1 && htmlRich.emphasizeText([140,textLength]);
-            htmlRich.setSelectionOffsets([textLength]);
-        }
-    }
-    postList.on("input.emphasizeText",".post p",emphasizePost);
-    function wrapUrl (e){
-        var postEditor = $(this);
-        var html = postEditor.html();
-//        if (html.match(tUtil.urlRxp)) {
-//            //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
-//            postEditor.html(
-//                html.replace(/<a[^><]*>|<\/a>/g,"").replace(tUtil.urlRxp,function(match){
-//                    return tUtil.wrapLinks(match);
-//                })
-//            );
-//            tUtil.setFocusLast(o_postEditor);
-//        }
         var currentRange = window.getSelection().getRangeAt(0);
         var currentNode = currentRange.endContainer;
         var currentHTML = currentNode.previousSibling && currentNode.previousSibling.innerHTML || currentNode.data;
+        var htmlRich = htmlText(this,UA);
+        var cursorPosition = htmlRich.getSelectionOffsets();
+        var html;
+        if (twitterText.extractUrls(currentHTML).length > 0 && !postEditor.attr("data-in-composition")){
 
-        if (twitterText.extractUrls(currentHTML).length > 0){
-            var htmlRich = htmlText(this,UA);
-            var cursorPosition = htmlRich.getSelectionOffsets();
             //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
-            html = html.replace(/<a[^><]*>|<\/a>/g,"");
+            html = postEditor.html().replace(/<a[^><]*>|<\/a>/g,"");
             postEditor.html(
                 twitterText.autoLinkEntities(
                     html,twitterText.extractUrlsWithIndices(html), tUtil.wraplinkAttrs
                 )
             )
-            htmlRich.setSelectionOffsets([parseInt(cursorPosition ) + 1])
+            htmlRich.setSelectionOffsets([parseInt(cursorPosition) + 1])
+        }
+
+        if (postEditor.parent().parent().find(".tweet-counter").text() < 0 && !postEditor.attr("data-in-composition")) {
+            var normalizerText = postEditor.text();
+            twitterText.extractUrls(normalizerText).forEach(function(item){
+                normalizerText = normalizerText.replace(item,'axaxaxaxaxaxaxaxaxax')
+            })
+//            normalizerText.indexOf(140)
+            //仅创建一个em 焦点需要定位到em后面
+            postEditor.html(postEditor.html().replace(/<\/*em>/g,''));
+            //139 要精确计算出来
+            htmlRich.emphasizeText([139,Number.MAX_VALUE]);
+            postEditor.html(
+                postEditor.html().replace('</em>','') + '</em>'
+            )
+            htmlRich.setSelectionOffsets([parseInt(cursorPosition)])
         }
     }
-    postList.on("input.urlFormat",".post p",wrapUrl);
-
+//  这里paste 多超出140字em范围无效
+    postList.on("keyup.withRichEditor paste.withRichEditor",".post p",withRichEditor);
     $(document).on("compositionstart", function(e){
-        postList.off("input.urlFormat input.emphasizeText")
+        e.target.setAttribute("data-in-composition", "true")
     });
     $(document).on("compositionend", function(e){
-        postList.on("input.urlFormat",".post p",wrapUrl);
-        postList.on("input.emphasizeText",".post p",emphasizePost);
+        e.target.removeAttribute("data-in-composition")
     });
     postList.find(".time").each(function(){
         var postTime = $(this);

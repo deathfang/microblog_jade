@@ -18,7 +18,7 @@ function Post(username, post, time,id) {
 module.exports = Post;
 
 //在此处readFile会报错 手动提取jade字符串
-var postTemplate = 'li.media.animate-hide(id=_id)\n    a.pull-left(href="/" + user)\n        strong.fullname #{user}\n        img.media-object.avatar(src="../img/avatar.png")\n    .media-body\n        !{time}\n        .post: p !{post}\n        .tweet-actions\n            a(href="",title="删除").icon-remove.fade\n            a(href="",title="编辑").icon-edit.fade\n            a(href="",title="保存").icon-save.fade.hide';
+var postTemplate = 'li.media.animate-hide(id=_id)\n    a.pull-left(href="/" + user)\n        strong.fullname #{user}\n        img.media-object.avatar(src="../img/avatar.png")\n    .media-body\n        !{time}\n        .post: p !{post}\n        .tweet-actions\n            a(href="",title="删除").icon-remove.fade\n            a(href="",title="编辑").icon-edit.fade\n            a(href="",title="保存").icon-save.fade.hide\n            span.tweet-counter.hide';
 
 Post.prototype.save = function (callback) {
     // 存入 Mongodb 的文档
@@ -57,7 +57,7 @@ Post.prototype.save = function (callback) {
                         var sessionPost = Util.postFormat(dbPost.post,dbPost.time);
                         sessionPost.user = dbPost.user;
                         sessionPost._id = dbPost._id;
-                        callback(null,sessionPost._id,jade.compile(postTemplate)(sessionPost),inc,dbPost.time);
+                        callback(null,sessionPost._id,jade.compile(postTemplate)(sessionPost),inc);
                     })
                 })
             });
@@ -121,7 +121,7 @@ Post.handle = function (getpost,post,user,callback) {
                         function(err){
                             error(err);
                             mongodb.close();
-                            callback(null,Util.postFormat(post.post,now),now)
+                            callback(null,Util.postFormat(post.post,now))
                     })
                 }
             }

@@ -1,48 +1,39 @@
 !function($){
-    var TimesMS = {
-        day: 864e5,
-        hour: 36e5,
-        minute: 6e4,
-        second: 1e3
-    }
     var tweetCount = $(".stats li:first strong");
     var tweetBox = $(".tweet-box");
-    var postInput = tweetBox.find('[name=post]');
-    var oPostInput = postInput.get(0);
+    var postEditor = tweetBox.find(".textbox");
+    var o_postEditor = postEditor.get(0);
+    var PLACEHOLDER = "<div>撰写新推文...</div>";
+    var boxUpdated = localStorage.getItem("boxUpdated") || false;
     var toolbar = tweetBox.find(".toolbar");
     var tweetLength = toolbar.find('.tweet-counter')
     var tweetButton = toolbar.find("button");
     var postList = $(".postlist");
-//    var overstepPoint;
     var tweetBack = {};
+    var htmlRich = htmlText(o_postEditor,UA);
     var condensed = function(){
-        postInput.val() === "" && tweetBox.removeClass("uncondensed");
+        if (postEditor.text().trim() === "") {
+            tweetBox.removeClass("uncondensed");
+            postEditor.html(PLACEHOLDER);
+            boxUpdated = false;
+        }
     }
-
+    function getText(element){
+        //contenteditable下换行有div innerText有换行 jQuery text()和textContent无
+        //Firefox不支持innerText 单独处理
+        return element.innerText ?
+                element.innerText :
+                $(element).html().replace(/<br>/g,"&#10;").replace(/<\S[^><]*>/g,'')
+    }
     var tbutton = new tUtil.ButtonStatus(tweetButton,"btn-primary")
-    var textLengthTips = function(msgtips,val,disable,enable,emphasizeText){
-        var msglen = tUtil.msglen(val),
-            tips = 140-msglen;
-        if (val == "") {
-            disable();
-            msgtips.removeClass("text-warn");
-        }
-        else if (msglen <= 140) {
-            enable();
-            msglen >= 130 ? msgtips.addClass("text-warn") : msgtips.removeClass("text-warn");
-        } else {
-            msgtips.addClass("text-warn");
-            disable();
-            emphasizeText && emphasizeText();
-        }
-        msgtips.text(tips);
-    }
+
     storePostText = {
         set:function(item){
             localStorage.setItem('postText',item);
         },
         apply:function (){
-            typeof localStorage.getItem('postText') !== 'undefined' && postInput.val(localStorage.getItem('postText'));
+            localStorage.getItem('postText') &&
+                localStorage.getItem('postText').replace(/<\S[^><]*>/g,'').replace(/&nbsp;/g,"").trim() &&                        postEditor.html(localStorage.getItem('postText'));
             localStorage.removeItem('backup')
         },
         clear:function(item){
@@ -53,86 +44,68 @@
             localStorage.setItem('backup',JSON.stringify(tweetBack));
         }
     }
-    postInput.focus(function(){
+    postEditor.focus(function(e){
         tweetBox.addClass("uncondensed");
+        if (!boxUpdated) {
+            postEditor.html("<br>");
+            htmlRich.setSelectionOffsets([0])
+        }
+        focusEditor()
     }).blur(condensed).on("input",function(e){
-            storePostText.set(postInput.val());
-            var val = postInput.val();
-            textLengthTips(tweetLength,val,function(){
-                tbutton.disable().remove();
-            },function(){
-                tbutton.active().add();
-            });
+            if (!postEditor.attr("data-in-composition")) {
+                tUtil.textLengthTips(tweetLength,postEditor.text(),function(){
+                    tbutton.disable().goOut();
+                },function(){
+                    postEditor.text().trim() && tbutton.active().highlight();
+                });
+                if (postEditor.text().trim()){
+                    localStorage.setItem("boxUpdated",true);
+                    boxUpdated = true;
+                }
+                else {
+                    localStorage.removeItem("boxUpdated");
+                }
+                storePostText.set(postEditor.html());
+            }
         }).keydown(function(e){
             //Mac习惯用command
-            (e.metaKey || e.ctrlKey) && e.keyCode === 13 && postInput.parent('form').trigger('submit');
-        })
+            (e.metaKey || e.ctrlKey) && e.keyCode === 13 &&
+                !tweetButton.attr("disabled") && postEditor.parent('form').trigger('submit');
+        }).on("keyup.withRichEditor paste.withRichEditor",withRichEditor);
     storePostText.apply();
-    postInput.parent('form').submit(function(e){
+    postEditor.parent('form').submit(function(e){
         e.preventDefault();
-        if (!tweetButton.attr("disabled")) {
-            tweetBox.addClass("tweeting");
-            $.post("/post",{post:postInput.val()},function(res){
+        tweetBox.addClass("tweeting");
+        $.post("/post",{post:getText(o_postEditor)
+            },function(res){
                 tweetBox.removeClass("tweeting");
                 typeof res == "string" && (res = JSON.parse(res));
                 var newPost = $(res.postHTML);
                 postList.prepend(newPost);
                 tweetCount.text(parseInt(tweetCount.text()) + res.inc);
-                var time = moment(res.now);
-                if (moment.isMoment(time)) {
-                    var interval = 5000,inc = 1,diff,
-                        newPostTime = newPost.find(".time");
-                    function renderTime(){
-                        if (moment().diff(time)/(TimesMS.day) > 1) return;
-                        newPostTime.html(time.twitter());
-                        if (moment().diff(time)/6e4 < 1) {
-                            diff = (60 - parseInt(newPostTime.html()))*1000;
-                            if (diff > interval) {
-                                interval = interval *inc;
-                                inc++;
-                            }else {
-                                interval = diff;
-                            }
-                        }
-                        else{
-                            $.each(TimesMS,function(k,v){
-                                if (moment().diff(time)/v > 1){
-                                    interval = v;
-                                    return false;
-                                }
-                            })
-                        }
-                        setTimeout(renderTime,interval);
-                    }
-                    renderTime();
-                }
+                var newPostTime = newPost.find(".time");
+                tUtil.timer(newPostTime);
                 setTimeout(function(){
                     newPost.removeClass('animate-hide');
                 },500)
-                storePostText.backup(res.id,postInput.val());
-                postInput.blur().val("");
-                condensed();
+                storePostText.backup(res.id,postEditor.html());
+                postEditor.text("").blur();
                 storePostText.clear("postText");
+                localStorage.removeItem("boxUpdated");
                 setTimeout(function(){
                     tUtil.messagesTips("你的推文已发布!",1000,"alert-tips")
                 },1000)
             })
-        }
-//        else {
-//            oPostInput.setSelectionRange(overstepPoint,postInput.val().length)
-//        }
     });
     !function(){
-        if (postInput.val() !== "") {
+        if (postEditor.text() !== "" && boxUpdated) {
             tweetBox.addClass("uncondensed");
-            var length = postInput.val().length;
-            oPostInput.setSelectionRange(length ,length );
-            oPostInput.focus();
-            tbutton.active().add();
-            textLengthTips(tweetLength,postInput.val(),function(){
-                tbutton.disable().remove();
+            postEditor.focus(focusEditor).focus();
+            tbutton.active().highlight();
+            tUtil.textLengthTips(tweetLength,postEditor.text(),function(){
+                tbutton.disable().goOut();
             },function(){
-                tbutton.active().add();
+                tbutton.active().highlight();
             });
         }
     }();
@@ -146,7 +119,7 @@
                         post.addClass('animate-hide fast_hide');
                         //弹层 遮罩消失后的视觉误差 放个延迟
                     },500)
-                    tbutton.active().add();
+                    tbutton.active().highlight();
                     dialog.remove();
                     dialog = null;
                     setTimeout(function(){
@@ -156,9 +129,11 @@
                     },1000)
                     if (localStorage.getItem("backup")){
                         setTimeout(function(){
+                            boxUpdated = true;
                             var backPost = JSON.parse(localStorage.getItem("backup"))[id];
-                            postInput.val(backPost).get(0).select();
+                            postEditor.html(backPost).focus();
                             storePostText.set(backPost);
+                            localStorage.setItem("boxUpdated",true);
                         //alert tips消失后再恢复
                         },2000)
                     }
@@ -190,18 +165,8 @@
             postText = postEditor.text().trim(),
             postID = postEditor.parents('.media').attr('id'),
             postTime = $("#" + postID + ' .time');
-        var htmlRich = htmlText(o_postEditor,UA);
 
-        postEditor.attr("contenteditable",true).focus(function(){
-            postEditor.find("a").each(function(){
-                var anchor = $(this),emTxt = anchor.find("em")
-                anchor.html(
-                    anchor.html().replace(anchor.text(),anchor.attr("href")).replace(emTxt,"<em"> + emTxt + "</em>")
-                )
-            });
-//            tUtil.setFocusLast(o_postEditor.lastChild);
-            htmlRich.setSelectionOffsets([postEditor.text().length]);
-        }).focus();
+        postEditor.attr("contenteditable",true).focus();
 
         saveButton.click(function(e){
             e.preventDefault();
@@ -228,49 +193,14 @@
         }
 
         function savePost(){
-            postEditor.find("a").each(function(){
-                $(this).text($(this).attr("href"))
-            });
-            //contenteditable下换行有div innerText有换行 jQuery text()和textContent无
-            $.post('/edit/'+ postID,{
-                //Firefox不支持innerText 单独处理
-                post:o_postEditor.innerText ?
-                    o_postEditor.innerText :
-                    postEditor.html().replace(/<br>/g,"&#10;").replace(/<\S[^><]*>/g,'')
-            },function(res){
+            $.post('/edit/'+ postID,{ost:getText(o_postEditor)},function(res){
                 //Mac Chrome下 res 是string类型
                 typeof res === 'string' && (res = JSON.parse(res));
-                if (res.newPost.post) {
-                    postEditor.html(res.newPost.post);
-                    postTime.replaceWith(res.newPost.time);
-                    var time = moment(res.now);
-                    if (moment.isMoment(time)) {
-                        var interval = 5000,inc = 1,diff,
-                            newPostTime = $('#' + postID + ' .time');
-                        function renderTime(){
-                            if (moment().diff(time)/(TimesMS.day) > 1) return;
-                            newPostTime.html(time.twitter());
-                            if (moment().diff(time)/6e4 < 1) {
-                                diff = (60 - parseInt(postTime.html()))*1000;
-                                if (diff > interval) {
-                                    interval = interval *inc;
-                                    inc++;
-                                }else {
-                                    interval = diff;
-                                }
-                            }
-                            else{
-                                $.each(TimesMS,function(k,v){
-                                    if (moment().diff(time)/v > 1){
-                                        interval = v;
-                                        return false;
-                                    }
-                                })
-                            }
-                            setTimeout(renderTime,interval);
-                        }
-                        renderTime();
-                    }
+                if (res.post) {
+                    postEditor.html(res.post);
+                    postTime.replaceWith(res.time);
+                    var newPostTime = $('#' + postID + ' .time');
+                    tUtil.timer(newPostTime);
                     o_postEditor.contentEditable = false;
                     o_postEditor.blur();
                     saveButton.addClass("hide");
@@ -289,7 +219,7 @@
                             savelabel.modal('hide');
                         },1000)
                     });
-                    storePostText.backup(postID,postEditor.text());
+                    storePostText.backup(postID,postEditor.html());
                 }
             });
         }
@@ -300,12 +230,31 @@
         var saveButton = tweetCount.prev();
         tweetCount.is(":hidden") && tweetCount.removeClass("hide");
         saveButton.is(":hidden") && saveButton.removeClass("hide");
-        !postEditor.attr("data-in-composition") && textLengthTips(tweetCount,postEditor.text(),function(){
+        !postEditor.attr("data-in-composition") && tUtil.textLengthTips(tweetCount,postEditor.text(),function(){
             saveButton.addClass('hide')
         },function(){
             saveButton.removeClass('hide')
         });
     });
+
+    function focusEditor(e){
+        var postEditor = $(this);
+        var htmlRich = htmlText(this,UA);
+        postEditor.find("a").each(function(){
+            var anchor = $(this),emTxt = anchor.find("em")
+            anchor.html(
+                anchor.html().replace(anchor.text(),anchor.attr("href")).replace(emTxt,"<em"> + emTxt + "</em>")
+            )
+        });
+//           焦点涉及到br情况
+        htmlRich.setSelectionOffsets([
+            this === document.querySelector('.tweet-box .textbox') ?
+                getText(this).length :
+                postEditor.text().length
+        ])
+    }
+
+    postList.on("focus.focusEditor",".post p",focusEditor);
 
     function withRichEditor (e){
         var postEditor = $(this);
@@ -314,29 +263,28 @@
         var currentHTML = currentNode.previousSibling && currentNode.previousSibling.innerHTML || currentNode.data;
         var htmlRich = htmlText(this,UA);
         var cursorPosition = htmlRich.getSelectionOffsets();
-        var html;
-        if (twitterText.extractUrls(currentHTML).length > 0 && !postEditor.attr("data-in-composition")){
+        var html,urls;
+        if (twitterText.extractUrls(currentHTML).length && !postEditor.attr("data-in-composition")){
 
             //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
             html = postEditor.html().replace(/<a[^><]*>|<\/a>/g,"");
+            urls = twitterText.extractUrlsWithIndices(html);
             postEditor.html(
                 twitterText.autoLinkEntities(
-                    html,twitterText.extractUrlsWithIndices(html), tUtil.wraplinkAttrs
+                    html,urls,tUtil.wraplinkAttrs
                 )
             )
             htmlRich.setSelectionOffsets([parseInt(cursorPosition) + 1])
         }
 
         if (postEditor.parent().parent().find(".tweet-counter").text() < 0 && !postEditor.attr("data-in-composition")) {
-            var normalizerText = postEditor.text();
-            twitterText.extractUrls(normalizerText).forEach(function(item){
-                normalizerText = normalizerText.replace(item,'axaxaxaxaxaxaxaxaxax')
+            var emPosition = 140;
+            twitterText.extractUrls(postEditor.text()).forEach(function(item){
+                emPosition -= 20 - item.length;
             })
-//            normalizerText.indexOf(140)
             //仅创建一个em 焦点需要定位到em后面
             postEditor.html(postEditor.html().replace(/<\/*em>/g,''));
-            //139 要精确计算出来
-            htmlRich.emphasizeText([139,Number.MAX_VALUE]);
+            htmlRich.emphasizeText([emPosition,Number.MAX_VALUE]);
             postEditor.html(
                 postEditor.html().replace('</em>','') + '</em>'
             )
@@ -353,33 +301,6 @@
     });
     postList.find(".time").each(function(){
         var postTime = $(this);
-        var time = moment(postTime.data('time'));
-        var interval = 5000,inc = 1,diff;
-        function renderTime(){
-            if (moment().diff(time)/(TimesMS.day) > 1) return;
-            postTime.html(time.twitter());
-            //时差小于1min定时
-            if (moment().diff(time)/6e4 < 1) {
-                diff = (60 - parseInt(postTime.html()))*1000;
-                if (diff > interval) {
-                    interval = interval *inc;
-                    inc++;
-                }else {
-                    // 剩余到达1min的时长小于间隔时长时 需要按时更新到min  如：显示39s interval = 30s时要将interval = 60 -39
-                    interval = diff;
-                }
-            }
-            //根据当前时间单位设置定时器间隔
-            else{
-                $.each(TimesMS,function(k,v){
-                   if (moment().diff(time)/v > 1){
-                       interval = v;
-                       return false;
-                   }
-                })
-            }
-            setTimeout(renderTime,interval);
-        }
-        renderTime();
+        tUtil.timer(postTime)
     })
 }(jQuery)

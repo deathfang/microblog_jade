@@ -108,8 +108,7 @@ module.exports = function(app) {
             res.send({
                 inc:inc,
                 id:id,
-                postHTML:postHTML,
-                now:now
+                postHTML:postHTML
             });
         });
     });
@@ -153,10 +152,7 @@ module.exports = function(app) {
             if (err) {
                 return res.redirect('/');
             }
-            res.send({
-                newPost:newPost,
-                now:now
-            })
+            res.send(newPost)
         })
     });
 }

@@ -54,13 +54,19 @@ var tUtil = function(){
         //测试初次弹层显示时监听show shown无效
         dialog.modal().css({marginTop:-dialog.outerHeight()/2 + "px"}).addClass('fade_in');
         body.addClass('modal-enabled');
+        var tweetBox = document.querySelector('.tweet-box .textbox');
+        //回车确认删除时 tweet-text.js 焦点会引发错误 contentEditable = false修复
+        tweetBox.contentEditable = false;
         dialog.on("shown",function(){
             //tweet编辑时 内容改变 重新计算
             resize === true && dialog.css({marginTop:-dialog.outerHeight()/2 + "px"});
             body.addClass('modal-enabled');
+            tweetBox.contentEditable = false;
         })
         dialog.on("hidden",function(){
-            body.removeClass('modal-enabled')
+            body.removeClass('modal-enabled');
+            tweetBox.contentEditable = true;
+            tweetBox.focus();
         })
         var actionButton = dialog.find('[data-action]').on('click.delDialog',callback);
         dialog.keyup(function(e){

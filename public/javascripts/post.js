@@ -47,7 +47,7 @@
     postEditor.focus(function(e){
         tweetBox.addClass("uncondensed");
         if (!boxUpdated) {
-            postEditor.html("<br>");
+            postEditor.html("");
             htmlRich.setSelectionOffsets([0])
         }
         focusEditor()
@@ -193,7 +193,7 @@
         }
 
         function savePost(){
-            $.post('/edit/'+ postID,{ost:getText(o_postEditor)},function(res){
+            $.post('/edit/'+ postID,{post:getText(o_postEditor)},function(res){
                 //Mac Chrome下 res 是string类型
                 typeof res === 'string' && (res = JSON.parse(res));
                 if (res.post) {
@@ -246,9 +246,9 @@
                 anchor.html().replace(anchor.text(),anchor.attr("href")).replace(emTxt,"<em"> + emTxt + "</em>")
             )
         });
-//           焦点涉及到br情况
+//          初次load时需要
         htmlRich.setSelectionOffsets([
-            this === document.querySelector('.tweet-box .textbox') ?
+            this === o_postEditor ?
                 getText(this).length :
                 postEditor.text().length
         ])
@@ -258,10 +258,11 @@
 
     function withRichEditor (e){
         var postEditor = $(this);
+        var oPostEditor = this;
         var currentRange = window.getSelection().getRangeAt(0);
         var currentNode = currentRange.endContainer;
         var currentHTML = currentNode.previousSibling && currentNode.previousSibling.innerHTML || currentNode.data;
-        var htmlRich = htmlText(this,UA);
+        var htmlRich = htmlText(oPostEditor,UA);
         var cursorPosition = htmlRich.getSelectionOffsets();
         var html,urls;
         if (twitterText.extractUrls(currentHTML).length && !postEditor.attr("data-in-composition")){
@@ -284,7 +285,19 @@
             })
             //仅创建一个em 焦点需要定位到em后面
             postEditor.html(postEditor.html().replace(/<\/*em>/g,''));
-            htmlRich.emphasizeText([emPosition,Number.MAX_VALUE]);
+            //计算几个换行符 Firefox查找br
+            var lineCount = oPostEditor.innerText ? oPostEditor.innerText.length - postEditor.text().length :
+                postEditor.find("br").length;
+            htmlRich.emphasizeText([
+                emPosition + (
+                    //目标为tweetBox
+                    oPostEditor === o_postEditor ?
+                        //是否有换行情况细节计算 后面加减 -1 -2原因不明 火狐-1 webkit -2
+                        (lineCount ? (oPostEditor.innerText ? lineCount - 2: lineCount - 1): 0 ) :
+                        (lineCount ? lineCount - 1: 0 )
+                    ),
+                Number.MAX_VALUE
+            ]);
             postEditor.html(
                 postEditor.html().replace('</em>','') + '</em>'
             )

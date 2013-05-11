@@ -1,0 +1,22 @@
+{
+  "family": "iTitter",
+  "name": "iTitter",
+  "version": "0.0.1",
+  "spm": {
+    "alias": {
+      "jquery": "libs/jquery",
+      "jquery-plugins":{
+          "match": "/jquery\\.[a-z].*\\.js/",
+           "deps": ["jquery"],
+           "exports": "jQuery"
+      }
+    }
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-cmd-transport": "~0.2.0",
+    "grunt-cmd-concat": "~0.2.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-clean": "~0.4.0"
+  }
+}

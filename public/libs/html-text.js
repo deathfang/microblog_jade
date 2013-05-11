@@ -1,4 +1,5 @@
-htmlText = function(a,b) {
+define('libs/html-text', [], function(require, exports, module) {
+module.exports = function(a,b) {
     function isTextNode(a) {
         return a.nodeType == 3 || a.nodeType == 4
     }
@@ -128,3 +129,4 @@ htmlText = function(a,b) {
 	}
 	
 }
+})

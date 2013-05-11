@@ -1,4 +1,9 @@
-!function($){
+define(function(require) {
+    var $ = require('jquery');
+    var UA = require('UA');
+    var htmlText = require('libs/html-text');
+    var twitterText = require('libs/twitter-text');
+    var tUtil = require('js/util');
     var tweetCount = $(".stats li:first strong");
     var tweetBox = $(".tweet-box");
     var postEditor = tweetBox.find(".textbox");
@@ -316,4 +321,4 @@
         var postTime = $(this);
         tUtil.timer(postTime)
     })
-}(jQuery)
+})

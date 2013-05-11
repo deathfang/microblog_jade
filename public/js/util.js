@@ -1,4 +1,8 @@
-var tUtil = function(){
+define('js/util', [], function(require, exports, module) {
+    var $ = require('jquery');
+//    var htmlText = require('libs/html-text')
+    var moment = require('libs/moment');
+//var tUtil = function(){
     var body = $("body");
 // 微博字数计算规则 汉字 1 英文 0.5 网址 20 后台截取 除去首尾空白
 //    var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://){1}(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
@@ -195,7 +199,7 @@ var tUtil = function(){
         }
         renderTime();
     }
-   return {
+   module.exports =  {
 //       urlRxp:urlRxp
        textLengthTips:textLengthTips
       ,wraplinkAttrs:wraplinkAttrs
@@ -205,4 +209,5 @@ var tUtil = function(){
 //      ,setFocusLast:setFocusLast
       ,timer:timer
    }
-}()
+//}()
+})

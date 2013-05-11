@@ -1,3 +1,4 @@
+define('libs/UA', [], function(require, exports, module) {
 UA= {}
 UA.parseUA = function(subUA) {
 
@@ -469,3 +470,5 @@ UA.compareVersions = function (a, b) {
 
     return 0;
 };
+module.exports = UA;
+})

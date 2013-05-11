@@ -1,3 +1,4 @@
+define('libs/twitter-text', [], function(require, exports, module) {
 //modified line 130
 !function() {
     var b = {};
@@ -444,5 +445,6 @@
                 j = e[5];
             return (!d || u(f, b.txt.regexen.validateUrlScheme) && f.match(/^https?$/i)) && u(h, b.txt.regexen.validateUrlPath) && u(i, b.txt.regexen.validateUrlQuery, !0) && u(j, b.txt.regexen.validateUrlFragment, !0) ? c && u(g, b.txt.regexen.validateUrlUnicodeAuthority) || !c && u(g, b.txt.regexen.validateUrlAuthority) : !1
         }
-    })(), twitterText = b.txt
+    })(), module.exports = b.txt
 }()
+})

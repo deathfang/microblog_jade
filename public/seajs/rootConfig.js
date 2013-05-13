@@ -1,17 +1,16 @@
 seajs.config({
   // Enable plugins
-  "plugins": ['shim'],
+//  "plugins": ['shim'],
    "alias": {
-    'jquery':{
-        "src":'libs/jquery',
-        "exports":"jQuery"
-    },
-   "jquery-plugins":{
-       "match": "libs/jquery-plugins/*.js",
-       "deps": ["jquery"],
-       "exports": "jQuery"
-   },
-    'UA':'libs/yui-ua'
+    "jquery":'libs/jquery',
+//   "jquery-plugins":{
+//       "match": "libs/jquery-plugins/*.js",
+//       "deps": ["jquery"],
+//       "exports": "jQuery"
+//   },
+    'UA':'libs/yui-ua',
+    "moment":"libs/moment",
+    "twitterText":"libs/twitter-text"
   }
 });
 

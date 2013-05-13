@@ -40,21 +40,9 @@ html
             .page-container
                 a(href="http://t.qq.com/deathfang",target='_blank') 点这里
                 |  2012
-        //script(src="/libs/yui-ua.js")
-        //script(src="/libs/jquery.min.js")
-        //script(src="/bootstrap/js/bootstrap.min.js")
-        //script(src="/javascripts/util.js")
-        //script(src="/libs/drag.js")
-        //script(src="/libs/moment.min.js")
-        //script(src="/libs/moment.twitter.js")
-        //script(src="/libs/twitter-text.js")
-        //script(src="/libs/twitter_html_text.js")
-        //if error
-        //    script
-        //        tUtil.messagesTips("#{error}",2000,"alert-error")
-        //script(src="/javascripts/post.js")
         script(src="/seajs/sea.js",data-config="/seajs/rootConfig.js")
+        //script(src="/seajs/sea.js")
         script
-            seajs.use("/js/post")
+            seajs.use(['dist/js/post'])
 
 

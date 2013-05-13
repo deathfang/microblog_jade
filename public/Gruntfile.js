@@ -18,7 +18,7 @@ module.exports = function (grunt) {
                 }
             },
 
-            hello : {
+            iwitter : {
                 options : {
                     idleading : 'dist/js/'
                 },
@@ -26,9 +26,9 @@ module.exports = function (grunt) {
                 files : [
                     {
                         cwd : 'js/',
-                        src : '**/*',
+                        src : ['**/*'],
                         filter : 'isFile',
-                        dest : '.build/itwitter'
+                        dest : '.build/js'
                     }
                 ]
             }
@@ -38,7 +38,7 @@ module.exports = function (grunt) {
                 paths : ['.'],
                 include : 'all'
             },
-            hello : {
+            iwitter : {
                 files: [
                     {
                         expand: true,
@@ -51,19 +51,19 @@ module.exports = function (grunt) {
             }
         },
 
-        uglify : {
-            hello : {
-                files: [
-                    {
-                        expand: true,
-                        cwd: 'dist/',
-                        src: ['js/**/*.js', '!js/**/*-debug.js'],
-                        dest: 'dist/',
-                        ext: '.js'
-                    }
-                ]
-            }
-        },
+//        uglify : {
+//            iwitter : {
+//                files: [
+//                    {
+//                        expand: true,
+//                        cwd: 'dist/',
+//                        src: ['js/**/*.js', '!js/**/*-debug.js'],
+//                        dest: 'dist/',
+//                        ext: '.js'
+//                    }
+//                ]
+//            }
+//        }, moment没处理好，
 
         clean : {
             spm : ['.build']
@@ -75,5 +75,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    grunt.registerTask('build', ['transport', 'concat', 'uglify', 'clean']);
+    grunt.registerTask('build', ['transport', 'concat', 'clean']);
 };

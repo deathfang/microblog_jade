@@ -1,7 +1,8 @@
-define('js/util', [], function(require, exports, module) {
+define(function(require, exports, module) {
     var $ = require('jquery');
-//    var htmlText = require('libs/html-text')
-    var moment = require('libs/moment');
+    var twitterText = require('twitterText');
+    require("libs/jquery-plugins/bootstrap.min");
+    require("libs/jquery-plugins/drag");
 //var tUtil = function(){
     var body = $("body");
 // 微博字数计算规则 汉字 1 英文 0.5 网址 20 后台截取 除去首尾空白
@@ -163,6 +164,7 @@ define('js/util', [], function(require, exports, module) {
 //            range.setStartAfter(node);
 //        }
 //    }
+    var moment = require('libs/moment');
     function timer(postTime){
         var TimesMS = {
             day: 864e5,
@@ -199,7 +201,7 @@ define('js/util', [], function(require, exports, module) {
         }
         renderTime();
     }
-   module.exports =  {
+   module.exports = {
 //       urlRxp:urlRxp
        textLengthTips:textLengthTips
       ,wraplinkAttrs:wraplinkAttrs

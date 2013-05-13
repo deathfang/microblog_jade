@@ -2,8 +2,8 @@ define(function(require) {
     var $ = require('jquery');
     var UA = require('UA');
     var htmlText = require('libs/html-text');
-    var twitterText = require('libs/twitter-text');
-    var tUtil = require('js/util');
+    var twitterText = require('twitterText');
+    var tUtil = require('./util');
     var tweetCount = $(".stats li:first strong");
     var tweetBox = $(".tweet-box");
     var postEditor = tweetBox.find(".textbox");
@@ -56,23 +56,7 @@ define(function(require) {
             htmlRich.setSelectionOffsets([0])
         }
         focusEditor()
-    }).blur(condensed).on("input",function(e){
-            if (!postEditor.attr("data-in-composition")) {
-                tUtil.textLengthTips(tweetLength,postEditor.text(),function(){
-                    tbutton.disable().goOut();
-                },function(){
-                    postEditor.text().trim() && tbutton.active().highlight();
-                });
-                if (postEditor.text().trim()){
-                    localStorage.setItem("boxUpdated",true);
-                    boxUpdated = true;
-                }
-                else {
-                    localStorage.removeItem("boxUpdated");
-                }
-                storePostText.set(postEditor.html());
-            }
-        }).keydown(function(e){
+    }).blur(condensed).keydown(function(e){
             //Mac习惯用command
             (e.metaKey || e.ctrlKey) && e.keyCode === 13 &&
                 !tweetButton.attr("disabled") && postEditor.parent('form').trigger('submit');
@@ -189,7 +173,7 @@ define(function(require) {
 
         function textWarn(){
             postEditor.parent().tooltip({
-                title:"不能为空白( ´◔ ‸◔`)！",
+                title:"修改下嘛( ´◔ ‸◔`)！",
                 trigger:"manual"
             }).tooltip('show');
             setTimeout(function(){
@@ -282,7 +266,21 @@ define(function(require) {
             )
             htmlRich.setSelectionOffsets([parseInt(cursorPosition) + 1])
         }
-
+        if (oPostEditor == o_postEditor) {
+            tUtil.textLengthTips(tweetLength,postEditor.text(),function(){
+                tbutton.disable().goOut();
+            },function(){
+                postEditor.text().trim() && tbutton.active().highlight();
+            });
+            if (postEditor.text().trim()){
+                localStorage.setItem("boxUpdated",true);
+                boxUpdated = true;
+            }
+            else {
+                localStorage.removeItem("boxUpdated");
+            }
+            storePostText.set(postEditor.html());
+        }
         if (postEditor.parent().parent().find(".tweet-counter").text() < 0 && !postEditor.attr("data-in-composition")) {
             var emPosition = 140;
             twitterText.extractUrls(postEditor.text()).forEach(function(item){
@@ -306,7 +304,8 @@ define(function(require) {
             postEditor.html(
                 postEditor.html().replace('</em>','') + '</em>'
             )
-            htmlRich.setSelectionOffsets([parseInt(cursorPosition)])
+            htmlRich.setSelectionOffsets([parseInt(cursorPosition)]);
+
         }
     }
 //  这里paste 多超出140字em范围无效

@@ -1,4 +1,4 @@
-define('libs/UA', [], function(require, exports, module) {
+define("libs/yui-ua",[],function(require, exports, module) {
 UA= {}
 UA.parseUA = function(subUA) {
 

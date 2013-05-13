@@ -1,5 +1,5 @@
-define('libs/html-text', [], function(require, exports, module) {
-module.exports = function(a,b) {
+define("libs/html-text",[],function(require, exports, module) {
+var htmlText = function(a,b) {
     function isTextNode(a) {
         return a.nodeType == 3 || a.nodeType == 4
     }
@@ -129,4 +129,5 @@ module.exports = function(a,b) {
 	}
 	
 }
+module.exports = htmlText
 })

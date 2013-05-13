@@ -1,4 +1,5 @@
-@orange:                #f89406;
+@orange:#f89406;
+@link:#0084b4;
 .opacity(@opacity) {
   opacity: @opacity / 100;
   filter: ~"alpha(opacity=@{opacity})";
@@ -219,6 +220,7 @@ border-radius: 0 0 5px 5px;
     font-size: 14px;
     margin-right: 8px;
     width: auto;
+    color:@link;
     &::after{
       content: attr(title);
       font-size: 12px;
@@ -241,7 +243,6 @@ border-radius: 0 0 5px 5px;
           .opacity(100);
         }
         [class^=icon-]:hover {
-          text-decoration: none;
           &::after{
             text-decoration: underline;
           }

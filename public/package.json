@@ -1,15 +1,13 @@
 {
-  "family": "iTitter",
-  "name": "iTitter",
+  "family": "iTwitter",
+  "name": "iTwitter",
   "version": "0.0.1",
   "spm": {
     "alias": {
-      "jquery": "libs/jquery",
-      "jquery-plugins":{
-          "match": "/jquery\\.[a-z].*\\.js/",
-           "deps": ["jquery"],
-           "exports": "jQuery"
-      }
+        "jquery":"libs/jquery",
+        "UA":"libs/yui-ua",
+        "moment":"libs/moment",
+        "twitterText":"libs/twitter-text"
     }
   },
   "devDependencies": {

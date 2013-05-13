@@ -63,7 +63,7 @@ module.exports = function (grunt) {
 //                    }
 //                ]
 //            }
-//        }, moment没处理好，
+//        }, moment没处理好，jqBootstrapValidation,jquery.backstretch.min 放到deps里
 
         clean : {
             spm : ['.build']

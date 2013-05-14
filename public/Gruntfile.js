@@ -43,7 +43,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd: '.build/',
-                        src: ['js/**/*.js'],
+                        src: ['js/**/*.js','!js/**/*-debug.js'],
                         dest: 'dist/',
                         ext: '.js'
                     }
@@ -63,7 +63,7 @@ module.exports = function (grunt) {
 //                    }
 //                ]
 //            }
-//        }, moment没处理好，jqBootstrapValidation,jquery.backstretch.min 放到deps里
+//        }, moment特殊处理，jqBootstrapValidation,jquery.backstretch.min 放到deps里
 
         clean : {
             spm : ['.build']
@@ -73,7 +73,26 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-cmd-transport');
     grunt.loadNpmTasks('grunt-cmd-concat');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
 
     grunt.registerTask('build', ['transport', 'concat', 'clean']);
 };
+//先合并 检查后再压缩
+//module.exports = function (grunt) {
+//    grunt.initConfig({
+//       uglify : {
+//           iwitter : {
+//               files: [
+//                   {
+//                       expand: true,
+//                       cwd: 'dist/',
+//                       src: ['js/**/*.js', '!js/**/*-debug.js'],
+//                       dest: 'dist/',
+//                       ext: '.js'
+//                   }
+//               ]
+//           }
+//       }
+//    });
+//    grunt.loadNpmTasks('grunt-contrib-uglify');
+//    grunt.registerTask('build-c', ['uglify']);
+//};

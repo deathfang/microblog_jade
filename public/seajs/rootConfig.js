@@ -14,3 +14,9 @@ seajs.config({
   }
 });
 
+//concat
+//seajs.config({
+//    "alias": {
+//        "moment":"libs/moment"
+//    }
+//});

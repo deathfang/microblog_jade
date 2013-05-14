@@ -76,14 +76,14 @@ define(function(require) {
                 tUtil.timer(newPostTime);
                 setTimeout(function(){
                     newPost.removeClass('animate-hide');
-                },500)
+                },0)
                 storePostText.backup(res.id,postEditor.html());
                 postEditor.text("").blur();
                 storePostText.clear("postText");
                 localStorage.removeItem("boxUpdated");
                 setTimeout(function(){
                     tUtil.messagesTips("你的推文已发布!",1000,"alert-tips")
-                },1000)
+                },500)
             })
     });
     !function(){
@@ -104,10 +104,10 @@ define(function(require) {
             $.post("/del/" + id,{count:parseInt(tweetCount.text()) - 1},function(res){
                 if(res) {
                     dialog.modal("hide");
-                    setTimeout(function(){
+//                    setTimeout(function(){
                         post.addClass('animate-hide fast_hide');
                         //弹层 遮罩消失后的视觉误差 放个延迟
-                    },500)
+//                    },0)
                     tbutton.active().highlight();
                     dialog.remove();
                     dialog = null;
@@ -115,7 +115,7 @@ define(function(require) {
                         post.remove();
                         tUtil.messagesTips("你的推文已删除。",1000,"alert-tips");
                         tweetCount.text(parseInt(tweetCount.text()) - 1);
-                    },1000)
+                    },300)
                     if (localStorage.getItem("backup")){
                         setTimeout(function(){
                             boxUpdated = true;
@@ -124,7 +124,7 @@ define(function(require) {
                             storePostText.set(backPost);
                             localStorage.setItem("boxUpdated",true);
                         //alert tips消失后再恢复
-                        },2000)
+                        },1000)
                     }
                 }
             });

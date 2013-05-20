@@ -8,8 +8,8 @@ mongoose.connect(config.db, function (err) {
     }
 });
 
-require('./../proxy/post');
-require('./../proxy/user');
+require('./post');
+require('./user');
 
 exports.User = mongoose.model('User');
 exports.Post = mongoose.model('Post');

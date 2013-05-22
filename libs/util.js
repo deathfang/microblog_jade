@@ -1,3 +1,4 @@
+var xss = require('xss');
 var moment = require('moment');
 var jade =  require('jade');
 moment.lang('zh-cn');
@@ -25,4 +26,8 @@ exports.postFormat = function(post,time){
         dateTime:+time
     })
     return sessionPost;
+}
+
+exports.xss = function(html){
+   return xss(html);
 }

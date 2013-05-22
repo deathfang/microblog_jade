@@ -2,7 +2,18 @@ var EventProxy = require('eventproxy');
 var models = require('../models');
 var Post = models.Post;
 var User = require('./user');
-var Util = require('../libs/util');
+
+exports.getPostsByQuery = function(query, opt, callback){
+    Post.find(query, ['_id'], opt, function (err, docs) {
+        if (err) {
+            return callback(err);
+        }
+        if (docs.length === 0) {
+            return callback(null, []);
+        }
+        callback(null,docs)
+    })
+}
 
 exports.newAndSave = function(author,content,callback){
     var post = new Post();

@@ -3,7 +3,7 @@ var path = require('path');
 exports.config = {
     debug: true,
     name: 'iTwitter',
-    description: '模仿twitter的demo,前端用bootstrap+twitter样式补丁，后端Node.js+mongodb',
+    description: '模仿twitter界面的demo,前端用bootstrap+twitter样式补丁，后端Node.js+mongodb',
     version: '0.0.1',
 
     // site settings
@@ -19,8 +19,5 @@ exports.config = {
     session_secret: 'iTwitter',
     auth_cookie_name: 'iTwitter',
     port: 3000,
-
-    // 话题列表显示的话题数量
-//    list_topic_count: 20,
-
+    list_topic_count: 20
 };

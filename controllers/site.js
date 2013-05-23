@@ -2,10 +2,15 @@ var User = require('../proxy').User;
 var Post = require('../proxy').Post;
 var EventProxy = require('eventproxy');
 var config = require('../config').config;
+var Util = require('../libs/util');
+var jade =  require('jade');
 
 exports.index = function(req,res,next){
     var limit = config.list_topic_count;
     var render = function(posts,user){
+        posts = posts.map(function(post){
+            return Util.merge(post,Util.postFormat(post.content,post.time))
+        })
         res.render('index',{
             title: '首頁',
             header_title:'推文',

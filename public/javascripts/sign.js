@@ -61,12 +61,13 @@ $("#login form").submit(function(e){
         }
     })
 });
-function checkUnique(ele,warning){
+function checkUnique(ele,warning,name,email){
     var $that = $(ele);
+    var data = name ? {name:$that.val()} : {email:$that.val()};
     $.ajax({
         type:'POST',
         url:'/check_unique',
-        data:{name:$that.val()},
+        data:data,
         beforeSend:function(){
             $that.addClass('check_loading');
         },
@@ -90,11 +91,11 @@ function checkUnique(ele,warning){
 }
 
 $("#emailsignup").on('keyup paste',function(){
-    checkUnique(this,'邮箱')
+    checkUnique(this,'邮箱',false,true)
 })
 
 $("#usernamesignup").on('keyup paste',function(){
-    checkUnique(this,'用户名')
+    checkUnique(this,'用户名',true)
 }).blur(function(){
         if (!$(this).parent('.control-group').hasClass('warning')) {
             $(this).parent('.control-group').addClass('success')
@@ -106,4 +107,3 @@ $("#usernamesignup").on('keyup paste',function(){
                 .html('<ul role="alert"><li>用户名不能为空白</li></ul>')
         }
     })
-})

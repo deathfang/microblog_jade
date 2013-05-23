@@ -2,7 +2,7 @@ var path = require('path');
 
 exports.config = {
     debug: true,
-    name: 'iTwitter',
+    name: 'itwitter',
     description: '模仿twitter界面的demo,前端用bootstrap+twitter样式补丁，后端Node.js+mongodb',
     version: '0.0.1',
 

@@ -3,11 +3,11 @@ var Post = models.Post;
 var User = require('./user');
 
 exports.getPostsByQuery = function(query, opt, callback){
-    Post.find(query, ['_id'], opt, function (err, posts) {
+    Post.find(query, '_id', opt, function (err, posts) {
         if (err) {
             return callback(err);
         }
-        if (docs.length === 0) {
+        if (posts.length === 0) {
             return callback(null, []);
         }
         callback(null,posts)

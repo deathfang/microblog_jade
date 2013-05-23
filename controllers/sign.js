@@ -1,9 +1,10 @@
 var User = require('../proxy').User;
 var crypto = require('crypto');
+var Util = require('../libs/util');
 
 exports.reg = function(req,res,next){
-    var name = req.body.usernamesignup.xss();
-    var passwd = req.body.passwordsignup.xss();
+    var name = req.body.usernamesignup;
+    var passwd = req.body.passwordsignup;
     User.getUsersByQuery({name:name},{},function(err){
         if (err) {
             return next(err);
@@ -20,8 +21,8 @@ exports.reg = function(req,res,next){
 }
 
 exports.checkUnique = function(req,res,next){
-    var name = req.body.name.xss();
-    var email = req.body.email.xss();
+    var name = req.body.name;
+    var email = req.body.email;
     User.getUsersByQuery({'$or': [{name: name}, {email: email}]},{},function(err,users){
         if (err) {
             return next(err);
@@ -34,8 +35,8 @@ exports.checkUnique = function(req,res,next){
 }
 
 exports.login = function(req,res,next){
-    var name = req.body.username.xss();
-    var passwd = md5(req.body.password.xss());
+    var name = req.body.username;
+    var passwd = md5(req.body.password);
     User.getUserByName(name,function(err,user){
         if (err) {
             return next(err);

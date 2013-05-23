@@ -7,6 +7,8 @@ var jade =  require('jade');
 exports.create = function(req,res,next){
     var name = req.session.user.name;
     var proxy = EventProxy.create('post','user',function(post){
+        var post = Util.merge(post,Util.postFormat(post.content,post.time));
+        post = jade.compile(Util.postTemplate)(post);
         res.send({
             id:post._id,
             postHTML:post.content

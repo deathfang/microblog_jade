@@ -26,8 +26,30 @@ exports.postFormat = function(post,time){
         dateTime:+time
     })
     return sessionPost;
-}
+};
 
 exports.xss = function(html){
    return xss(html);
-}
+};
+
+exports.merge = function () {
+    var i      = 0,
+        len    = arguments.length,
+        result = {},
+        key,
+        obj;
+
+    for (; i < len; ++i) {
+        obj = arguments[i];
+
+        for (key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                result[key] = obj[key];
+            }
+        }
+    }
+
+    return result;
+};
+
+exports.postTemplate = 'li.media.animate-hide(id=_id)\n    a.pull-left(href="/" + user)\n        strong.fullname #{user}\n        img.media-object.avatar(src="../img/avatar.png")\n    .media-body\n        !{time}\n        .post: p !{post}\n        .tweet-actions\n            span(title="删除").icon-remove.fade\n            span(title="编辑").icon-edit.fade\n            span(title="保存").icon-save.fade.hide';

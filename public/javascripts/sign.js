@@ -61,23 +61,21 @@ $("#login form").submit(function(e){
         }
     })
 });
-$("#usernamesignup").on('keyup paste',function(){
-    var $that = $(this);
+function checkUnique(ele,warning){
+    var $that = $(ele);
     $.ajax({
         type:'POST',
-        url:'/check_username',
-        data:{username:$that.val()},
+        url:'/check_unique',
+        data:{name:$that.val()},
         beforeSend:function(){
             $that.addClass('check_loading');
         },
         success:function(data){
-            //Mac Chrome下data是string
-            typeof data === "string" && (data = JSON.parse(data));
             if (!data) {
                 $that.parent('.control-group')
                     .addClass('warning').removeClass('success')
                     .find('.help-block')
-                    .html('<ul role="alert"><li>用户名已存在</li></ul>')
+                    .html('<ul role="alert"><li>' + warning + '已存在</li></ul>')
             }
             else {
                 $that.parent('.control-group')
@@ -89,8 +87,23 @@ $("#usernamesignup").on('keyup paste',function(){
             $that.removeClass('check_loading');
         }
     })
-}).change(function(){
+}
+
+$("#emailsignup").on('keyup paste',function(){
+    checkUnique(this,'邮箱')
+})
+
+$("#usernamesignup").on('keyup paste',function(){
+    checkUnique(this,'用户名')
+}).blur(function(){
         if (!$(this).parent('.control-group').hasClass('warning')) {
-            $(this).addClass('success')
+            $(this).parent('.control-group').addClass('success')
+        }
+        if (!$(this).val().trim()) {
+            $(this).parent('.control-group')
+                .addClass('warning').removeClass('success')
+                .find('.help-block')
+                .html('<ul role="alert"><li>用户名不能为空白</li></ul>')
         }
     })
+})

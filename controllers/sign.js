@@ -19,9 +19,9 @@ exports.reg = function(req,res,next){
     })
 }
 
-exports.checkUserName = function(req,res,next){
-    var name = req.body.usernamesignup.xss();
-    var email = req.body.emailsignup.xss();
+exports.checkUnique = function(req,res,next){
+    var name = req.body.name.xss();
+    var email = req.body.email.xss();
     User.getUsersByQuery({'$or': [{name: name}, {email: email}]},{},function(err,users){
         if (err) {
             return next(err);

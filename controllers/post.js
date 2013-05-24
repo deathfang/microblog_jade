@@ -7,7 +7,7 @@ var jade =  require('jade');
 exports.create = function(req,res,next){
     var name = req.session.user.name;
     var proxy = EventProxy.create('post','user',function(post){
-        var post = Util.merge(post,Util.postFormat(post.content,post.time));
+        var post = Util.merge(post._doc,Util.postFormat(post.content,post.time));
         post = jade.compile(Util.postTemplate)(post);
         res.send({
             id:post._id,
@@ -17,7 +17,7 @@ exports.create = function(req,res,next){
     proxy.fail(next);
     Post.newAndSave(name,req.body.post,proxy.done('post'));
     User.getUserByName(name,proxy.done(function(user){
-        user.post_count += 1;
+        user.post_count ++;
         user.save();
         proxy.emit('user');
     }))
@@ -25,7 +25,7 @@ exports.create = function(req,res,next){
 
 exports.update = function(req,res,next){
     var id = req.params.id;
-    Post.findById(id,function(err,post){
+    Post.getOnePost(id,function(err,post){
         if (err) {
             return next(err);
         }
@@ -49,7 +49,7 @@ exports.delete = function (req, res, next){
         res.json(true)
     });
     proxy.fail(next);
-    Post.findById(id,proxy.done(function(post){
+    Post.getOnePost(id,proxy.done(function(post){
         post.remove();
         proxy.emit('post')
     }));

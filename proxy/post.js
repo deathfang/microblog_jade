@@ -3,7 +3,7 @@ var Post = models.Post;
 var User = require('./user');
 
 exports.getPostsByQuery = function(query, opt, callback){
-    Post.find(query, '_id', opt, function (err, posts) {
+    Post.find(query, null, opt, function (err, posts) {
         if (err) {
             return callback(err);
         }
@@ -12,6 +12,10 @@ exports.getPostsByQuery = function(query, opt, callback){
         }
         callback(null,posts)
     })
+}
+
+exports.getOnePost = function(id,callback){
+    Post.findById(id,callback);
 }
 
 exports.newAndSave = function(author,content,callback){

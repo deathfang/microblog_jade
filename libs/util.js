@@ -4,13 +4,13 @@ var jade =  require('jade');
 moment.lang('zh-cn');
 require('./moment.twitter.js');
 
-exports.postFormat = function(post,time){
+exports.postFormat = function(content,time){
     var postLInkTmpl = 'a(href=url,title=url,target="_blank",rel="nofollow") #{text}';
     var postTimeTmpl = 'a.time(href="",title=longtime,data-time=dateTime) #{time}';
     var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://){1}(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
     var tokens = {}, links = null,
         sessionPost = {},
-        hasUrl = post.match(urlRxp);
+        hasUrl = content.match(urlRxp);
     if (hasUrl) {
         links = function(match) {
             tokens.url = match;
@@ -19,7 +19,7 @@ exports.postFormat = function(post,time){
             return jade.compile(postLInkTmpl)(tokens)
         }
     }
-    sessionPost.post = hasUrl ? post.replace(urlRxp,links) : post;
+    sessionPost.content = hasUrl ? content.replace(urlRxp,links) : content;
     sessionPost.time = jade.compile(postTimeTmpl)({
         time:moment(time).twitter(),
         longtime:moment(time).format('L, h:mm a').replace(/\d\d/,''),
@@ -52,4 +52,4 @@ exports.merge = function () {
     return result;
 };
 
-exports.postTemplate = 'li.media.animate-hide(id=_id)\n    a.pull-left(href="/" + user)\n        strong.fullname #{user}\n        img.media-object.avatar(src="../img/avatar.png")\n    .media-body\n        !{time}\n        .post: p !{post}\n        .tweet-actions\n            span(title="删除").icon-remove.fade\n            span(title="编辑").icon-edit.fade\n            span(title="保存").icon-save.fade.hide';
+exports.postTemplate = 'li.media.animate-hide(id=_id)\n    a.pull-left(href="/" + author)\n        strong.fullname #{author}\n        img.media-object.avatar(src="../img/avatar.png")\n    .media-body\n        !{time}\n        .post: p !{content}\n        .tweet-actions\n            span(title="删除").icon-remove.fade\n            span(title="编辑").icon-edit.fade\n            span(title="保存").icon-save.fade.hide';

@@ -42,7 +42,7 @@ $("#login form").submit(function(e){
     $.post("/login",{
         username:$("#username").val(),
         password:$("#password").val(),
-        loginkeeping:$("#loginkeeping").val()
+        loginkeeping:$("#loginkeeping").prop("checked") ? $("#loginkeeping").val() : null
     },function(res){
         if (res == 'err_id') {
             $("#username").parent('.control-group')
@@ -78,7 +78,7 @@ function checkUnique(ele,warning,name,email){
                     .find('.help-block')
                     .html('<ul role="alert"><li>' + warning + '已存在</li></ul>')
             }
-            else {
+            else if(!email){
                 $that.parent('.control-group')
                     .removeClass('warning')
                     .find('.help-block').html('')
@@ -90,7 +90,7 @@ function checkUnique(ele,warning,name,email){
     })
 }
 
-$("#emailsignup").on('keyup paste',function(){
+$("#emailsignup").blur(function(){
     checkUnique(this,'邮箱',false,true)
 })
 

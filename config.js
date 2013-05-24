@@ -15,9 +15,9 @@ exports.config = {
     site_static_host: '', // 静态文件存储域名
 
 
-    db: 'mongodb://127.0.0.1/iTwitter',
-    session_secret: 'iTwitter',
-    auth_cookie_name: 'iTwitter',
+    db: 'mongodb://127.0.0.1/itwitter',
+    session_secret: 'itwitter',
+    auth_cookie_name: 'itwitter',
     port: 3000,
     list_topic_count: 20
 };

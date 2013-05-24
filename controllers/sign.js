@@ -5,12 +5,13 @@ var Util = require('../libs/util');
 exports.reg = function(req,res,next){
     var name = req.body.usernamesignup;
     var passwd = req.body.passwordsignup;
+    var email = req.body.emailsignup;
     User.getUsersByQuery({name:name},{},function(err){
         if (err) {
             return next(err);
         }
         passwd = md5(passwd);
-        User.newAndSave(name,passwd,function(err,user){
+        User.newAndSave(name,passwd,email,function(err,user){
             if (err) {
                 return next(err);
             }

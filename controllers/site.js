@@ -9,8 +9,10 @@ exports.index = function(req,res,next){
     var limit = config.list_topic_count;
     var render = function(posts,user){
         posts = posts.map(function(post){
-            return Util.merge(post,Util.postFormat(post.content,post.time))
+            //post._doc      debug mongoose
+            return Util.merge(post._doc,Util.postFormat(post.content,post.time))
         })
+        console.log(posts[0])
         res.render('index',{
             title: '首頁',
             header_title:'推文',
@@ -18,10 +20,10 @@ exports.index = function(req,res,next){
             user:req.session.user || user
         })
     }
-    var options = {limit: limit, sort:'-time'};
+    var options = {limit: limit, sort:{time:-1}};
+    var proxy = EventProxy.create('posts','user',render);
+    proxy.fail(next);
     if (!req.session.user && req.cookies.user) {
-        var proxy = EventProxy.create('posts','user',render);
-        proxy.fail(next);
         Post.getPostsByQuery({},options,proxy.done('posts'));
         User.getUserByName(req.cookies.user,proxy.done(function(user){
             req.session.user = user;
@@ -29,7 +31,9 @@ exports.index = function(req,res,next){
         }))
     }
     else if (req.session.user) {
-        Post.getPostsByQuery({},options,render);
+        Post.getPostsByQuery({},options,proxy.done(function(posts){
+            render(posts);
+        }));
     }
     else {
         res.render('sign');

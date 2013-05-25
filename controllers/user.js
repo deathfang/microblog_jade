@@ -2,16 +2,21 @@ var User = require('../proxy').User;
 var Post = require('../proxy').Post;
 var EventProxy = require('eventproxy');
 var config = require('../config').config;
+var Util = require('../libs/util');
 
 exports.index = function(req,res,next){
     var username = req.params.user;
     var limit = config.list_topic_count;
     var render = function(posts){
-        res.render('index',{
+        posts = posts.map(function(post){
+            //post._doc      debug mongoose
+            return Util.merge(post._doc,Util.postFormat(post.content,post.time))
+        })
+        res.render('user',{
             title: username,
             posts:posts,
             header_title:
-                req.session.user.name === username ?
+                req.session.user && req.session.user.name === username ?
                     "我的推文" : "Ta的推文"
         })
     }
@@ -24,5 +29,7 @@ exports.index = function(req,res,next){
         }
         proxy.emit('user')
     }));
-    Post.getPostsByQuery({author:username},options,proxy.done('posts'));
+    Post.getPostsByQuery({author:username},options,proxy.done(function(posts){
+        render(posts);
+    }));
 }

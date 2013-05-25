@@ -3,7 +3,6 @@ var Post = require('../proxy').Post;
 var EventProxy = require('eventproxy');
 var config = require('../config').config;
 var Util = require('../libs/util');
-var jade =  require('jade');
 
 exports.index = function(req,res,next){
     var limit = config.list_topic_count;
@@ -12,7 +11,6 @@ exports.index = function(req,res,next){
             //post._doc      debug mongoose
             return Util.merge(post._doc,Util.postFormat(post.content,post.time))
         })
-        console.log(posts[0])
         res.render('index',{
             title: '首頁',
             header_title:'推文',

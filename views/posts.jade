@@ -1,21 +1,32 @@
 .content-header
     .header-inner: h2 #{header_title}
-    .stream-container
-        ol.postlist
-            - posts.forEach(function(post){
-                li.media(id=post._id)
-                    a.pull-left(href="/" + post.author)
-                        strong.fullname #{post.author}
-                        img.media-object.avatar(src="../img/avatar.png")
-                    .media-body
-                        | !{post.time}
-                        .post: p !{post.content}
-                        if user && user.name == post.author
-                            .tweet-actions
-                                span(title="删除").icon-remove.fade
-                                span(title="编辑").icon-edit.fade
-                                span(title="保存").icon-save.fade.hide
-            - })
+.stream-container
+    ol.postlist
+        - posts.forEach(function(post){
+            li.media(id=post._id)
+                a.pull-left(href="/" + post.author)
+                    strong.fullname #{post.author}
+                    img.media-object.avatar(src="../img/avatar.png")
+                .media-body
+                    | !{post.time}
+                    .post: p !{post.content}
+                    if user && user.name == post.author
+                        .tweet-actions
+                            span(title="删除").icon-remove.fade
+                            span(title="编辑").icon-edit.fade
+                            span(title="保存").icon-save.fade.hide
+                            span.tweet-counter.hide
+        - })
+    .stream-footer
+        .timeline-end.has-items.has-more-items
+            .stream-end
+                .stream-end-inner
+                    i.icon-twitter
+                    .hide-text 你的时间线还是空的。关注你感兴趣的人和话题以在时间线上看到他们的推文。
+                    button(type="button").btn-link.back-to-top.hide 回到顶部 ↑
+            .stream-loading
+                .stream-end-inner
+                    i.icon-spinner.icon-spin(title="正在载入...")
 
 
 

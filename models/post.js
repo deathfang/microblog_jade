@@ -8,3 +8,5 @@ var PostSchema = new Schema({
 })
 
 mongoose.model('Post',PostSchema)
+
+

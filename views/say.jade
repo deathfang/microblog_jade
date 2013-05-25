@@ -1,6 +1,7 @@
 .tweet-box.tweet-user
     form.form-inlinecenter(method="post",action="/post")
-        textarea(placeholder="撰写新推文...",name="post")
+        .textbox(contenteditable="true",spellcheck="true",role="textbox",aria-multiline="true",dir="ltr")
+            div 撰写新推文...
         .toolbar
             .tweet-button
                 i.icon-spinner.icon-spin

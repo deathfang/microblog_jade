@@ -8,7 +8,6 @@
   "dependencies": {
     "express": "3.0.5",
     "jade": "*",
-    "connect-mongo": ">= 0.3.2",
     "connect-flash":"*",
     "less":">= 1.3.3",
     "moment":">=2.0.0",

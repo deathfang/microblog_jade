@@ -4,5 +4,5 @@
     $ npm install
     $ node app.js
 ## Reference
-* [express migrating from 2.x to 3.x](https://github.com/visionmedia/express/wiki/Migrating-from-2.x-to-3.x)
-* [The Node.JS MongoDB Driver Manual](http://mongodb.github.com/node-mongodb-native/)
+* http://mongoosejs.com/docs/guide.html
+* https://github.com/JacksonTian/eventproxy

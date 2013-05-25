@@ -3,23 +3,32 @@ var moment = require('moment');
 var jade =  require('jade');
 moment.lang('zh-cn');
 require('./moment.twitter.js');
+var twitterText = require('./twitter-text.js');
+var wraplinkAttrs = {
+//        hashtagClass: "twitter-hashtag pretty-link",
+//        hashtagUrlBase: "/search?q=%23",
+//        symbolTag: "s",
+//        textWithSymbolTag: "b",
+//        cashtagClass: "twitter-cashtag pretty-link",
+//        cashtagUrlBase: "/search?q=%24",
+//        usernameClass: "twitter-atreply pretty-link",
+//        usernameUrlBase: "/",
+//        usernameIncludeSymbol: !0,
+//        listClass: "twitter-listname pretty-link",
+    urlTarget: "_blank",
+    rel:"nofollow",
+//        suppressNoFollow: !0,
+//        htmlEscapeNonEntities: !0
+}
+
 
 exports.postFormat = function(content,time){
-    var postLInkTmpl = 'a(href=url,title=url,target="_blank",rel="nofollow") #{text}';
     var postTimeTmpl = 'a.time(href="",title=longtime,data-time=dateTime) #{time}';
-    var urlRxp = new RegExp("((news|telnet|nttp|file|http|ftp|https)://){1}(([-A-Za-z0-9]+(\\.[-A-Za-z0-9]+)*(\\.[-A-Za-z]{2,5}))|([0-9]{1,3}(\\.[0-9]{1,3}){3}))(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*)*","gi");
-    var tokens = {}, links = null,
-        sessionPost = {},
-        hasUrl = content.match(urlRxp);
-    if (hasUrl) {
-        links = function(match) {
-            tokens.url = match;
-            tokens.text = tokens.url.replace(/(http(s?):\/\/)?(www\.)?/, "");
-            tokens.text.length > 19 && (tokens.text = tokens.text.slice(0,19) + "...")
-            return jade.compile(postLInkTmpl)(tokens)
-        }
-    }
-    sessionPost.content = hasUrl ? content.replace(urlRxp,links) : content;
+    var  sessionPost = {}
+    sessionPost.content = twitterText.extractUrls(content).length ?
+        twitterText.autoLinkEntities(
+            content,twitterText.extractUrlsWithIndices(content),wraplinkAttrs
+        ) : content;
     sessionPost.time = jade.compile(postTimeTmpl)({
         time:moment(time).twitter(),
         longtime:moment(time).format('L, h:mm a').replace(/\d\d/,''),

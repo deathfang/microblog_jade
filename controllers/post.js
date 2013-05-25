@@ -10,10 +10,7 @@ exports.create = function(req,res,next){
         req.session.user.post_count++;
         var post = Util.merge(post._doc,Util.postFormat(post.content,post.time));
         var postHTML = jade.compile(Util.postTemplate)(post);
-        res.send({
-            id:post._id,
-            postHTML:postHTML
-        })
+        res.send(postHTML);
     });
     proxy.fail(next);
     Post.newAndSave(name,req.body.post,proxy.done('post'));
@@ -36,8 +33,7 @@ exports.update = function(req,res,next){
             if (err) {
                 return next(err);
             }
-            console.log(Util.postFormat(doc.content,doc.time))
-            res.send(Util.postFormat(doc.content,doc.time))
+            res.json(Util.postFormat(doc.content,doc.time))
         })
     })
 }

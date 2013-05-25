@@ -57,11 +57,8 @@ html
                             span.help-block
                         +submit_button("注册")
                         +change_link("已有账号？","#tologin","立即登录")
-        script(src="/javascripts/jquery.min.js")
-        script(src="/bootstrap/js/bootstrap.min.js")
-        script(src="/javascripts/jquery.backstretch.min.js")
-        script(src="/javascripts/jqBootstrapValidation.js")
-        script(src="/javascripts/sign.js")
-
+        script(src="/seajs/sea.js",data-config="/seajs/rootConfig.js")
+        script
+            seajs.use(['libs/jquery','js/sign'])
 
 

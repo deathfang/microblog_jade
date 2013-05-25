@@ -30,7 +30,7 @@ label,input,textarea,div[contenteditable="true"],select{margin:0;font-size:13px;
 label{display:block;margin-bottom:5px;color:#333;cursor:pointer}
 button{border:0}
 fieldset{padding:0;margin:0;border:0}
-input,textarea,select,[name=post]{display:inline-block;width:210px;padding:4px;margin:0;outline:0;background-color:#fff;border:1px solid #ccc;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}
+input,textarea,select,[name=post],div[contenteditable="true"]{display:inline-block;width:210px;padding:4px;margin:0;outline:0;background-color:#fff;border:1px solid #ccc;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}
 
 input[type=checkbox],input[type=radio]{width:auto;height:auto;padding:0;margin:3px 0;line-height:normal;border:0;background-color:transparent;cursor:pointer}
 input[type=file]{background-color:#fff;padding:initial;border:initial;line-height:initial;-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none}
@@ -169,3 +169,16 @@ opacity:0;
 	transition: opacity .3s linear;
 	opacity:1;
 }
+.stream-end-item,.stream-end,.stream-loading,.stream-placeholder{border-left:1px solid #eee;border-left:1px solid rgba(0,0,0,.1);border-right:1px solid #eee;border-right:1px solid rgba(0,0,0,.1);border-bottom:1px solid #eee;border-bottom:1px solid rgba(0,0,0,.1);-webkit-border-radius:0 0 6px 6px;-moz-border-radius:0 0 6px 6px;border-radius:0 0 6px 6px}
+.stream-end,.stream-loading,.stream-placeholder,.content-placeholder,.back-to-top,.btn-link.back-to-top{font-size:13px;color:#777;text-align:center}
+.stream-end-inner{padding:30px 50px;background-color:#fff;-webkit-border-radius:0 0 5px 5px;-moz-border-radius:0 0 5px 5px;border-radius:0 0 5px 5px}
+.stream-end-inner-thin{padding:0}
+.stream-end p,.stream-placeholder p{margin-top:5px}
+.stream-end-inner{padding:30px 50px;background-color:#fff;-webkit-border-radius:0 0 5px 5px;-moz-border-radius:0 0 5px 5px;border-radius:0 0 5px 5px}
+.stream-end-inner-thin{padding:0}
+.stream-end p,.stream-placeholder p{margin-top:5px}
+.stream-end,.stream-loading,.stream-whale-end{margin-bottom:14px}
+.timeline-end.has-items .hide-text{display:none}
+.timeline-end .stream-loading{display:none}
+.timeline-end.has-more-items .stream-loading{display:block}
+.timeline-end.has-more-items .stream-end{display:none}

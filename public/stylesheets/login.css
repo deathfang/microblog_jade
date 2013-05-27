@@ -1,4 +1,5 @@
 @import url(http://fonts.googleapis.com/css?family=Prosto+One);
+body{background-color: #eee}
 input:focus:invalid:focus, textarea:focus:invalid:focus, select:focus:invalid:focus {
     border-color: rgba(82, 168, 236, 0.8);
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
@@ -11,7 +12,7 @@ h1,p,label,input,form{margin:0;padding:0}
 a.hiddenanchor{display:none}
 #wrapper{left:0;top:0;bottom:0;right:0;height: 300px;margin:auto;width: 400px;position:absolute}
 #wrapper a{color:#5F9BC6;text-decoration:underline}
-#wrapper h1{font-size:48px;color:#4696DF;padding:2px 0 10px 0;font-weight:bold;text-align:center;padding-bottom:30px}
+#wrapper h1{font-size:48px;color:#4696DF;padding:2px 0 10px 0;font-weight:bold;text-align:center;padding-bottom:30px;font-weight: normal}
 #wrapper h1{font-family:'Prosto One',cursive}
 #wrapper h1:after{content:' ';display:block;width:100%;height:2px;margin-top:10px;background-image:-webkit-gradient(linear,0 0,100% 0,from(rgba(147,184,189,0)),color-stop(0.2,rgba(132,184,231,.8)),color-stop(0.53,rgba(129,165,245,1)),color-stop(0.79,rgba(214,222,241,.8)),to(rgba(147,184,189,0)));background-image:-webkit-linear-gradient(left,rgba(147,184,189,0) 0,rgba(132,184,231,.8) 25%,rgba(129,165,245,1) 53%,rgba(132,184,231,.8) 74%,rgba(147,184,189,0) 100%);background-image:-moz-linear-gradient(left,rgba(147,184,189,0) 0,rgba(132,184,231,.8) 20%,rgba(129,165,245,1) 53%,rgba(214,222,241,.8) 79%,rgba(147,184,189,0) 100%);background-image:-o-linear-gradient(left,rgba(147,184,189,0) 0,rgba(132,184,231,.8) 20%,rgba(129,165,245,1) 53%,rgba(214,222,241,.8) 79%,rgba(147,184,189,0) 100%);background-image:linear-gradient(left,rgba(147,184,189,0) 0,rgba(132,184,231,.8) 20%,rgba(129,165,245,1) 53%,rgba(214,222,241,.8) 79%,rgba(147,184,189,0) 100%)}
 #wrapper p{margin-bottom:15px}
@@ -47,7 +48,36 @@ p.change_link{position:absolute;color: #7F7C7C;left:0;height:20px;width: 340px;p
 .lt8 #wrapper h1{color:#066A75}
 .lt8 #register{display:none}
 .lt8 p.change_link,.ie9 p.change_link{position:absolute;height:90px;background:transparent}
-#CssGaga{content:"20130312104212,213"}
+.backstretch img{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;left: 0;
+
+}
+.backstretch img:first-child{
+    z-index: 1;
+    -webkit-animation:backstretch-step1 6s infinite;
+    -moz-animation:backstretch-step1 6s infinite;
+    -ms-animation:backstretch-step1 6s infinite;
+    animation:backstretch-step1 6s infinite;
+}
+@-webkit-keyframes backstretch-step1 {
+    10%,90%{opacity: 1}
+    40%,60%{opacity: 0}
+}
+@-moz-keyframes backstretch-step1 {
+    10%,90%{opacity: 1}
+    40%,60%{opacity: 0}
+}
+@-ms-keyframes backstretch-step1 {
+    10%,90%{opacity: 1}
+    40%,60%{opacity: 0}
+}
+@keyframes backstretch-step1 {
+    10%,90%{opacity: 1}
+    40%,60%{opacity: 0}
+}
 
 /*
 Animate.css - http://daneden.me/animate

@@ -1,6 +1,3 @@
-define(function(require) {
-    var $ = require('jquery');
-    require("libs/jquery-plugins/bootstrap-tooltip");
 var regexpPw =  function($el, val, callback){
     callback({
         value: val,
@@ -8,12 +5,11 @@ var regexpPw =  function($el, val, callback){
         message: "密码不能小于6位且必须包含一个数字和字母"
     });
 }
-require('libs/jquery-plugins/jquery.backstretch.min')
+define(function(require) {
+    var $ = require('jquery');
+    require("libs/jquery-plugins/bootstrap-tooltip");
+
 require('libs/jquery-plugins/jqBootstrapValidation')
-$.backstretch([
-    "img/bg1.png",
-    "img/bg2.png"
-], {duration: 3000, fade: 750});
 
 $(".logo").tooltip();
 $("input,select,textarea").not("[type=submit],[name=passwordsignup_confirm],#usernamesignup").jqBootstrapValidation({

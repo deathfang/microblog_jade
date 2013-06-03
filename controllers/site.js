@@ -7,10 +7,6 @@ var Util = require('../libs/util');
 exports.index = function(req,res,next){
     var limit = config.list_topic_count;
     var render = function(posts,user){
-        posts = posts.map(function(post){
-            //post._doc      debug mongoose
-            return Util.merge(post._doc,Util.postFormat(post.content,post.time))
-        })
         res.render('index',{
             title: '首頁',
             header_title:'推文',

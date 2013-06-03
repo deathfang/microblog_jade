@@ -8,10 +8,6 @@ exports.index = function(req,res,next){
     var username = req.params.user;
     var limit = config.list_topic_count;
     var render = function(posts){
-        posts = posts.map(function(post){
-            //post._doc      debug mongoose
-            return Util.merge(post._doc,Util.postFormat(post.content,post.time))
-        })
         res.render('user',{
             title: username,
             posts:posts,

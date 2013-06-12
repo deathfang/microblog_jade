@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
     var twitterText = require('twitterText');
-    require("libs/jquery-plugins/bootstrap.min");
-    require("libs/jquery-plugins/drag");
+    require("lib/jquery-plugins/bootstrap.min");
+    require("lib/jquery-plugins/drag");
 //var tUtil = function(){
     var body = $("body");
 // 微博字数计算规则 汉字 1 英文 0.5 网址 20 后台截取 除去首尾空白
@@ -50,28 +50,43 @@ define(function(require, exports, module) {
         }, duration)
     }
 
+    var tweetBoxState = function(){
+        var tweetBox = document.querySelector('.tweet-box .textbox');
+        return sessionStorage.getItem("backup") ? {
+            enable:function(){
+                tweetBox.contentEditable = true;
+                tweetBox.focus();
+            },
+            disable:function(){
+                tweetBox.contentEditable = false;
+            }
+        } : {
+            enable:function(){},
+            disable:function(){}
+        }
+    }();
+
     var tweetDialog = function(id,title,itemHTML,action,resize,callback){
         var callback = typeof resize === "function" ? resize : callback;
         itemHTML.replace(actionHTML,"").replace(/<span.+保存成功.+\/span>/,"");
         var dialog = $(sub(modalTmpl,{
             id:id,title:title,itemHTML:itemHTML,action:action
         }));
-        //测试初次弹层显示时监听show shown无效
+        //测试初次弹层显sessionStorage.getItem("backup") ? 示时监听show shown无效
         dialog.modal().css({marginTop:-dialog.outerHeight()/2 + "px"}).addClass('fade_in');
         body.addClass('modal-enabled');
-        var tweetBox = document.querySelector('.tweet-box .textbox');
+
         //回车确认删除时 tweet-text.js 焦点会引发错误 contentEditable = false修复
-        tweetBox.contentEditable = false;
+        tweetBoxState.disable();
         dialog.on("shown",function(){
             //tweet编辑时 内容改变 重新计算
             resize === true && dialog.css({marginTop:-dialog.outerHeight()/2 + "px"});
             body.addClass('modal-enabled');
-            tweetBox.contentEditable = false;
+            tweetBoxState.disable();
         })
         dialog.on("hidden",function(){
             body.removeClass('modal-enabled');
-            tweetBox.contentEditable = true;
-            tweetBox.focus();
+            tweetBoxState.enable();
         })
         var actionButton = dialog.find('[data-action]').on('click.delDialog',callback);
         dialog.keyup(function(e){
@@ -164,7 +179,7 @@ define(function(require, exports, module) {
 //            range.setStartAfter(node);
 //        }
 //    }
-    var moment = require('libs/moment');
+    var moment = require('lib/moment');
     function timer(postTime){
         var TimesMS = {
             day: 864e5,

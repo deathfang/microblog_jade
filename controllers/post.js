@@ -1,6 +1,6 @@
 var User = require('../proxy').User;
 var Post = require('../proxy').Post;
-var Util = require('../libs/util');
+var Util = require('../lib/util');
 var EventProxy = require('eventproxy');
 var jade =  require('jade');
 

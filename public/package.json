@@ -4,10 +4,10 @@
   "version": "0.0.1",
   "spm": {
     "alias": {
-        "jquery":"libs/jquery",
-        "UA":"libs/yui-ua",
-        "moment":"libs/moment",
-        "twitterText":"libs/twitter-text"
+        "jquery":"lib/jquery",
+        "UA":"lib/yui-ua",
+        "moment":"lib/moment",
+        "twitterText":"lib/twitter-text"
     }
   },
   "devDependencies": {

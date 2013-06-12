@@ -1,7 +1,7 @@
 define(function(require) {
     var $ = require('jquery');
     var UA = require('UA');
-    var htmlText = require('libs/html-text');
+    var htmlText = require('lib/html-text');
     var twitterText = require('twitterText');
     var tUtil = require('./util');
     var tweetCount = $(".stats li:first strong");
@@ -73,16 +73,22 @@ define(function(require) {
                 tweetCount.text(parseInt(tweetCount.text()) + 1);
                 var newPostTime = newPost.find(".time");
                 tUtil.timer(newPostTime);
-                setTimeout(function(){
-                    newPost.removeClass('animate-hide');
-                },0)
+                $.when(function(){
+                    var dfd = $.Deferred();
+                    setTimeout(function(){
+                        newPost.removeClass('animate-hide');
+                        dfd.resolve()
+                    },0)
+                    return dfd.promise()
+                }()).done(function(){
+                    setTimeout(function(){
+                        tUtil.messagesTips("你的推文已发布!",1000,"alert-tips")
+                    },500)
+                })
                 storePostText.backup(newPost.attr('id'),postEditor.html());
                 postEditor.text("").blur();
                 storePostText.clear("postText");
                 localStorage.removeItem("boxUpdated");
-                setTimeout(function(){
-                    tUtil.messagesTips("你的推文已发布!",1000,"alert-tips")
-                },500)
             })
     });
     !function(){
@@ -100,31 +106,32 @@ define(function(require) {
     var deleteDialog = {},
         updatePOST,
         actionCallback = function(post,id,dialog){
-            $.get("/del/" + id,function(res){
+            $.post("/del/" + id,function(res){
                 if(res) {
                     dialog.modal("hide");
-//                    setTimeout(function(){
-                        post.addClass('animate-hide fast_hide');
-                        //弹层 遮罩消失后的视觉误差 放个延迟
-//                    },0)
+                    $.when(post.addClass('animate-hide fast_hide')).done(function(){
+                        setTimeout(function(){
+                            var dfd = $.Deferred();
+                            post.remove();
+                            tUtil.messagesTips("你的推文已删除。",1000,"alert-tips");
+                            tweetCount.text(parseInt(tweetCount.text()) - 1);
+                            return dfd.resolve();
+                        },300)
+                    }).done(function(){
+                        if (sessionStorage.getItem("backup")){
+                            setTimeout(function(){
+                                boxUpdated = true;
+                                var backPost = JSON.parse(sessionStorage.getItem("backup"))[id];
+                                postEditor.html(backPost).focus();
+                                storePostText.set(backPost);
+                                localStorage.setItem("boxUpdated",true);
+                                //alert tips消失后再恢复
+                            },1000)
+                        }
+                    })
                     tbutton.active().highlight();
                     dialog.remove();
                     dialog = null;
-                    setTimeout(function(){
-                        post.remove();
-                        tUtil.messagesTips("你的推文已删除。",1000,"alert-tips");
-                        tweetCount.text(parseInt(tweetCount.text()) - 1);
-                    },300)
-                    if (sessionStorage.getItem("backup")){
-                        setTimeout(function(){
-                            boxUpdated = true;
-                            var backPost = JSON.parse(sessionStorage.getItem("backup"))[id];
-                            postEditor.html(backPost).focus();
-                            storePostText.set(backPost);
-                            localStorage.setItem("boxUpdated",true);
-                        //alert tips消失后再恢复
-                        },1000)
-                    }
                 }
             });
         }

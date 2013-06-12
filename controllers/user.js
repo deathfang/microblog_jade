@@ -2,7 +2,7 @@ var User = require('../proxy').User;
 var Post = require('../proxy').Post;
 var EventProxy = require('eventproxy');
 var config = require('../config').config;
-var Util = require('../libs/util');
+var Util = require('../lib/util');
 
 exports.index = function(req,res,next){
     var username = req.params.user;

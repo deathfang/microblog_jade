@@ -1,4 +1,4 @@
-define("libs/twitter-text",[],function(require, exports, module) {
+define("lib/twitter-text",[],function(require, exports, module) {
 //modified line 130
 !function() {
     var b = {};

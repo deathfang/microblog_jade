@@ -7,9 +7,9 @@ var regexpPw =  function($el, val, callback){
 }
 define(function(require) {
     var $ = require('jquery');
-    require("libs/jquery-plugins/bootstrap-tooltip");
+    require("lib/jquery-plugins/bootstrap-tooltip");
 
-require('libs/jquery-plugins/jqBootstrapValidation')
+require('lib/jquery-plugins/jqBootstrapValidation')
 
 $(".logo").tooltip();
 $("input,select,textarea").not("[type=submit],[name=passwordsignup_confirm],#usernamesignup").jqBootstrapValidation({

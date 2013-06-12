@@ -26,6 +26,8 @@ app.configure(function(){
     app.use(express.session({
         secret: config.session_secret
     }));
+    // custom middleware
+    app.use(require('./controllers/sign').auth_user);
     app.use(function(req,res,next){
         res.locals.user = req.session.user;
         res.locals.error = req.flash('error').toString();

@@ -12,5 +12,5 @@ module.exports = function (app) {
     app.post('/post',post.create);
     app.get('/:user',user.index);
     app.post('/edit/:id',post.update);
-    app.get('/del/:id',post.delete);
+    app.post('/del/:id',post.delete);
 }

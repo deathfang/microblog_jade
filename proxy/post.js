@@ -2,7 +2,7 @@ var models = require('../models');
 var Post = models.Post;
 var User = require('./user');
 var EventProxy = require('eventproxy');
-var Util = require('../libs/util');
+var Util = require('../lib/util');
 
 exports.getPostsByQuery = function(query, opt, callback){
     Post.find(query, null, opt, function (err, docs) {

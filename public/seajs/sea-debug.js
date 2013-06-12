@@ -884,8 +884,8 @@ var configData = config.data = {
   base: (function() {
     var ret = loaderDir
 
-    // If loaderUri is `http://test.com/libs/seajs/[seajs/1.2.3/]sea.js`, the
-    // baseUri should be `http://test.com/libs/`
+    // If loaderUri is `http://test.com/lib/seajs/[seajs/1.2.3/]sea.js`, the
+    // baseUri should be `http://test.com/lib/`
     var m = ret.match(/^(.+?\/)(?:seajs\/)+(?:\d[^/]+\/)?$/)
     if (m) {
       ret = m[1]

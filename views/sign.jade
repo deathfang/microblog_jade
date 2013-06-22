@@ -60,8 +60,13 @@ html
         .backstretch
             img(src="img/bg1.png")
             img(src="img/bg2.png")
-        script(src="/seajs/sea.js",data-config="/seajs/rootConfig.js")
+        script(src="/seajs/sea.js")
         script
+            seajs.config({
+                "alias": {
+                    "jquery":'lib/jquery',
+                }
+            });
             seajs.use(['lib/jquery','js/sign'])
 
 

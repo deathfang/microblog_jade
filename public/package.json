@@ -1,12 +1,15 @@
 {
-  "family": "iTwitter",
-  "name": "iTwitter",
+  "family": "itwitter",
+  "name": "itwitter",
   "version": "0.0.1",
   "spm": {
     "alias": {
         "jquery":"lib/jquery",
+        "_":"lib/underscore",
+        "backbone":"lib/backbone",
         "UA":"lib/yui-ua",
         "moment":"lib/moment",
+        "html-text":"lib/html-text",
         "twitterText":"lib/twitter-text"
     }
   },

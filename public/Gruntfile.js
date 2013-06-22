@@ -17,17 +17,14 @@ module.exports = function (grunt) {
                     '.html' : [text.html2jsParser]
                 }
             },
-
-            iwitter : {
-                options : {
+            main:{
+                options:{
                     idleading : 'dist/js/'
                 },
-
                 files : [
                     {
                         cwd : 'js/',
                         src : ['**/*'],
-                        filter : 'isFile',
                         dest : '.build/js'
                     }
                 ]
@@ -38,33 +35,31 @@ module.exports = function (grunt) {
                 paths : ['.'],
                 include : 'all'
             },
-            iwitter : {
+            main:{
                 files: [
                     {
                         expand: true,
                         cwd: '.build/',
                         src: ['js/**/*.js','!js/**/*-debug.js'],
-                        dest: 'dist/',
-                        ext: '.js'
+                        dest: 'dist/'
                     }
                 ]
             }
         },
 
         uglify : {
-            iwitter : {
+            main:{
                 files: [
                     {
                         expand: true,
                         cwd: 'dist/',
                         src: ['js/**/*.js', '!js/**/*-debug.js'],
-                        dest: 'dist/',
-                        ext: '.js'
+                        dest: 'dist/'
                     }
                 ]
             }
         },
-//        moment特殊处理，jqBootstrapValidation,jquery.backstretch.min 放到deps里
+//        moment单独处理，jqBootstrapValidation放到deps里
 
         clean : {
             spm : ['.build']
@@ -75,7 +70,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-cmd-concat');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.registerTask('build', ['transport', 'concat', 'clean']);
+    grunt.registerTask('default', ['transport', 'concat', 'clean']);
     //先合并 调整后再压缩
     grunt.registerTask('compress', ['uglify']);
 };

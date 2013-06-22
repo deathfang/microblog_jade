@@ -1,7 +1,7 @@
 define(function(require) {
     var $ = require('jquery');
     var UA = require('UA');
-    var htmlText = require('lib/html-text');
+    var htmlText = require('html-text');
     var twitterText = require('twitterText');
     var tUtil = require('./util');
     var tweetCount = $(".stats li:first strong");
@@ -174,7 +174,7 @@ define(function(require) {
         });
 
         function postTextChange(){
-            return updatePOST = (postText !== postEditor.text() && postEditor.text().trim());
+            return updatePOST = !!(postText !== postEditor.text() && postEditor.text().trim());
         }
 
         function textWarn(){

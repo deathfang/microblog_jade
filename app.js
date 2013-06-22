@@ -14,7 +14,12 @@ var app = express();
 
 module.exports = app;
 
+var maxAge = 3600000 * 24 * 30;
+var staticDir = path.join(__dirname, 'public');
+
 app.configure(function(){
+    app.use(express.static(__dirname + '/stylesheets'));
+    app.use(express.static(__dirname + '/uploads'));
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
     app.use(flash());
@@ -33,13 +38,14 @@ app.configure(function(){
         res.locals.error = req.flash('error').toString();
         next();
     });
+    app.use(express.static(staticDir));
+    // get(*)处理404时，app.router放在__dirname后，否则css,js解析错误
+//    Resource interpreted as Stylesheet but transferred with MIME type text/html
     app.use(app.router);
 });
 
-var maxAge = 3600000 * 24 * 30;
-var staticDir = path.join(__dirname, 'public');
+
 app.configure('development', function(){
-    app.use(express.static(staticDir));
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 

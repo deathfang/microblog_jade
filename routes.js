@@ -13,4 +13,7 @@ module.exports = function (app) {
     app.get('/:user',user.index);
     app.post('/edit/:id',post.update);
     app.post('/del/:id',post.delete);
+    app.all('*', function(req,res){
+        res.sendfile('views/Page not found.html')
+    });
 }

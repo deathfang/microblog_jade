@@ -17,15 +17,30 @@ exports.index = function(req,res,next){
         })
     }
     var options = {limit: limit, sort:'-time'};
-    var proxy = EventProxy.create('user','posts',render);
-    proxy.fail(next);
-    User.getUserByName(username,proxy.done(function(user){
+//    var proxy = EventProxy.create('user','not_found','posts',render);
+//    proxy.fail(next);
+//    User.getUserByName(username,proxy.done(function(user){
+//        if (!user) {
+////            return res.sendfile('views/Page not found.html')
+//            proxy.emit
+//        }
+//        proxy.emit('user')
+//    }));
+//    Post.getPostsByQuery({author:username},options,proxy.done(function(posts){
+//        render(posts);
+//    }));
+    User.getUserByName(username,function(err,user){
+        if (err) {
+            return next(err)
+        }
         if (!user) {
             return res.sendfile('views/Page not found.html')
         }
-        proxy.emit('user')
-    }));
-    Post.getPostsByQuery({author:username},options,proxy.done(function(posts){
-        render(posts);
-    }));
+        Post.getPostsByQuery({author:username},options,function(err,posts){
+            if (err) {
+                return next(err)
+            }
+            render(posts);
+        })
+    })
 }

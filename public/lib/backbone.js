@@ -5,7 +5,7 @@
 //     For all details and documentation:
 //     http://backbonejs.org
 
-define("lib/backbone",[],function(require, exports, module) {
+define("lib/backbone",["_","jquery"],function(require, exports, module) {
 
     // Initial Setup
     // -------------
@@ -27,12 +27,7 @@ define("lib/backbone",[],function(require, exports, module) {
 
     // The top-level namespace. All public Backbone classes and modules will
     // be attached to this. Exported for both the browser and the server.
-    var Backbone;
-    if (typeof exports !== 'undefined') {
-        Backbone = exports;
-    } else {
-        Backbone = root.Backbone = {};
-    }
+    var Backbone = root.Backbone = {};
 
     // Current version of the library. Keep in sync with `package.json`.
     Backbone.VERSION = '1.0.0';

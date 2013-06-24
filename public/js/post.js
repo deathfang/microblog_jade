@@ -68,7 +68,8 @@ define(function(require) {
         $.post("/post",{post:getText(o_postEditor)
             },function(res){
                 tweetBox.removeClass("tweeting");
-                var newPost = $(res);
+                var newPost = $(res).addClass('animate-hide animate-opacity');
+                newPost.children().css('opacity',0);
                 postList.prepend(newPost);
                 tweetCount.text(parseInt(tweetCount.text()) + 1);
                 var newPostTime = newPost.find(".time");
@@ -81,8 +82,10 @@ define(function(require) {
                     },0)
                     return dfd.promise()
                 }()).done(function(){
+                    newPost.children().fadeTo(500,1);
                     setTimeout(function(){
-                        tUtil.messagesTips("你的推文已发布!",1000,"alert-tips")
+                        newPost.removeClass('animate-opacity');
+                        tUtil.messagesTips("你的推文已发布!",1500,"alert-tips")
                     },500)
                 })
                 storePostText.backup(newPost.attr('id'),postEditor.html());

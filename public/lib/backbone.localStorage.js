@@ -9,7 +9,7 @@
         module.exports = factory(require("underscore"), require("backbone"));
     } else if (typeof define === "function") {
         // CMD. Register as an anonymous module.
-        define("lib/backbone.localStorage",[], function(require, exports, module) {
+        define("lib/backbone.localStorage",['_','backbone'], function(require, exports, module) {
             root._ = require('_');
             root.Backbone = require('backbone');
             // Use global variables if the locals are undefined.

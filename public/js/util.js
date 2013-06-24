@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
     var twitterText = require('twitterText');
-    require("lib/jquery-plugins/bootstrap.min");
-    require("lib/jquery-plugins/drag");
+    require.async("lib/jquery-plugins/bootstrap.min");
+    require.async("lib/jquery-plugins/drag");
 //var tUtil = function(){
     var body = $("body");
 // 微博字数计算规则 汉字 1 英文 0.5 网址 20 后台截取 除去首尾空白

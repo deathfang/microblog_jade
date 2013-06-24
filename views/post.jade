@@ -1,0 +1,12 @@
+li.media(id=_id)
+    a.pull-left(href="/" + author)
+        strong.fullname #{author}
+        img.media-object.avatar(src="../img/avatar.png")
+    .media-body
+        | !{time}
+        .post: p !{content}
+        .tweet-actions
+            span(title="删除").icon-remove.fade
+            span(title="编辑").icon-edit.fade
+            span(title="保存").icon-save.fade.hide
+            span.tweet-counter.hide

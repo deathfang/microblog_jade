@@ -3,8 +3,8 @@ html
     head
         meta(charset="utf-8")
         title #{title} - microblog
-        link(rel='stylesheet', href='bootstrap/css/bootstrap.css')
-        link(rel='stylesheet', href='bootstrap/css/bootstrap-responsive.css')
+        link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
+        link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.css')
         link(rel='stylesheet', href='/stylesheets/font-awesome.css')
         link(rel='stylesheet', href='/stylesheets/twitter.css')
         link(rel='stylesheet', href='/stylesheets/style.css')
@@ -53,6 +53,7 @@ html
                     "twitterText":"lib/twitter-text"
                 }
             });
-            seajs.use(['lib/jquery','js/post'])
+            seajs.use(['jquery','js/post'])
+
 
 

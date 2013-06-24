@@ -247,13 +247,17 @@ border-radius: 0 0 5px 5px;
       -ms-transition-duration:  .4s;
       -o-transition-duration:  .4s;
       transition-duration:  .4s;
+      * {
+        opacity: 0;
+      }
     }
     &.animate-hide{
       height: 0;
       padding-top: 0;
       padding-bottom: 0;
-      opacity: 0;
       visibility: hidden;
+      border-top-width:0;
+      boder-left-width:0;
     }
     &:hover{
       background-color: #f5f5f5;

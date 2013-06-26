@@ -49,6 +49,7 @@ define(function(require, exports, module) {
         renderTime();
     }
     module.exports = {
+        REG_NOHTML : /<\S[^><]*>/g,
         messageLength:messageLength,
         timer:timer
     }

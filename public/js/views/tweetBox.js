@@ -1,38 +1,53 @@
 define(function(require,exports,module){
     var Backbone = require('backbone');
     var $ = require('jquery');
-    var UA = require('UA');
-    var Common = require('./post_common_method');
-
-    var tweetBox = require('../models/tweetBox');
+    var UA = require.async('UA');
+    var htmlText = require('html-text');
+    var util = require('../util');
+    var commonView = require('./post_commonView_method');
+    var messagesAlert = require('./message_alert');
+    var tweetbox = new (require('../models/tweetbox'));
     var tweetBoxView = Backbone.View.extend({
         el:'.tweet-box',
         events:{
-            'focus .textbox':function(){}
+            'focus .textbox':function(){
+                this.$editor.addClass("uncondensed");
+                if (tweetbox.get('updated')) {
+                    this.$editor.html("");
+                    this.htmlRich.setSelectionOffsets([0])
+                }
+//                focusEditor()
+            },
+            'blur .textbox':'toggleCondensed',
+            'keydown .textbox':'updateOnEnter'
         },
         initialize:function(){
+            this.PLACEHOLDER = '<div>撰写新推文...</div>',
             this.tweetCount = $('.stats li:first strong'),
             this.$editor = this.$(".textbox"),
             this.editor = this.$editor[0],
             this.textLength = this.$('.tweet-counter'),
             this.button = this.$('button');
-            if (postEditor.text() !== "" && boxUpdated) {
-                this.$el.addClass("uncondensed");
-                this.$editor.focus();
-                this.enable();
-                Common.textLengthTips(this.textLength,this.modal.get('text'),function(){
-                    this.disable()
-                },function(){
-                    this.enable()
-                });
+
+            this.listenTo(tweetbox,'reset',this.render);
+            this.listenTo(tweetbox,'change:text',this.render);
+
+            tweetbox.fetch();
+
+            if (this.getText()) {
+                this.getText().replace(util.REG_NOHTML,'').replace(/&nbsp;/g,"").trim()
+                && this.$editor.html(this.getText());
+                if (tweetbox.get('updated')) {
+                    this.toggleCondensed();
+                    this.editor.focus();
+                }
             }
         },
-        condensed:function(){
-            if (this.model.get('text').trim() === "") {
-                this.$el.removeClass("uncondensed");
-                this.$editor.html(this.model.PLACEHOLDER);
-                this.model.save({boxUpdated:false})
-            }
+        render:function(){
+            commonView.textLengthTips(
+                this.textLength,this.getText(),
+                this.disable,this.enable
+            );
         },
         enable:function(){
             this.button.removeClass("disabled")
@@ -43,7 +58,24 @@ define(function(require,exports,module){
             this.button.addClass("disabled")
                 .attr("disabled",true)
                 .removeClass('btn-primary')
-        }
+        },
+        getText : function(){
+            tweetbox.get('text')
+        },
+        toggleCondensed:function(){
+            this.$el.toggleClass("uncondensed",this.isWhitespace());
+            this.isWhitespace() && this.$editor.html(this.PLACEHOLDER);
+        },
+        isWhitespace:function(){
+            return !!this.getText().trim()
+        },
+        updateOnEnter:function(e){
+            //Mac习惯用command
+            (e.metaKey || e.ctrlKey) && e.keyCode === 13 &&
+                !this.button.attr("disabled") && this.$('form').trigger('submit');
+        },
+        htmlRich:htmlText(this.editor,UA)
+
     })
     module.exports = tweetBoxView;
 })

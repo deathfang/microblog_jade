@@ -1,12 +1,17 @@
 define(function(require,exports,module){
     var Backbone = require('backbone');
     require('lib/backbone.localStorage');
-    var Post = Backbone.Model.extend({
+    var TweetBox = Backbone.Model.extend({
         defaults:{
-            updated:localStorage.getItem('boxUpdated') || false,
-            PLACEHOLDER:'<div>撰写新推文...</div>'
+            text:'',
+            updated:false
         },
-        localStorage:new Backbone.LocalStorage('postText')
+        toggle: function () {
+            this.save({
+                updated: !this.get('updated')
+            });
+        },
+        localStorage:new Backbone.LocalStorage('tweetbox')
     })
-    module.exports = Post;
+    module.exports = TweetBox;
 })

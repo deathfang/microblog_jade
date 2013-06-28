@@ -27,8 +27,8 @@ define(function(require) {
         //contenteditable下换行有div innerText有换行 jQuery text()和textContent无
         //Firefox不支持innerText 单独处理
         return element.innerText ?
-                element.innerText :
-                $(element).html().replace(/<br>/g,"&#10;").replace(/<\S[^><]*>/g,'')
+            element.innerText :
+            $(element).html().replace(/<br>/g,"&#10;").replace(/<\S[^><]*>/g,'')
     }
     var tbutton = new tUtil.ButtonStatus(tweetButton,"btn-primary")
 
@@ -39,7 +39,7 @@ define(function(require) {
         apply:function (){
             localStorage.getItem('postText') &&
                 localStorage.getItem('postText').replace(/<\S[^><]*>/g,'').replace(/&nbsp;/g,"").trim() &&                        postEditor.html(localStorage.getItem('postText'));
-            localStorage.removeItem('backup')
+            // localStorage.removeItem('backup')
         },
         clear:function(item){
             arguments.length > 0 ? localStorage.removeItem(item) : localStorage.clear();
@@ -66,15 +66,15 @@ define(function(require) {
         e.preventDefault();
         tweetBox.addClass("tweeting");
         $.post("/post",{post:getText(o_postEditor)
-            },function(res){
-                tweetBox.removeClass("tweeting");
-                var newPost = $(res).addClass('animate-hide animate-opacity');
-                newPost.children().css('opacity',0);
-                postList.prepend(newPost);
-                tweetCount.text(parseInt(tweetCount.text()) + 1);
-                var newPostTime = newPost.find(".time");
-                tUtil.timer(newPostTime);
-                $.when(function(){
+        },function(res){
+            tweetBox.removeClass("tweeting");
+            var newPost = $(res).addClass('animate-hide animate-opacity');
+            newPost.children().css('opacity',0);
+            postList.prepend(newPost);
+            tweetCount.text(parseInt(tweetCount.text()) + 1);
+            var newPostTime = newPost.find(".time");
+            tUtil.timer(newPostTime);
+            $.when(function(){
                     var dfd = $.Deferred();
                     setTimeout(function(){
                         newPost.removeClass('animate-hide');
@@ -88,24 +88,24 @@ define(function(require) {
                         tUtil.messagesTips("你的推文已发布!",1500,"alert-tips")
                     },500)
                 })
-                storePostText.backup(newPost.attr('id'),postEditor.html());
-                postEditor.text("").blur();
-                storePostText.clear("postText");
-                localStorage.removeItem("boxUpdated");
-            })
+            storePostText.backup(newPost.attr('id'),postEditor.html());
+            postEditor.text("").blur();
+            storePostText.clear("postText");
+            localStorage.removeItem("boxUpdated");
+        })
     });
-    !function(){
-        if (postEditor.text() !== "" && boxUpdated) {
-            tweetBox.addClass("uncondensed");
-            postEditor.focus(focusEditor).focus();
+    // !function(){
+    if (postEditor.text() !== "" && boxUpdated) {
+        // tweetBox.addClass("uncondensed");
+        postEditor.focus(focusEditor).focus();
+        // tbutton.active().highlight();
+        tUtil.textLengthTips(tweetLength,postEditor.text(),function(){
+            tbutton.disable().goOut();
+        },function(){
             tbutton.active().highlight();
-            tUtil.textLengthTips(tweetLength,postEditor.text(),function(){
-                tbutton.disable().goOut();
-            },function(){
-                tbutton.active().highlight();
-            });
-        }
-    }();
+        });
+    }
+    // }();
     var deleteDialog = {},
         updatePOST,
         actionCallback = function(post,id,dialog){
@@ -121,18 +121,18 @@ define(function(require) {
                             return dfd.resolve();
                         },300)
                     }).done(function(){
-                        if (sessionStorage.getItem("backup")){
-                            setTimeout(function(){
-                                boxUpdated = true;
-                                var backPost = JSON.parse(sessionStorage.getItem("backup"))[id];
-                                postEditor.html(backPost).focus();
-                                storePostText.set(backPost);
-                                localStorage.setItem("boxUpdated",true);
-                                //alert tips消失后再恢复
-                            },1000)
-                        }
-                    })
-                    tbutton.active().highlight();
+                            if (sessionStorage.getItem("backup")){
+                                setTimeout(function(){
+                                    boxUpdated = true;
+                                    var backPost = JSON.parse(sessionStorage.getItem("backup"))[id];
+                                    postEditor.html(backPost).focus();
+                                    storePostText.set(backPost);
+                                    localStorage.setItem("boxUpdated",true);
+                                    //alert tips消失后再恢复
+                                },1000)
+                            }
+                        })
+                    // tbutton.active().highlight();
                     dialog.remove();
                     dialog = null;
                 }
@@ -168,7 +168,7 @@ define(function(require) {
 
         saveButton.click(function(e){
             e.preventDefault();
-           postTextChange() ? savePost() : textWarn();
+            postTextChange() ? savePost() : textWarn();
         });
         postEditor.keydown(function(e){
             if ((e.metaKey || e.ctrlKey) && e.keyCode === 13){
@@ -242,12 +242,13 @@ define(function(require) {
                 anchor.html().replace(anchor.text(),anchor.attr("href")).replace(emTxt,"<em"> + emTxt + "</em>")
             )
         });
-//          初次load时需要
+        // 初次load时需要
         htmlRich.setSelectionOffsets([
             this === o_postEditor ?
                 getText(this).length :
                 postEditor.text().length
         ])
+
     }
 
     postList.on("focus.focusEditor",".post p",focusEditor);
@@ -263,7 +264,7 @@ define(function(require) {
         var html,urls;
         if (twitterText.extractUrls(currentHTML).length && !postEditor.attr("data-in-composition")){
 
-            //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
+            //过滤<a..>和</a>, a的文本保留继续url转换 ,焦点保持在url最后
             html = postEditor.html().replace(/<a[^><]*>|<\/a>/g,"");
             urls = twitterText.extractUrlsWithIndices(html);
             postEditor.html(

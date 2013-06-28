@@ -64,7 +64,7 @@ define(function(require, exports, module) {
             enable:function(){},
             disable:function(){}
         }
-    }();
+    };
 
     var tweetDialog = function(id,title,itemHTML,action,resize,callback){
         var callback = typeof resize === "function" ? resize : callback;
@@ -77,16 +77,16 @@ define(function(require, exports, module) {
         body.addClass('modal-enabled');
 
         //回车确认删除时 tweet-text.js 焦点会引发错误 contentEditable = false修复
-        tweetBoxState.disable();
+        tweetBoxState().disable();
         dialog.on("shown",function(){
             //tweet编辑时 内容改变 重新计算
             resize === true && dialog.css({marginTop:-dialog.outerHeight()/2 + "px"});
             body.addClass('modal-enabled');
-            tweetBoxState.disable();
+            tweetBoxState().disable();
         })
         dialog.on("hidden",function(){
             body.removeClass('modal-enabled');
-            tweetBoxState.enable();
+            tweetBoxState().enable();
         })
         var actionButton = dialog.find('[data-action]').on('click.delDialog',callback);
         dialog.keyup(function(e){

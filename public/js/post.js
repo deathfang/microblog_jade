@@ -39,7 +39,7 @@ define(function(require) {
         apply:function (){
             localStorage.getItem('postText') &&
                 localStorage.getItem('postText').replace(/<\S[^><]*>/g,'').replace(/&nbsp;/g,"").trim() &&                        postEditor.html(localStorage.getItem('postText'));
-            // localStorage.removeItem('backup')
+            sessionStorage.removeItem('backup')
         },
         clear:function(item){
             arguments.length > 0 ? localStorage.removeItem(item) : localStorage.clear();

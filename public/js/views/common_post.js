@@ -2,12 +2,7 @@ define(function(require,exports,module){
     var util = require('../util');
     var CommonView = Backbone.View.extend({
         initialize:function(){
-            $(document).on("compositionstart", function(e){
-                e.target.setAttribute("data-in-composition", "true")
-            });
-            $(document).on("compositionend", function(e){
-                e.target.removeAttribute("data-in-composition")
-            });
+
         },
         textLengthTips : function(msgtips,val,disable,enable){
             var msglen = util.messageLength(val),

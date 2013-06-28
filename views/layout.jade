@@ -43,7 +43,7 @@ html
         script(src="/seajs/sea.js")
         script
             seajs.config({
-                "preload":"plugin-text",
+                "preload":"/seajs/seajs-text",
                 "alias": {
                     "jquery":"lib/jquery",
                     "_":"lib/underscore",
@@ -54,7 +54,14 @@ html
                     "twitterText":"lib/twitter-text"
                 }
             });
-            seajs.use(['jquery','js/post'])
+            seajs.use(['jquery','js/post'],function($){
+                $(document).on("compositionstart", function(e){
+                    e.target.setAttribute("data-in-composition", "true")
+                });
+                $(document).on("compositionend", function(e){
+                    e.target.removeAttribute("data-in-composition")
+                });
+            })
 
 
 

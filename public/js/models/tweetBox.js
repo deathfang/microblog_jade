@@ -4,6 +4,7 @@ define(function(require,exports,module){
     var TweetBox = Backbone.Model.extend({
         defaults:{
             text:'',
+            html:'',
             updated:false
         },
         toggle: function () {

@@ -4,14 +4,14 @@ define(function(require,exports,module){
     var UA = require.async('UA');
     var htmlText = require('html-text');
     var util = require('../util');
-    var commonView = require('./post_commonView_method');
+    var commonView = require('./common_post');
     var messagesAlert = require('./message_alert');
     var tweetbox = new (require('../models/tweetbox'));
     var tweetBoxView = Backbone.View.extend({
         el:'.tweet-box',
         events:{
             'focus .textbox':function(){
-                this.$editor.addClass("uncondensed");
+                this.toggleCondensed();
                 if (tweetbox.get('updated')) {
                     this.$editor.html("");
                     this.htmlRich.setSelectionOffsets([0])
@@ -28,19 +28,14 @@ define(function(require,exports,module){
             this.editor = this.$editor[0],
             this.textLength = this.$('.tweet-counter'),
             this.button = this.$('button');
-
+            //首次load需要reset
             this.listenTo(tweetbox,'reset',this.render);
-            this.listenTo(tweetbox,'change:text',this.render);
+            this.listenTo(tweetbox,'change',this.render);
 
             tweetbox.fetch();
 
-            if (this.getText()) {
-                this.getText().replace(util.REG_NOHTML,'').replace(/&nbsp;/g,"").trim()
-                && this.$editor.html(this.getText());
-                if (tweetbox.get('updated')) {
-                    this.toggleCondensed();
-                    this.editor.focus();
-                }
+            if (tweetbox.get('updated')) {
+                this.$editor.focus(this.loadFocus).focus();
             }
         },
         render:function(){
@@ -48,6 +43,7 @@ define(function(require,exports,module){
                 this.textLength,this.getText(),
                 this.disable,this.enable
             );
+            this.$editor.html(tweetbox.get('html'));
         },
         enable:function(){
             this.button.removeClass("disabled")
@@ -74,7 +70,12 @@ define(function(require,exports,module){
             (e.metaKey || e.ctrlKey) && e.keyCode === 13 &&
                 !this.button.attr("disabled") && this.$('form').trigger('submit');
         },
-        htmlRich:htmlText(this.editor,UA)
+        htmlRich:htmlText(this.editor,UA),
+        loadFocus:function(){
+            this.htmlRich.setSelectionOffsets([
+                commonView.getTextWrap(this.editor).length
+            ])
+        }
 
     })
     module.exports = tweetBoxView;

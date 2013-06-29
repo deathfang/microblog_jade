@@ -10,16 +10,11 @@ define(function(require,exports,module){
     var tweetBoxView = Backbone.View.extend({
         el:'.tweet-box',
         events:{
-            'focus .textbox':function(){
-                this.toggleCondensed();
-                if (tweetbox.get('updated')) {
-                    this.$editor.html("");
-                    this.htmlRich.setSelectionOffsets([0])
-                }
-//                focusEditor()
-            },
-            'blur .textbox':'toggleCondensed',
-            'keydown .textbox':'updateOnEnter'
+            'focus .textbox':'openEdit',
+            'blur .textbox':'close',
+            'keydown .textbox':'updateOnEnter',
+            'keyup.withRichEditor .textbox':'',
+            'paste.withRichEditor .textbox':''
         },
         initialize:function(){
             this.PLACEHOLDER = '<div>撰写新推文...</div>',
@@ -34,9 +29,7 @@ define(function(require,exports,module){
 
             tweetbox.fetch();
 
-            if (tweetbox.get('updated')) {
-                this.$editor.focus(this.loadFocus).focus();
-            }
+            this.loadFocus();
         },
         render:function(){
             commonView.textLengthTips(
@@ -59,8 +52,15 @@ define(function(require,exports,module){
             tweetbox.get('text')
         },
         toggleCondensed:function(){
-            this.$el.toggleClass("uncondensed",this.isWhitespace());
-            this.isWhitespace() && this.$editor.html(this.PLACEHOLDER);
+            this.$el.toggleClass("uncondensed",!tweetbox.get('updated'));
+        },
+        openEdit:function(){
+            this.toggleCondensed();
+            !tweetbox.get('updated') && this.$editor.html('');
+        },
+        close:function(){
+            this.toggleCondensed();
+            !tweetbox.get('updated') && this.$editor.html(this.PLACEHOLDER);
         },
         isWhitespace:function(){
             return !!this.getText().trim()
@@ -72,9 +72,13 @@ define(function(require,exports,module){
         },
         htmlRich:htmlText(this.editor,UA),
         loadFocus:function(){
-            this.htmlRich.setSelectionOffsets([
-                commonView.getTextWrap(this.editor).length
-            ])
+            if (tweetbox.get('updated')) {
+                this.$editor.focus(function(){
+                    this.htmlRich.setSelectionOffsets([
+                        commonView.getTextWrap(this.editor).length
+                    ])
+                }).focus();
+            }
         }
 
     })

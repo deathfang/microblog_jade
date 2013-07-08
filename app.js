@@ -60,7 +60,7 @@ require('./routes')(app);
 
 if (!module.parent) {
     app.listen(config.port);
-    console.log("Express server listening on port %d in %s mode");
+    console.log("Express server listening on port %d in %s mode",config.port, app.settings.env);
 }
 
 /**

@@ -4,17 +4,18 @@ define(function(require,exports,module){
     var UA = require.async('UA');
     var htmlText = require('html-text');
     var util = require('../util');
-    var commonView = require('./common_post');
-    var messagesAlert = require('./message_alert');
-    var tweetbox = new (require('../models/tweetbox'));
-    var tweetBoxView = Backbone.View.extend({
+    var CommonTweetView = require('./common_tweet');
+    var MessagesAlert = require('./message_alert');
+    var TweetBox = require('../models/tweetbox');
+    var TweetBoxView = Backbone.View.extend({
         el:'.tweet-box',
         events:{
             'focus .textbox':'openEdit',
             'blur .textbox':'close',
             'keydown .textbox':'updateOnEnter',
-            'keyup.withRichEditor .textbox':'',
-            'paste.withRichEditor .textbox':''
+            'keyup.withRichEditor .textbox':'withRichEditor',
+            'paste.withRichEditor .textbox':'withRichEditor',
+            'submit form':'createOnePost'
         },
         initialize:function(){
             this.PLACEHOLDER = '<div>撰写新推文...</div>',
@@ -24,19 +25,18 @@ define(function(require,exports,module){
             this.textLength = this.$('.tweet-counter'),
             this.button = this.$('button');
             //首次load需要reset
-            this.listenTo(tweetbox,'reset',this.render);
-            this.listenTo(tweetbox,'change',this.render);
+            this.listenTo(TweetBox,'reset',this.render);
+            this.listenTo(TweetBox,'change:text',this.render);
 
-            tweetbox.fetch();
+            TweetBox.fetch();
 
             this.loadFocus();
         },
         render:function(){
-            commonView.textLengthTips(
+            CommonTweetView.textLengthTips(
                 this.textLength,this.getText(),
                 this.disable,this.enable
             );
-            this.$editor.html(tweetbox.get('html'));
         },
         enable:function(){
             this.button.removeClass("disabled")
@@ -49,21 +49,21 @@ define(function(require,exports,module){
                 .removeClass('btn-primary')
         },
         getText : function(){
-            tweetbox.get('text')
+            TweetBox.get('text')
         },
         toggleCondensed:function(){
-            this.$el.toggleClass("uncondensed",!tweetbox.get('updated'));
+            this.$el.toggleClass("uncondensed",!TweetBox.get('updated'));
         },
         openEdit:function(){
             this.toggleCondensed();
-            !tweetbox.get('updated') && this.$editor.html('');
+            !TweetBox.get('updated') && this.$editor.html('');
         },
         close:function(){
             this.toggleCondensed();
-            !tweetbox.get('updated') && this.$editor.html(this.PLACEHOLDER);
+            !TweetBox.get('updated') && this.$editor.html(this.PLACEHOLDER);
         },
         isWhitespace:function(){
-            return !!this.getText().trim()
+            return !this.getText().trim()
         },
         updateOnEnter:function(e){
             //Mac习惯用command
@@ -72,15 +72,61 @@ define(function(require,exports,module){
         },
         htmlRich:htmlText(this.editor,UA),
         loadFocus:function(){
-            if (tweetbox.get('updated')) {
+            if (TweetBox.get('updated')) {
                 this.$editor.focus(function(){
                     this.htmlRich.setSelectionOffsets([
-                        commonView.getTextWrap(this.editor).length
+                        CommonTweetView.getTextWrap(this.editor).length
                     ])
                 }).focus();
+                this.$editor.html(TweetBox.get('html'));
             }
+        },
+        saveData:function(){
+            TweetBox.save({
+                text:this.$editor.text(),
+                html:this.$editor.html()
+            });
+            TweetBox.save({
+                updated:this.isWhitespace() ? false : true
+            })
+        },
+        withRichEditor:function(){
+            CommonTweetView.withRichEditor.bind(this,TweetBox)
+        },
+        createOnePost:function(e){
+            e.preventDefault();
+            this.$el.addClass("tweeting");
+            $.post("/post",{post:CommonTweetView.getTextWrap(this.editor)},function(res){
+                this.$el.removeClass("tweeting");
+                var newPost = $(res).addClass('animate-hide animate-opacity');
+                newPost.children().css('opacity',0);
+                $(".postlist").prepend(newPost);
+                this.tweetCount.text(parseInt(this.tweetCount.text()) + 1);
+                var newPostTime = newPost.find(".time");
+                util.timer(newPostTime);
+                $.when(function(){
+                        var dfd = $.Deferred();
+                        setTimeout(function(){
+                            newPost.removeClass('animate-hide');
+                            dfd.resolve()
+                        },0)
+                        return dfd.promise()
+                    }()).done(function(){
+                        newPost.children().fadeTo(500,1);
+                        setTimeout(function(){
+                            newPost.removeClass('animate-opacity');
+                            new MessagesAlert({
+                                text:"你的推文已发布!",
+                                duration:1500,
+                                className:"alert-tips"
+                            })
+                        },500)
+                    })
+//                storePostText.backup(newPost.attr('id'),tweetbox.get('html'));
+                TweetBox.save({text:'',updated:false});
+                this.editor.blur();
+            })
         }
-
     })
-    module.exports = tweetBoxView;
+    module.exports = TweetBoxView;
 })

@@ -3,7 +3,7 @@ define(function(require, exports, module){
     var Backbone = require('backbone');
     var $ = require('jquery');
     var messageTmpl = require('../templates/message_alert.html');
-    var messagesAlert = Backbone.View.extend({
+    var MessagesAlert = Backbone.View.extend({
         template: _.template(messageTmpl),
         initialize:function(){
             this.render()
@@ -19,5 +19,5 @@ define(function(require, exports, module){
             return this;
         }
     });
-    module.exports = messagesAlert;
+    module.exports = MessagesAlert;
 })

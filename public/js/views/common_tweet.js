@@ -1,7 +1,12 @@
 define(function(require,exports,module){
+    require.async('../../lib/jquery-plugins/bootstrap-modal.js');
+    var _ = require.async('_');
     var $ = require('jquery');
     var util = require('../util');
-    var twitterText = require('twitterText');
+    var actionHTML = require('../templates/post_action.html');
+    var modalTmpl = require('../templates/modal.html');
+    var twitterText = require.async('twitterText');
+    var body = $('body');
     var CommonTweetView = Backbone.View.extend({
         initialize:function(){
 
@@ -30,7 +35,7 @@ define(function(require,exports,module){
                 $(element).html().replace(/<br>/g,"&#10;").replace(util.REG_NOHTML,'')
         },
         withRichEditor:function(model){
-            this.saveData();
+            this.saveEditData();
             var currentRange = window.getSelection().getRangeAt(0);
             var currentNode = currentRange.endContainer;
             var currentHTML = currentNode.previousSibling && currentNode.previousSibling.innerHTML || currentNode.data;
@@ -80,6 +85,35 @@ define(function(require,exports,module){
                 this.htmlRich.setSelectionOffsets([parseInt(cursorPosition)]);
 
             }
+        },
+        tweetDialog : function(attributes,resize,disable,enable,callback){
+            var callback = typeof resize === "function" ? resize : callback;
+            itemHTML.replace(actionHTML,"").replace(/<span.+保存成功.+\/span>/,"");
+            var dialog = $(_.template(modalTmpl)(attributes));
+            //测试初次弹层显示时监听show shown无效
+            dialog.modal().css({marginTop:-dialog.outerHeight()/2 + "px"}).addClass('fade_in');
+            body.addClass('modal-enabled');
+
+//            //回车确认删除时 tweet-text.js 焦点会引发错误 contentEditable = false修复
+//            tweetBoxState.disable();
+            disable();
+            dialog.on("shown",function(){
+                //tweet编辑时 内容改变 重新计算
+                resize === true && dialog.css({marginTop:-dialog.outerHeight()/2 + "px"});
+                body.addClass('modal-enabled');
+//                tweetBoxState.disable();
+                disable();
+            })
+            dialog.on("hidden",function(){
+                body.removeClass('modal-enabled');
+//                tweetBoxState.enable();
+                enable();
+            })
+            var actionButton = dialog.find('[data-action]').on('click.delDialog',callback);
+            dialog.keyup(function(e){
+                e.keyCode === 13 && actionButton.trigger('click.delDialog');
+            })
+            return dialog;
         }
     });
     module.exports = new CommonTweetView

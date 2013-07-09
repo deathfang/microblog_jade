@@ -3,7 +3,8 @@ define(function(require,exports,module){
     var Tweet = Backbone.Model.extend({
         defaults:{
             text:'',
-            html:''
+            html:'',
+            updated:false
         }
     })
     module.exports = Tweet;

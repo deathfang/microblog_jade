@@ -4,5 +4,5 @@ define(function(require,exports,module){
     var TweetList = Backbone.Model.extend({
         model:Tweet
     })
-    module.exports = TweetList;
+    module.exports = new TweetList;
 })

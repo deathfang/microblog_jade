@@ -5,10 +5,12 @@ define(function(require,exports,module){
     var htmlText = require('html-text');
     var util = require('../util');
     var CommonTweetView = require('./common_tweet');
-    var MessagesAlert = require('./message_alert');
+    var MessagesAlert = require.async('./message_alert');
     var TweetBox = require('../models/tweetbox');
+    var TweetList = require('../collections/tweets');
     var TweetBoxView = Backbone.View.extend({
         el:'.tweet-box',
+        model:TweetBox,
         events:{
             'focus .textbox':'openEdit',
             'blur .textbox':'close',
@@ -25,16 +27,16 @@ define(function(require,exports,module){
             this.textLength = this.$('.tweet-counter'),
             this.button = this.$('button');
             //首次load需要reset
-            this.listenTo(TweetBox,'reset',this.render);
-            this.listenTo(TweetBox,'change:text',this.render);
+            this.listenTo(this.model,'reset',this.render);
+            this.listenTo(this.model,'change:text',this.render);
 
-            TweetBox.fetch();
+            this.model.fetch();
 
             this.loadFocus();
         },
         render:function(){
             CommonTweetView.textLengthTips(
-                this.textLength,this.getText(),
+                this.textLength,this.model.get('text'),
                 this.disable,this.enable
             );
         },
@@ -48,22 +50,19 @@ define(function(require,exports,module){
                 .attr("disabled",true)
                 .removeClass('btn-primary')
         },
-        getText : function(){
-            TweetBox.get('text')
-        },
         toggleCondensed:function(){
-            this.$el.toggleClass("uncondensed",!TweetBox.get('updated'));
+            this.$el.toggleClass("uncondensed",!this.model.get('updated'));
         },
         openEdit:function(){
             this.toggleCondensed();
-            !TweetBox.get('updated') && this.$editor.html('');
+            !this.model.get('updated') && this.$editor.html('');
         },
         close:function(){
             this.toggleCondensed();
-            !TweetBox.get('updated') && this.$editor.html(this.PLACEHOLDER);
+            !this.model.get('updated') && this.$editor.html(this.PLACEHOLDER);
         },
         isWhitespace:function(){
-            return !this.getText().trim()
+            return !this.model.get('text').trim()
         },
         updateOnEnter:function(e){
             //Mac习惯用command
@@ -72,26 +71,26 @@ define(function(require,exports,module){
         },
         htmlRich:htmlText(this.editor,UA),
         loadFocus:function(){
-            if (TweetBox.get('updated')) {
+            if (this.model.get('updated')) {
                 this.$editor.focus(function(){
                     this.htmlRich.setSelectionOffsets([
                         CommonTweetView.getTextWrap(this.editor).length
                     ])
                 }).focus();
-                this.$editor.html(TweetBox.get('html'));
+                this.$editor.html(this.model.get('html'));
             }
         },
-        saveData:function(){
-            TweetBox.save({
+        saveEditData:function(){
+            this.model.save({
                 text:this.$editor.text(),
                 html:this.$editor.html()
             });
-            TweetBox.save({
+            this.model.save({
                 updated:this.isWhitespace() ? false : true
             })
         },
         withRichEditor:function(){
-            CommonTweetView.withRichEditor.bind(this,TweetBox)
+            CommonTweetView.withRichEditor.bind(this,this.model)
         },
         createOnePost:function(e){
             e.preventDefault();
@@ -121,12 +120,12 @@ define(function(require,exports,module){
                                 className:"alert-tips"
                             })
                         },500)
-                    })
-//                storePostText.backup(newPost.attr('id'),tweetbox.get('html'));
-                TweetBox.save({text:'',updated:false});
+                    });
+                TweetList.add(_.extend({backup:true},this.model.toJSON()));
+                this.model.save({text:'',updated:false});
                 this.editor.blur();
             })
         }
     })
-    module.exports = TweetBoxView;
+    module.exports = new TweetBoxView;
 })

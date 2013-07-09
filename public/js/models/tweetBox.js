@@ -8,6 +8,6 @@ define(function(require,exports,module){
             updated:false
         },
         localStorage:new Backbone.LocalStorage('tweetbox')
-    })
-    module.exports = TweetBox;
+    });
+    module.exports = new TweetBox;
 })

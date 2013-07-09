@@ -12,6 +12,7 @@ define(function(require,exports,module){
             'click .icon-remove':'delete'
         },
         initialize:function(){
+            this.postID = this.el.id;
             this.textLength = this.$('.tweet-counter');
             this.saveButton = this.$('.icon-save');
             this.listenTo(this.model, 'change:text', this.render);
@@ -47,7 +48,7 @@ define(function(require,exports,module){
                     }).done(function(){
                             if (this.model.get('backup')){
                                 setTimeout(function(){
-                                    TweetBoxView.model.save(_.extend({},this.model,{updated:true}));
+                                    TweetBoxView.model.save(_.extend({},this.model.toJSON(),{updated:true}));
                                     TweetBoxView.$editor.html(this.model.get('html')).focus();
                                     //alert tips消失后再恢复
                                     this.model.destroy();
@@ -55,14 +56,12 @@ define(function(require,exports,module){
                             }
                         })
                     dialog.remove();
-                    dialog = null;
-
+                    this.model.set({deleteDialog:null});
                 }
             });
         },
         delete:function(e){
             e.preventDefault();
-            var postID = this.el.id;
             var tweetBoxState = function(){
                 return this.model.get("backup") ? {
                     enable:function(){
@@ -79,16 +78,28 @@ define(function(require,exports,module){
             }();
             if (!this.model.get('deleteDialog')) {
                 this.model.set({
-                    deleteDialog:CommonTweetView.tweetDialog("delete-tweet-dialog-" + postID,"确定要删除这条推文吗?",post.html(),"删除",function(){
-                        actionCallback(post,postID,deleteDialog[postID])
+                    deleteDialog:CommonTweetView.tweetDialog({
+                        id:'delete-tweet-dialog-' + this.postID,
+                        title:'确定要删除这条推文吗?',
+                        itemHTML:this.model.get('html'),
+                        action:'删除'
+                    },false,tweetBoxState.disable,tweetBoxState.enable,function(){
+                        this.remove(this.postID,this.model.get('deleteDialog'))
                     })
                 });
-            }else if(updatePOST){
-                deleteDialog[postID] = tUtil.tweetDialog("delete-tweet-dialog-" + postID,"确定要删除这条推文吗?",post.html(),"删除",true,function(){
-                    actionCallback(post,postID,deleteDialog[postID])
+            }else if(this.model.get('updated')){
+                this.model.set({
+                    deleteDialog:CommonTweetView.tweetDialog({
+                        id:'delete-tweet-dialog-' + this.postID,
+                        title:'确定要删除这条推文吗?',
+                        itemHTML:this.model.get('html'),
+                        action:'删除'
+                    },true,tweetBoxState.disable,tweetBoxState.enable,function(){
+                        this.remove(this.postID,this.model.get('deleteDialog'))
+                    })
                 });
             }else{
-                deleteDialog[postID].modal();
+                this.model.get('deleteDialog').modal();
             }
         }
 

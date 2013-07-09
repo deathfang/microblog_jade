@@ -121,7 +121,7 @@ define(function(require,exports,module){
                             })
                         },500)
                     });
-                TweetList.add(_.extend({backup:true},this.model.toJSON()));
+                TweetList.add(_.extend({backup:true},this.model.toJSON(),{updated:false}));
                 this.model.save({text:'',updated:false});
                 this.editor.blur();
             })

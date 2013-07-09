@@ -87,7 +87,6 @@ define(function(require,exports,module){
             }
         },
         tweetDialog : function(attributes,resize,disable,enable,callback){
-            var callback = typeof resize === "function" ? resize : callback;
             itemHTML.replace(actionHTML,"").replace(/<span.+保存成功.+\/span>/,"");
             var dialog = $(_.template(modalTmpl)(attributes));
             //测试初次弹层显示时监听show shown无效

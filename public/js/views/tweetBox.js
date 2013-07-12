@@ -10,7 +10,6 @@ define(function(require,exports,module){
     var TweetList = require('../collections/tweets');
     var TweetBoxView = Backbone.View.extend({
         el:'.tweet-box',
-        model:TweetBox,
         events:{
             'focus .textbox':'openEdit',
             'blur .textbox':'close',
@@ -20,11 +19,12 @@ define(function(require,exports,module){
             'submit form':'createOnePost'
         },
         initialize:function(){
-            this.PLACEHOLDER = '<div>撰写新推文...</div>',
-            this.tweetCount = $('.stats li:first strong'),
-            this.$editor = this.$(".textbox"),
-            this.editor = this.$editor[0],
-            this.textLength = this.$('.tweet-counter'),
+            this.model = new TweetBox;
+            this.PLACEHOLDER = '<div>撰写新推文...</div>';
+            this.tweetCount = $('.stats li:first strong');
+            this.$editor = this.$(".textbox");
+            this.editor = this.$editor[0];
+            this.textLength = this.$('.tweet-counter');
             this.button = this.$('button');
             //首次load需要reset
             this.listenTo(this.model,'reset',this.render);
@@ -90,7 +90,7 @@ define(function(require,exports,module){
             })
         },
         withRichEditor:function(){
-            CommonTweetView.withRichEditor.bind(this,this.model)
+            CommonTweetView.withRichEditor.bind(this,this.model)()
         },
         createOnePost:function(e){
             e.preventDefault();
@@ -115,10 +115,9 @@ define(function(require,exports,module){
                         setTimeout(function(){
                             newPost.removeClass('animate-opacity');
                             new MessagesAlert({
-                                text:"你的推文已发布!",
-                                duration:1500,
-                                className:"alert-tips"
-                            })
+                                text:'你的推文已发布',
+                                duration:1500
+                            });
                         },500)
                     });
                 TweetList.add(_.extend({backup:true},this.model.toJSON(),{updated:false}));

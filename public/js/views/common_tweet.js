@@ -3,8 +3,8 @@ define(function(require,exports,module){
     var _ = require.async('_');
     var $ = require('jquery');
     var util = require('../util');
-    var actionHTML = require('../templates/post_action.html');
-    var modalTmpl = require('../templates/modal.html');
+    var actionHTML = require('../templates/post_action.handlebars');
+    var modalCompiled  = require('../templates/modal.handlebars');
     var twitterText = require.async('twitterText');
     var body = $('body');
     var CommonTweetView = Backbone.View.extend({
@@ -35,11 +35,9 @@ define(function(require,exports,module){
                 $(element).html().replace(/<br>/g,"&#10;").replace(util.REG_NOHTML,'')
         },
         withRichEditor:function(model){
-            this.saveEditData();
             var currentRange = window.getSelection().getRangeAt(0);
             var currentNode = currentRange.endContainer;
             var currentHTML = currentNode.previousSibling && currentNode.previousSibling.innerHTML || currentNode.data;
-//            var htmlRich = htmlText(oPostEditor,UA);
             var cursorPosition = this.htmlRich.getSelectionOffsets();
             var html,urls;
             if (twitterText.extractUrls(currentHTML).length && !this.$editor.attr("data-in-composition")){
@@ -83,12 +81,12 @@ define(function(require,exports,module){
                     model.get('html').replace('</em>','') + '</em>'
                 )
                 this.htmlRich.setSelectionOffsets([parseInt(cursorPosition)]);
-
+                this.saveEditData();
             }
         },
         tweetDialog : function(attributes,resize,disable,enable,callback){
-            itemHTML.replace(actionHTML,"").replace(/<span.+保存成功.+\/span>/,"");
-            var dialog = $(_.template(modalTmpl)(attributes));
+            itemHTML.replace(actionHTML({}),"").replace(/<span.+保存成功.+\/span>/,"");
+            var dialog = $(modalCompiled(attributes));
             //测试初次弹层显示时监听show shown无效
             dialog.modal().css({marginTop:-dialog.outerHeight()/2 + "px"}).addClass('fade_in');
             body.addClass('modal-enabled');

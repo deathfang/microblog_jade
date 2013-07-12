@@ -1,9 +1,5 @@
 module.exports = function (grunt) {
     var transport = require('grunt-cmd-transport');
-    var style = transport.style.init(grunt);
-    var text = transport.text.init(grunt);
-    var script = transport.script.init(grunt);
-
     grunt.initConfig({
         pkg : grunt.file.readJSON("package.json"),
 
@@ -11,10 +7,8 @@ module.exports = function (grunt) {
             options : {
                 paths : ['.'],
                 alias: '<%= pkg.spm.alias %>',
-                parsers : {
-                    '.js' : [script.jsParser],
-                    '.css' : [style.css2jsParser],
-                    '.html' : [text.html2jsParser]
+                handlebars:{
+                    id:'lib/runtime'
                 }
             },
             main:{

@@ -9,5 +9,5 @@ define(function(require,exports,module){
         },
         localStorage:new Backbone.LocalStorage('tweetbox')
     });
-    module.exports = new TweetBox;
+    module.exports = TweetBox;
 })

@@ -43,11 +43,12 @@ html
         script(src="/seajs/sea.js")
         script
             seajs.config({
-                "preload":"/seajs/seajs-text",
+                "preload":["seajs/seajs-text"],
                 "alias": {
                     "jquery":"lib/jquery",
                     "_":"lib/underscore",
                     "backbone":"lib/backbone",
+                    "handlebars": 'lib/handlebars',
                     "UA":"lib/yui-ua",
                     "moment":"lib/moment",
                     "html-text":"lib/html-text",

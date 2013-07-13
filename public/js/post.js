@@ -134,11 +134,11 @@ define(function(require) {
                         })
                     // tbutton.active().highlight();
                     dialog.remove();
-                    dialog = null;
+                    dialog.off('click');
                 }
             });
         }
-    postList.delegate(".icon-remove","click",function(e){
+    postList.on("click",".icon-remove",function(e){
         e.preventDefault();
         var post = $(this).parents(".media"),
             postID = post.attr("id");
@@ -154,7 +154,7 @@ define(function(require) {
             deleteDialog[postID].modal();
         }
     });
-    postList.delegate(".icon-edit","click",function(e){
+    postList.on("click",".icon-edit",function(e){
         e.preventDefault();
         var postEditor = $(this).parents(".media").find(".post p"),
             o_postEditor = postEditor.get(0),

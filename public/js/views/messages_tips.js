@@ -2,9 +2,9 @@ define(function(require, exports, module){
     require.async('../../lib/jquery-plugins/bootstrap-alert.js');
     var Backbone = require('backbone');
     var $ = require('jquery');
-    var messageTmpl = require('../templates/message_alert.handlebars');
+    var messageCompiled = require('../templates/message_alert.handlebars');
     var MessagesAlert = Backbone.View.extend({
-        template: _.template(messageTmpl),
+        template: messageCompiled,
         initialize:function(options){
             this.text = options.text;
             this.duration = options.duration;
@@ -12,7 +12,7 @@ define(function(require, exports, module){
             this.render()
         },
         render:function(){
-            this.$el.html(template({text:this.text})).append($("body"));
+            this.$el.html(this.template({text:this.text})).appendTo($("body"));
             this.$el.addClass(this.newClassName)
             setTimeout(function() {
                 this.$el.alert("close")

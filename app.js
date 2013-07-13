@@ -57,7 +57,7 @@ app.configure('production', function () {
 
 //lessToCSS();
 require('./routes')(app);
-
+//app.set('env', 'production');
 if (!module.parent) {
     app.listen(config.port);
     console.log("Express server listening on port %d in %s mode",config.port, app.settings.env);

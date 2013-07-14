@@ -160,7 +160,7 @@ define(function(require) {
             o_postEditor = postEditor.get(0),
             saveButton = $(this).next(),
             tweetLength = saveButton.next(),
-            postText = postEditor.text().trim(),
+            postText = postEditor.text(),
             postID = postEditor.parents('.media').attr('id'),
             postTime = $("#" + postID + ' .time');
 
@@ -202,15 +202,15 @@ define(function(require) {
                     saveButton.addClass("hide");
                     tweetLength.addClass("hide");
                     var savelabel;
-                    if (postEditor.find('.modal').length < 1) {
+                    if (postEditor.parent().find('.modal').length < 1) {
                         savelabel = $('<span class="modal hide fade">保存成功</span>').appendTo(postEditor.parent());
                     }else {
-                        savelabel = postEditor.find('.modal');
+                        savelabel = postEditor.parent().find('.modal');
                     }
                     savelabel.modal({backdrop:false})
                     savelabel.on('shown',function(){
-                        saveButton.unbind('click');
-                        postEditor.unbind('keydown');
+                        saveButton.off('click');
+                        postEditor.off('keydown');
                         setTimeout(function(){
                             savelabel.modal('hide');
                         },1000)

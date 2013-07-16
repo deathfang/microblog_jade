@@ -1,5 +1,5 @@
 define(function(require, exports, module){
-    require.async('../../lib/jquery-plugins/bootstrap-alert.js');
+    require.async('lib/jquery-plugins/bootstrap-alert.js');
     var Backbone = require('backbone');
     var $ = require('jquery');
     var messageCompiled = require('../templates/message_alert.handlebars');

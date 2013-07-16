@@ -108,7 +108,7 @@ define(function(require,exports,module){
                         setTimeout(function(){
                             newPost.removeClass('animate-hide');
                             dfd.resolve()
-                        },0)
+                        })
                         return dfd.promise()
                     }()).done(function(){
                         newPost.children().fadeTo(500,1);

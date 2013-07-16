@@ -1,5 +1,5 @@
 define(function(require,exports,module){
-    require.async('../../lib/jquery-plugins/bootstrap-tooltip.js');
+    require.async('lib/jquery-plugins/bootstrap-tooltip.js');
     var Backbone = require('backbone');
     var $ = require('jquery');
     var util = require('../util');
@@ -24,7 +24,7 @@ define(function(require,exports,module){
         tagName:'li',
         className:'.media',
         events:{
-            'click .icon-remove':'preDelete',
+            'click .icon-remove':'delClick',
             'click .icon-edit':'edit',
             'click .icon-save':'preSave',
             'keydown .post p':'updateOnEnter',
@@ -89,7 +89,7 @@ define(function(require,exports,module){
                 action:'删除'
             }
         },
-        preDelete:function(e){
+        delClick:function(e){
             e.preventDefault();
             var tweetBoxState = tweetBoxState(this.model);
             if (!this.model.get('deleteDialog')) {

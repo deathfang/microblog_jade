@@ -1,5 +1,5 @@
 define(function(require,exports,module){
-    require.async('../../lib/jquery-plugins/bootstrap-modal.js');
+    require.async('lib/jquery-plugins/bootstrap-modal.js');
     var _ = require.async('_');
     var $ = require('jquery');
     var util = require('../util');

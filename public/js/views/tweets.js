@@ -20,9 +20,7 @@ define(function(require,exports,module){
             disable:function(){}
         }
     };
-    var TweetsView = Backbone.View.extend({
-        tagName:'li',
-        className:'.media',
+    var TweetView = Backbone.View.extend({
         events:{
             'click .icon-remove':'delClick',
             'click .icon-edit':'edit',
@@ -31,12 +29,14 @@ define(function(require,exports,module){
             'keyup.withRichEditor .post p':'withRichEditor',
             'paste.withRichEditor .post p':'withRichEditor'
         },
-        initialize:function(){
+        initialize:function(options){
+            this.className = options.className;
             this.$editor = this.$('.post p');
             this.editor = this.$editor[0];
             this.textLength = this.$('.tweet-counter');
             this.saveButton = this.$('.icon-save');
             this.oldText = this.model.get('text');
+            this.editorContainer  = this.$editor.parent();
             this.listenTo(this.model, 'change:text', this.render);
         },
         render:function(){
@@ -70,14 +70,12 @@ define(function(require,exports,module){
                             if (this.model.get('backup')){
                                 setTimeout(function(){
                                     TweetBoxView.model.save(_.extend({},this.model.toJSON(),{updated:true}));
-                                    TweetBoxView.editor.focus();
+                                    TweetBoxView.$editor.html(TweetBoxView.model.get('html')).focus();
                                     //alert tips消失后再恢复
                                     this.model.destroy();
                                 },1000)
                             }
                         })
-                    dialog.remove();
-                    dialog.off('click');
                 }
             });
         },
@@ -92,28 +90,24 @@ define(function(require,exports,module){
         delClick:function(e){
             e.preventDefault();
             var tweetBoxState = tweetBoxState(this.model);
-            if (!this.model.get('deleteDialog')) {
-                this.model.set({
-                    deleteDialog:CommonTweetView.tweetDialog(
-                        this.delDialogAttrs(),false,
-                        tweetBoxState.disable,tweetBoxState.enable,
-                        function(){
-                            this.delete(this.id,this.model.get('deleteDialog'))
-                        }
-                    )
-                });
+            if (!this.deleteDialog) {
+                this.deleteDialog = CommonTweetView.tweetDialog(
+                    this.delDialogAttrs(),false,
+                    tweetBoxState.disable,tweetBoxState.enable,
+                    function(){
+                        this.delete(this.id,this.deleteDialog)
+                    }
+                )
             }else if(this.model.get('updated')){
-                this.model.set({
-                    deleteDialog:CommonTweetView.tweetDialog(
-                        this.delDialogAttrs(),true,
-                        tweetBoxState.disable,tweetBoxState.enable,
-                        function(){
-                            this.delete(this.id,this.model.get('deleteDialog'))
-                        }
-                    )
-                });
+                this.deleteDialog = CommonTweetView.tweetDialog(
+                    this.delDialogAttrs(),false,
+                    tweetBoxState.disable,tweetBoxState.enable,
+                    function(){
+                        this.delete(this.id,this.deleteDialog)
+                    }
+                );
             }else{
-                this.model.get('deleteDialog').modal();
+                this.deleteDialog.modal();
             }
         },
         edit:function(e){
@@ -128,27 +122,21 @@ define(function(require,exports,module){
             $.post('/edit/'+ this.id,{post:CommonTweetView.getTextWrap(this.editor)},function(res){
                 if (res.content) {
                     this.$editor.html(res.content);
-                    this.$editor.find('.time').replaceWith(res.time);
+                    this.editorContainer.prev().replaceWith(res.time);
                     var newPostTime = $('#' + postID + ' .time');
                     util.timer(newPostTime);
                     this.$editor.attr({contenteditable:false}).blur();
                     this.saveButton.addClass("hide");
                     this.textLength.addClass("hide");
-                    var savelabel;
-                    if (postEditor.find('.modal').length < 1) {
-                        savelabel = $('<span class="modal hide fade">保存成功</span>').appendTo(postEditor.parent());
-                    }else {
-                        savelabel = postEditor.find('.modal');
-                    }
-                    savelabel.modal({backdrop:false})
-                    savelabel.on('shown',function(){
-                        saveButton.unbind('click');
-                        postEditor.unbind('keydown');
+                    !this.saveLabel && (this.saveLabel =
+                        $('<span class="modal hide fade">保存成功</span>').appendTo(this.editorContainer)
+                    );
+                    this.saveLabel.modal({backdrop:false})
+                    this.saveLabel.on('shown',function(){
                         setTimeout(function(){
-                            savelabel.modal('hide');
+                            this.saveLabel.modal('hide');
                         },1000)
                     });
-                    storePostText.backup(postID,postEditor.html());
                 }
             });
         },
@@ -158,16 +146,15 @@ define(function(require,exports,module){
             }
         },
         textWarn:function(){
-            var post = this.$editor.parent();
-            post.tooltip({
+            this.editorContainer.tooltip({
                 title:"修改下嘛( ´◔ ‸◔`)！",
                 trigger:"manual"
             }).tooltip('show');
             setTimeout(function(){
-                post.tooltip('hide');
+                this.editorContainer.tooltip('hide');
             },1500)
         },
-        saveDate:function(){
+        saveEditData:function(){
             this.model.set({
                 text:this.$editor.text(),
                 html:this.$editor.html()
@@ -180,5 +167,5 @@ define(function(require,exports,module){
             CommonTweetView.withRichEditor.bind(this,this.model)()
         }
     })
-    module.exports = TweetsView;
+    module.exports = TweetView;
 })

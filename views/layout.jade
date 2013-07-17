@@ -55,13 +55,15 @@ html
                     "twitterText":"lib/twitter-text"
                 }
             });
-            seajs.use(['jquery','js/post'],function($){
+            seajs.use(['jquery','js/views/tweetbox','js/views/tweetlist'],function($,TweetBoxView,TweetListView){
                 $(document).on("compositionstart", function(e){
                     e.target.setAttribute("data-in-composition", "true")
                 });
                 $(document).on("compositionend", function(e){
                     e.target.removeAttribute("data-in-composition")
                 });
+                new TweetBoxView;
+                new TweetListView;
             })
 
 

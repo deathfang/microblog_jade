@@ -8,6 +8,7 @@ define(function(require,exports,module){
     var MessagesAlert = require.async('./message_alert');
     var TweetBox = require('../models/tweetbox');
     var TweetList = require('../collections/tweets');
+    var TweetView = require('./tweets');
     var TweetBoxView = Backbone.View.extend({
         el:'.tweet-box',
         events:{
@@ -120,6 +121,9 @@ define(function(require,exports,module){
                             });
                         },500)
                     });
+                TweetList.once('add',function(tweet){
+                    new TweetView({model:tweet,el:newPost[0]});
+                })
                 TweetList.add(_.extend({backup:true},this.model.toJSON(),{updated:false}));
                 this.model.save({text:'',updated:false});
                 this.editor.blur();

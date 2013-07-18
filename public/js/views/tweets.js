@@ -4,7 +4,7 @@ define(function(require,exports,module){
     var $ = require('jquery');
     var util = require('../util');
     var CommonTweetView = require('./common_tweet');
-    var MessagesAlert = require.async('./message_alert');
+    var MessagesAlert = require.async('./messages_tips');
     var TweetBoxView = require('./tweetbox');
     var tweetBoxState = function(model){
         return model.get("backup") ? {
@@ -30,7 +30,8 @@ define(function(require,exports,module){
             'paste.withRichEditor .post p':'withRichEditor'
         },
         initialize:function(options){
-            this.className = options.className;
+            console.log('tweetvIEW')
+            this.el = options.el;
             this.$editor = this.$('.post p');
             this.editor = this.$editor[0];
             this.textLength = this.$('.tweet-counter');
@@ -73,7 +74,7 @@ define(function(require,exports,module){
                                     TweetBoxView.$editor.html(TweetBoxView.model.get('html')).focus();
                                     //alert tips消失后再恢复
                                     this.model.destroy();
-                                },1000)
+                                }.bind(this),1000)
                             }
                         })
                 }
@@ -135,7 +136,7 @@ define(function(require,exports,module){
                     this.saveLabel.on('shown',function(){
                         setTimeout(function(){
                             this.saveLabel.modal('hide');
-                        },1000)
+                        }.bind(this),1000)
                     });
                 }
             });

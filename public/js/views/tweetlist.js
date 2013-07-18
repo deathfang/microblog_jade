@@ -11,6 +11,7 @@ define(function(require,exports,module){
         },
         initialize:function(){
 //            this.listenTo(TweetList, 'add', this.addOne);
+            console.log('tweetlist')
             this.render();
         },
         render:function(){

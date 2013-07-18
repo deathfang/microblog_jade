@@ -1,7 +1,8 @@
 define(function(require,exports,module){
+    require.async('lib/jquery-plugins/bootstrap-transition');
     require.async('lib/jquery-plugins/bootstrap-modal.js');
     require.async("lib/jquery-plugins/drag");
-    var _ = require.async('_');
+    var Backbone = require('backbone');
     var $ = require('jquery');
     var util = require('../util');
     var actionHTML = require('../templates/post_action.handlebars');
@@ -10,7 +11,6 @@ define(function(require,exports,module){
     var body = $('body');
     var CommonTweetView = Backbone.View.extend({
         initialize:function(){
-
         },
         textLengthTips : function(msgtips,val,disable,enable){
             var msglen = util.messageLength(val),

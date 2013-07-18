@@ -5,10 +5,10 @@ define(function(require,exports,module){
     var htmlText = require('html-text');
     var util = require('../util');
     var CommonTweetView = require('./common_tweet');
-    var MessagesAlert = require.async('./message_alert');
+    var MessagesAlert = require('./messages_tips');
     var TweetBox = require('../models/tweetbox');
     var TweetList = require('../collections/tweets');
-    var TweetView = require('./tweets');
+//    var TweetView = require('./tweets');
     var TweetBoxView = Backbone.View.extend({
         el:'.tweet-box',
         events:{
@@ -20,6 +20,7 @@ define(function(require,exports,module){
             'submit form':'createOnePost'
         },
         initialize:function(){
+            console.log('tweetbox')
             this.model = new TweetBox;
             this.PLACEHOLDER = '<div>撰写新推文...</div>';
             this.tweetCount = $('.stats li:first strong');
@@ -30,9 +31,7 @@ define(function(require,exports,module){
             //首次load需要reset
             this.listenTo(this.model,'reset',this.render);
             this.listenTo(this.model,'change:text',this.render);
-
             this.model.fetch();
-
             this.loadFocus();
         },
         render:function(){
@@ -122,6 +121,7 @@ define(function(require,exports,module){
                         },500)
                     });
                 TweetList.once('add',function(tweet){
+                    var TweetView = require('./tweets');
                     new TweetView({model:tweet,el:newPost[0]});
                 })
                 TweetList.add(_.extend({backup:true},this.model.toJSON(),{updated:false}));

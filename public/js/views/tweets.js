@@ -5,15 +5,16 @@ define(function(require,exports,module){
     var util = require('../util');
     var CommonTweetView = require('./common_tweet');
     var MessagesAlert = require.async('./messages_tips');
-    var TweetBoxView = require('./tweetbox');
+    var tweetCount = $(".dashboard .stats li:first strong");
     var tweetBoxState = function(model){
+        var boxEditor = document.querySelector('.tweet-box .textbox');
         return model.get("backup") ? {
             enable:function(){
-                TweetBoxView.editor.contentEditable = true;
-                TweetBoxView.editor.focus();
+                boxEditor.contentEditable = true;
+                boxEditor.focus();
             },
             disable:function(){
-                TweetBoxView.editor.contentEditable = false;
+                boxEditor.contentEditable = false;
             }
         } : {
             enable:function(){},
@@ -30,7 +31,6 @@ define(function(require,exports,module){
             'paste.withRichEditor .post p':'withRichEditor'
         },
         initialize:function(options){
-            console.log('tweetvIEW')
             this.el = options.el;
             this.$editor = this.$('.post p');
             this.editor = this.$editor[0];
@@ -64,15 +64,13 @@ define(function(require,exports,module){
                                 text:'你的推文已删除',
                                 duration:1000
                             });
-                            TweetBoxView.tweetCount.text(parseInt(tweetCount.text()) - 1);
+                            tweetCount.text(parseInt(tweetCount.text()) - 1);
                             return dfd.resolve();
                         },300)
                     }).done(function(){
                             if (this.model.get('backup')){
                                 setTimeout(function(){
-                                    TweetBoxView.model.save(_.extend({},this.model.toJSON(),{updated:true}));
-                                    TweetBoxView.$editor.html(TweetBoxView.model.get('html')).focus();
-                                    //alert tips消失后再恢复
+                                    this.trigger('restore');
                                     this.model.destroy();
                                 }.bind(this),1000)
                             }

@@ -8,7 +8,7 @@ define(function(require,exports,module){
     var MessagesAlert = require('./messages_tips');
     var TweetBox = require('../models/tweetbox');
     var TweetList = require('../collections/tweets');
-//    var TweetView = require('./tweets');
+    var TweetView = require.async('./tweets');
     var TweetBoxView = Backbone.View.extend({
         el:'.tweet-box',
         events:{
@@ -20,7 +20,6 @@ define(function(require,exports,module){
             'submit form':'createOnePost'
         },
         initialize:function(){
-            console.log('tweetbox')
             this.model = new TweetBox;
             this.PLACEHOLDER = '<div>撰写新推文...</div>';
             this.tweetCount = $('.stats li:first strong');
@@ -121,8 +120,11 @@ define(function(require,exports,module){
                         },500)
                     });
                 TweetList.once('add',function(tweet){
-                    var TweetView = require('./tweets');
-                    new TweetView({model:tweet,el:newPost[0]});
+                    var tweetView = new TweetView({model:tweet,el:newPost[0]});
+                    tweetView.bind('restore',function(){
+                        this.model.save(_.extend({},tweet.toJSON(),{updated:true}));
+                        this.$editor.html(this.model.get('html')).focus();
+                    }.bind(this))
                 })
                 TweetList.add(_.extend({backup:true},this.model.toJSON(),{updated:false}));
                 this.model.save({text:'',updated:false});

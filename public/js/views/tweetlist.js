@@ -11,7 +11,6 @@ define(function(require,exports,module){
         },
         initialize:function(){
 //            this.listenTo(TweetList, 'add', this.addOne);
-            console.log('tweetlist')
             this.render();
         },
         render:function(){
@@ -34,9 +33,9 @@ define(function(require,exports,module){
             e.preventDefault();
             var $target = $(e.target);
             var post = $target.find('.post p');
-            TweetList.on('add',function(tweet){
-                this.addOne(tweet,$target);
-            })
+            TweetList.once('add',function(tweet){
+                this.addOne(tweet,$target.get(0));
+            }.bind(this));
             TweetList.add(this.newAttributes(
                 post.text(),
                 post.html()
@@ -46,5 +45,5 @@ define(function(require,exports,module){
 
 
     })
-    module.exports = TweetListView;
+    module.exports = new TweetListView;
 })

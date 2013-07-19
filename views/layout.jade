@@ -55,18 +55,16 @@ html
                     "twitterText":"lib/twitter-text"
                 }
             });
-            seajs.use(['jquery'],function($){
+            seajs.use(['jquery','js/views/tweetbox','js/views/tweetlist'],function($){
                 $(document).on("compositionstart", function(e){
                     e.target.setAttribute("data-in-composition", "true")
                 });
                 $(document).on("compositionend", function(e){
                     e.target.removeAttribute("data-in-composition")
                 });
-
-            });
-            seajs.use(['js/views/tweets'],function(){
                 console.log('success')
-            })
+            });
+
 
 
 

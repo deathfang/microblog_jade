@@ -31,19 +31,18 @@ define(function(require,exports,module){
         },
         createOne:function(e){
             e.preventDefault();
-            var $target = $(e.target);
+            var $target = $(e.currentTarget);
+            if ($target.data('model')) return;
             var post = $target.find('.post p');
             TweetList.once('add',function(tweet){
                 this.addOne(tweet,$target.get(0));
+                $target.data({model:true})
             }.bind(this));
             TweetList.add(this.newAttributes(
                 post.text(),
                 post.html()
             ));
-            $target.off('mouseenter');
         }
-
-
     })
     module.exports = new TweetListView;
 })

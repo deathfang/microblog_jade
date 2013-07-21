@@ -7,7 +7,7 @@ define(function(require,exports,module){
     var util = require('../util');
     var actionHTML = require('../templates/post_action.handlebars');
     var modalCompiled  = require('../templates/modal.handlebars');
-    var twitterText = require.async('twitterText');
+    var twitterText = require('twitterText');
     var body = $('body');
     var CommonTweetView = Backbone.View.extend({
         initialize:function(){
@@ -35,7 +35,7 @@ define(function(require,exports,module){
                 element.innerText :
                 $(element).html().replace(/<br>/g,"&#10;").replace(util.REG_NOHTML,'')
         },
-        withRichEditor:function(model){
+        withRichEditor:function(){
             var currentRange = window.getSelection().getRangeAt(0);
             var currentNode = currentRange.endContainer;
             var currentHTML = currentNode.previousSibling && currentNode.previousSibling.innerHTML || currentNode.data;
@@ -44,7 +44,7 @@ define(function(require,exports,module){
             if (twitterText.extractUrls(currentHTML).length && !this.$editor.attr("data-in-composition")){
 
                 //过滤<a..> </a> a的文本和其他url文本继续转换 焦点保持在url最后
-                html = model.get('html').replace(/<a[^><]*>|<\/a>/g,"");
+                html = this.$editor.html().replace(/<a[^><]*>|<\/a>/g,"");
                 urls = twitterText.extractUrlsWithIndices(html);
                 this.$editor.html(
                     twitterText.autoLinkEntities(
@@ -60,33 +60,33 @@ define(function(require,exports,module){
 
             if (this.textLength.text() < 0 && !this.$editor.attr("data-in-composition")) {
                 var emPosition = 140;
-                twitterText.extractUrls(model.get('text')).forEach(function(item){
+                twitterText.extractUrls(this.$editor.text()).forEach(function(item){
                     emPosition -= 20 - item.length;
                 })
                 //仅创建一个em 焦点需要定位到em后面
-                this.$editor.html(model.get('html').replace(/<\/*em>/g,''));
+                this.$editor.html(this.$editor.html().replace(/<\/*em>/g,''));
                 //计算几个换行符 Firefox查找br
-                var lineCount = this.editor.innerText ? this.editor.innerText.length - model.get('text').length :
+                var lineCount = this.editor.innerText ? this.editor.innerText.length - this.$editor.text().length :
                     this.$editor.find("br").length;
                 this.htmlRich.emphasizeText([
                     emPosition + (
                         //目标为tweetBox
                         this.$editor.hasClass('textbox') ?
                             //是否有换行情况细节计算 后面加减 -1 -2原因不明 火狐-1 webkit -2
-                            (lineCount ? (oPostEditor.innerText ? lineCount - 2: lineCount - 1): 0 ) :
+                            (lineCount ? (this.editor.innerText ? lineCount - 2: lineCount - 1): 0 ) :
                             (lineCount ? lineCount - 1: 0 )
                         ),
                     Number.MAX_VALUE
                 ]);
                 this.$editor.html(
-                    model.get('html').replace('</em>','') + '</em>'
+                    this.$editor.html().replace('</em>','') + '</em>'
                 )
                 this.htmlRich.setSelectionOffsets([parseInt(cursorPosition)]);
-                this.saveEditData();
             }
+            this.saveEditData();
         },
         tweetDialog : function(attributes,resize,disable,enable,callback){
-            itemHTML.replace(actionHTML({}),"").replace(/<span.+保存成功.+\/span>/,"");
+            attributes.itemHTML = attributes.itemHTML.replace(actionHTML({}),"").replace(/<span.+保存成功.+\/span>/,"");
             var dialog = $(modalCompiled(attributes));
             //测试初次弹层显示时监听show shown无效
             dialog.modal().css({marginTop:-dialog.outerHeight()/2 + "px"}).addClass('fade_in');

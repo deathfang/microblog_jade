@@ -27,16 +27,20 @@ define(function(require,exports,module){
             this.editor = this.$editor[0];
             this.textLength = this.$('.tweet-counter');
             this.button = this.$('button');
+            this.htmlRich = htmlText(this.editor,UA);
             //首次load需要reset
             this.listenTo(this.model,'reset',this.render);
             this.listenTo(this.model,'change:text',this.render);
             this.model.fetch();
+            //model fetch后添加到{0:{}}
+            this.model.save(this.model.get('0'));
             this.loadFocus();
         },
         render:function(){
+            !this.$editor.attr("data-in-composition") &&
             CommonTweetView.textLengthTips(
                 this.textLength,this.model.get('text'),
-                this.disable,this.enable
+                this.disable.bind(this),this.enable.bind(this)
             );
         },
         enable:function(){
@@ -49,16 +53,18 @@ define(function(require,exports,module){
                 .attr("disabled",true)
                 .removeClass('btn-primary')
         },
-        toggleCondensed:function(){
-            this.$el.toggleClass("uncondensed",!this.model.get('updated'));
-        },
         openEdit:function(){
-            this.toggleCondensed();
-            !this.model.get('updated') && this.$editor.html('');
+            if (!this.model.get('updated')) {
+                this.$el.addClass('uncondensed');
+                this.$editor.html('');
+                this.htmlRich.setSelectionOffsets([0]);
+            }
         },
         close:function(){
-            this.toggleCondensed();
-            !this.model.get('updated') && this.$editor.html(this.PLACEHOLDER);
+            if (!this.model.get('updated')) {
+                this.$el.removeClass('uncondensed');
+                this.$editor.html(this.PLACEHOLDER)
+            }
         },
         isWhitespace:function(){
             return !this.model.get('text').trim()
@@ -68,15 +74,15 @@ define(function(require,exports,module){
             (e.metaKey || e.ctrlKey) && e.keyCode === 13 &&
                 !this.button.attr("disabled") && this.$('form').trigger('submit');
         },
-        htmlRich:htmlText(this.editor,UA),
         loadFocus:function(){
             if (this.model.get('updated')) {
+                this.$el.addClass('uncondensed');
                 this.$editor.focus(function(){
                     this.htmlRich.setSelectionOffsets([
                         CommonTweetView.getTextWrap(this.editor).length
                     ])
-                }).focus();
-                this.$editor.html(this.model.get('html'));
+                }.bind(this));
+                this.$editor.html(this.model.get('html')).focus();
             }
         },
         saveEditData:function(){
@@ -89,7 +95,7 @@ define(function(require,exports,module){
             })
         },
         withRichEditor:function(){
-            CommonTweetView.withRichEditor.bind(this,this.model)()
+            CommonTweetView.withRichEditor.bind(this)()
         },
         createOnePost:function(e){
             e.preventDefault();
@@ -125,11 +131,14 @@ define(function(require,exports,module){
                         this.model.save(_.extend({},tweet.toJSON(),{updated:true}));
                         this.$editor.html(this.model.get('html')).focus();
                     }.bind(this))
-                })
-                TweetList.add(_.extend({backup:true},this.model.toJSON(),{updated:false}));
+                });
+                TweetList.add(_.extend({backup:true},{
+                    text:this.model.get('text'),
+                    html:this.model.get('html')
+                }, {updated:false}));
                 this.model.save({text:'',updated:false});
                 this.editor.blur();
-            })
+            }.bind(this))
         }
     })
     module.exports = new TweetBoxView;

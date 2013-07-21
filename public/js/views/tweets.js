@@ -2,25 +2,12 @@ define(function(require,exports,module){
     require.async('lib/jquery-plugins/bootstrap-tooltip.js');
     var Backbone = require('backbone');
     var $ = require('jquery');
+    var UA = require.async('UA');
+    var htmlText = require('html-text');
     var util = require('../util');
     var CommonTweetView = require('./common_tweet');
     var MessagesAlert = require.async('./messages_tips');
     var tweetCount = $(".dashboard .stats li:first strong");
-    var tweetBoxState = function(model){
-        var boxEditor = document.querySelector('.tweet-box .textbox');
-        return model.get("backup") ? {
-            enable:function(){
-                boxEditor.contentEditable = true;
-                boxEditor.focus();
-            },
-            disable:function(){
-                boxEditor.contentEditable = false;
-            }
-        } : {
-            enable:function(){},
-            disable:function(){}
-        }
-    };
     var TweetView = Backbone.View.extend({
         events:{
             'click .icon-remove':'delClick',
@@ -38,12 +25,14 @@ define(function(require,exports,module){
             this.saveButton = this.$('.icon-save');
             this.oldText = this.model.get('text');
             this.editorContainer  = this.$editor.parent();
+            this.htmlRich = htmlText(this.editor,UA);
             this.listenTo(this.model, 'change:text', this.render);
         },
         render:function(){
+            !this.$editor.attr("data-in-composition") &&
             CommonTweetView.textLengthTips(
                 this.textLength,this.model.get('text'),
-                this.disable,this.enable
+                this.disable.bind(this),this.enable.bind(this)
             );
         },
         disable:function(){
@@ -66,44 +55,60 @@ define(function(require,exports,module){
                             });
                             tweetCount.text(parseInt(tweetCount.text()) - 1);
                             return dfd.resolve();
-                        },300)
+                        }.bind(this),300)
                     }).done(function(){
                             if (this.model.get('backup')){
                                 setTimeout(function(){
                                     this.trigger('restore');
-                                    this.model.destroy();
                                 }.bind(this),1000)
                             }
-                        })
+                        }.bind(this));
+                    this.model.destroy();
+                    this.deleteDialog.remove();
                 }
-            });
+            }.bind(this));
         },
         delDialogAttrs:function(){
             return {
-                id:'delete-tweet-dialog-' + this.id,
+                id:'delete-tweet-dialog-' + this.el.id,
                 title:'确定要删除这条推文吗?',
                 itemHTML:this.model.get('html'),
                 action:'删除'
             }
         },
+        tweetBoxState :function(model){
+            var boxEditor = document.querySelector('.tweet-box .textbox');
+            return model.get("backup") ? {
+                enable:function(){
+                    boxEditor.contentEditable = true;
+                    boxEditor.focus();
+                },
+                disable:function(){
+                    boxEditor.contentEditable = false;
+                }
+            } : {
+                enable:function(){},
+                disable:function(){}
+            }
+        },
         delClick:function(e){
             e.preventDefault();
-            var tweetBoxState = tweetBoxState(this.model);
+            var tweetBoxState = this.tweetBoxState(this.model);
             if (!this.deleteDialog) {
                 this.deleteDialog = CommonTweetView.tweetDialog(
                     this.delDialogAttrs(),false,
                     tweetBoxState.disable,tweetBoxState.enable,
                     function(){
-                        this.delete(this.id,this.deleteDialog)
-                    }
+                        this.delete(this.el.id,this.deleteDialog)
+                    }.bind(this)
                 )
             }else if(this.model.get('updated')){
                 this.deleteDialog = CommonTweetView.tweetDialog(
                     this.delDialogAttrs(),false,
                     tweetBoxState.disable,tweetBoxState.enable,
                     function(){
-                        this.delete(this.id,this.deleteDialog)
-                    }
+                        this.delete(this.el.id,this.deleteDialog)
+                    }.bind(this)
                 );
             }else{
                 this.deleteDialog.modal();
@@ -118,11 +123,11 @@ define(function(require,exports,module){
             this.model.get('updated') ? this.save() : this.textWarn();
         },
         save:function(){
-            $.post('/edit/'+ this.id,{post:CommonTweetView.getTextWrap(this.editor)},function(res){
+            $.post('/edit/'+ this.el.id,{post:CommonTweetView.getTextWrap(this.editor)},function(res){
                 if (res.content) {
                     this.$editor.html(res.content);
                     this.editorContainer.prev().replaceWith(res.time);
-                    var newPostTime = $('#' + postID + ' .time');
+                    var newPostTime = $('#' + this.el.id + ' .time');
                     util.timer(newPostTime);
                     this.$editor.attr({contenteditable:false}).blur();
                     this.saveButton.addClass("hide");
@@ -133,11 +138,11 @@ define(function(require,exports,module){
                     this.saveLabel.modal({backdrop:false})
                     this.saveLabel.on('shown',function(){
                         setTimeout(function(){
-                            this.saveLabel.modal('hide');
-                        }.bind(this),1000)
-                    });
+                            this.modal('hide');
+                        },1000)
+                    }.bind(this));
                 }
-            });
+            }.bind(this));
         },
         updateOnEnter:function(e){
             if ((e.metaKey || e.ctrlKey) && e.keyCode === 13){
@@ -151,7 +156,7 @@ define(function(require,exports,module){
             }).tooltip('show');
             setTimeout(function(){
                 this.editorContainer.tooltip('hide');
-            },1500)
+            }.bind(this),1500)
         },
         saveEditData:function(){
             this.model.set({
@@ -163,7 +168,7 @@ define(function(require,exports,module){
             })
         },
         withRichEditor:function(){
-            CommonTweetView.withRichEditor.bind(this,this.model)()
+            CommonTweetView.withRichEditor.bind(this)()
         }
     })
     module.exports = TweetView;

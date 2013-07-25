@@ -8,7 +8,7 @@ define(function(require,exports,module){
     var MessagesAlert = require('./messages_tips');
     var TweetBox = require('../models/tweetbox');
     var TweetList = require('../collections/tweets');
-    var TweetView = require.async('./tweets');
+    var TweetView = require('./tweets');
     var TweetBoxView = Backbone.View.extend({
         el:'.tweet-box',
         events:{
@@ -104,6 +104,7 @@ define(function(require,exports,module){
                 this.$el.removeClass("tweeting");
                 var newPost = $(res).addClass('animate-hide animate-opacity');
                 newPost.children().css('opacity',0);
+                newPost.data({model:true});
                 $(".postlist").prepend(newPost);
                 this.tweetCount.text(parseInt(this.tweetCount.text()) + 1);
                 var newPostTime = newPost.find(".time");
@@ -131,7 +132,7 @@ define(function(require,exports,module){
                         this.model.save(_.extend({},tweet.toJSON(),{updated:true}));
                         this.$editor.html(this.model.get('html')).focus();
                     }.bind(this))
-                });
+                }.bind(this));
                 TweetList.add(_.extend({backup:true},{
                     text:this.model.get('text'),
                     html:this.model.get('html')

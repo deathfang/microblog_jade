@@ -381,6 +381,9 @@ footer {
   word-wrap: break-word;
   white-space: pre-wrap;
 }
+.tweet-dialog .post {
+  margin-bottom: 10px;
+}
 .stream-footer .icon-spin {
   font-size: 32px;
   color: rgba(0, 0, 0, 0.8);

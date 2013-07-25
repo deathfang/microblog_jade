@@ -6,13 +6,14 @@ define(function(require,exports,module){
     var htmlText = require('html-text');
     var util = require('../util');
     var CommonTweetView = require('./common_tweet');
-    var MessagesAlert = require.async('./messages_tips');
+    var MessagesAlert = require('./messages_tips');
     var tweetCount = $(".dashboard .stats li:first strong");
     var TweetView = Backbone.View.extend({
         events:{
             'click .icon-remove':'delClick',
             'click .icon-edit':'edit',
             'click .icon-save':'preSave',
+            'focus .post p':'focus',
             'keydown .post p':'updateOnEnter',
             'keyup.withRichEditor .post p':'withRichEditor',
             'paste.withRichEditor .post p':'withRichEditor'
@@ -27,6 +28,9 @@ define(function(require,exports,module){
             this.editorContainer  = this.$editor.parent();
             this.htmlRich = htmlText(this.editor,UA);
             this.listenTo(this.model, 'change:text', this.render);
+            this.$editor.on('input',function(){
+                this.textLength.is(":hidden") && this.textLength.removeClass("hide");
+            }.bind(this));
         },
         render:function(){
             !this.$editor.attr("data-in-composition") &&
@@ -58,9 +62,7 @@ define(function(require,exports,module){
                         }.bind(this),300)
                     }).done(function(){
                             if (this.model.get('backup')){
-                                setTimeout(function(){
-                                    this.trigger('restore');
-                                }.bind(this),1000)
+                                this.trigger('restore');
                             }
                         }.bind(this));
                     this.model.destroy();
@@ -72,7 +74,7 @@ define(function(require,exports,module){
             return {
                 id:'delete-tweet-dialog-' + this.el.id,
                 title:'确定要删除这条推文吗?',
-                itemHTML:this.model.get('html'),
+                itemHTML:this.el.innerHTML,
                 action:'删除'
             }
         },
@@ -101,15 +103,18 @@ define(function(require,exports,module){
                     function(){
                         this.delete(this.el.id,this.deleteDialog)
                     }.bind(this)
-                )
-            }else if(this.model.get('updated')){
+                );
+                this.oldText = this.model.get('text');
+            }else if(this.oldText !== this.model.get('text')){
+                this.deleteDialog.remove();
                 this.deleteDialog = CommonTweetView.tweetDialog(
-                    this.delDialogAttrs(),false,
+                    this.delDialogAttrs(),true,
                     tweetBoxState.disable,tweetBoxState.enable,
                     function(){
                         this.delete(this.el.id,this.deleteDialog)
                     }.bind(this)
                 );
+                this.oldText = this.model.get('text');
             }else{
                 this.deleteDialog.modal();
             }
@@ -117,6 +122,11 @@ define(function(require,exports,module){
         edit:function(e){
             e.preventDefault();
             this.$editor.attr("contenteditable",true).focus();
+        },
+        focus:function(){
+            this.htmlRich.setSelectionOffsets([
+                this.model.get('text').length
+            ]);
         },
         preSave:function(e){
             e.preventDefault();
@@ -138,9 +148,11 @@ define(function(require,exports,module){
                     this.saveLabel.modal({backdrop:false})
                     this.saveLabel.on('shown',function(){
                         setTimeout(function(){
-                            this.modal('hide');
-                        },1000)
-                    }.bind(this));
+                            $(this).modal('hide');
+                        }.bind(this),1000)
+                    });
+                    this.oldText = this.model.get('text');
+                    this.model.set({updated:false});
                 }
             }.bind(this));
         },

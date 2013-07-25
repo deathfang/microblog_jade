@@ -5,7 +5,6 @@ define(function(require,exports,module){
     var Backbone = require('backbone');
     var $ = require('jquery');
     var util = require('../util');
-    var actionHTML = require('../templates/post_action.handlebars');
     var modalCompiled  = require('../templates/modal.handlebars');
     var twitterText = require('twitterText');
     var body = $('body');
@@ -86,7 +85,7 @@ define(function(require,exports,module){
             this.saveEditData();
         },
         tweetDialog : function(attributes,resize,disable,enable,callback){
-            attributes.itemHTML = attributes.itemHTML.replace(actionHTML({}),"").replace(/<span.+保存成功.+\/span>/,"");
+            attributes.itemHTML = attributes.itemHTML.replace(/<div\sclass=\"tweet-actions\".+div>/,"");
             var dialog = $(modalCompiled(attributes));
             //测试初次弹层显示时监听show shown无效
             dialog.modal().css({marginTop:-dialog.outerHeight()/2 + "px"}).addClass('fade_in');

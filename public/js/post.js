@@ -132,9 +132,7 @@ define(function(require) {
                                 },1000)
                             }
                         })
-                    // tbutton.active().highlight();
                     dialog.remove();
-                    dialog.off('click');
                 }
             });
         }

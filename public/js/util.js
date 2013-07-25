@@ -68,7 +68,7 @@ define(function(require, exports, module) {
 
     var tweetDialog = function(id,title,itemHTML,action,resize,callback){
         var callback = typeof resize === "function" ? resize : callback;
-        itemHTML.replace(actionHTML,"").replace(/<span.+保存成功.+\/span>/,"");
+        itemHTML = itemHTML.replace(actionHTML,"").replace(/<span.+保存成功.+\/span>/,"");
         var dialog = $(sub(modalTmpl,{
             id:id,title:title,itemHTML:itemHTML,action:action
         }));

@@ -124,6 +124,17 @@ define(function(require,exports,module){
             this.$editor.attr("contenteditable",true).focus();
         },
         focus:function(){
+            var anchors = this.$editor.find('a');
+            if (anchors.filter(function(){return this.title.length > 20}).length){
+                anchors.each(function(k,v){
+                    var anchor = $(v);
+                    anchor.html(
+                        anchor.html().replace(anchor.text(),anchor.attr("href"))
+                    );
+                    this.model.set({text:this.$editor.text(),html:this.$editor.html()})
+                }.bind(this));
+            }
+
             this.htmlRich.setSelectionOffsets([
                 this.model.get('text').length
             ]);

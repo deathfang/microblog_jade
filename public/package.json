@@ -3,21 +3,22 @@
   "name": "itwitter",
   "version": "0.0.1",
   "spm": {
-    "alias": {
-        "jquery":"lib/jquery",
-        "_":"lib/underscore",
-        "backbone":"lib/backbone",
-        "UA":"lib/yui-ua",
-        "moment":"lib/moment",
-        "html-text":"lib/html-text",
-        "twitterText":"lib/twitter-text"
-    }
+      "alias": {
+          "jquery":"lib/jquery",
+          "_":"lib/underscore",
+          "backbone":"lib/backbone",
+          "handlebars": "lib/handlebars",
+          "UA":"lib/yui-ua",
+          "moment":"lib/moment",
+          "html-text":"lib/html-text",
+          "twitterText":"lib/twitter-text"
+      }
   },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-cmd-transport": "~0.2.0",
     "grunt-cmd-concat": "~0.2.0",
     "grunt-contrib-uglify": "~0.2.0",
-    "grunt-contrib-clean": "~0.4.0"
+    "grunt-contrib-clean": "~0.5.0"
   }
 }

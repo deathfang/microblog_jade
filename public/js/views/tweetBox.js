@@ -1,4 +1,5 @@
 define(function(require,exports,module){
+    require.async('lib/jquery-plugins/jquery.animate-enhanced');
     var Backbone = require('backbone');
     var $ = require('jquery');
     var UA = require.async('UA');

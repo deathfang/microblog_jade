@@ -1,0 +1,2 @@
+/*! itwitter 2013-07-26 */
+define("dist/js/models/tweetBox",["lib/backbone","_","jquery"],function(a,b,c){var d=a("lib/backbone");a("lib/backbone.localStorage");var e=d.Model.extend({defaults:{text:"",html:"",updated:!1},localStorage:new d.LocalStorage("tweetbox")});c.exports=e});

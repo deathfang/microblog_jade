@@ -1,0 +1,2 @@
+/*! itwitter 2013-07-26 */
+define("dist/js/collections/tweets",["lib/backbone","_","jquery","../models/tweet"],function(a,b,c){var d=a("lib/backbone"),e=a("../models/tweet"),f=d.Collection.extend({model:e});c.exports=new f}),define("dist/js/models/tweet",["lib/backbone","_","jquery"],function(a,b,c){var d=a("lib/backbone"),e=d.Model.extend({defaults:{text:"",html:"",updated:!1}});c.exports=e});

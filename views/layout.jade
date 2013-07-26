@@ -48,14 +48,14 @@ html
                     "jquery":"lib/jquery",
                     "_":"lib/underscore",
                     "backbone":"lib/backbone",
-                    "handlebars": 'lib/handlebars',
+                    "handlebars": "lib/handlebars",
                     "UA":"lib/yui-ua",
                     "moment":"lib/moment",
                     "html-text":"lib/html-text",
                     "twitterText":"lib/twitter-text"
                 }
             });
-            seajs.use(['jquery','js/views/tweetbox','js/views/tweetlist'],function($){
+            seajs.use(['jquery','dist/js/views/tweetBox','dist/js/views/tweetlist'],function($){
                 $(document).on("compositionstart", function(e){
                     e.target.setAttribute("data-in-composition", "true")
                 });

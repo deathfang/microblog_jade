@@ -1,0 +1,2 @@
+/*! itwitter 2013-07-26 */
+define("dist/js/templates/message_alert-debug.handlebars",["lib/runtime-debug"],function(a,b,c){var d=a("lib/runtime-debug"),e=d.template;c.exports=e(function(a,b,c,d,e){this.compilerInfo=[3,">= 1.0.0-rc.4"],c=c||{};for(var f in a.helpers)c[f]=c[f]||a.helpers[f];e=e||{};var g,h="",i="function",j=this.escapeExpression;return h+='<button type="button" data-dismiss="alert" class="close">&times;</button>\r\n',(g=c.text)?g=g.call(b,{hash:{},data:e}):(g=b.text,g=typeof g===i?g.apply(b):g),h+=j(g)})});

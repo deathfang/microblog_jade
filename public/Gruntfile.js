@@ -26,8 +26,7 @@ module.exports = function (grunt) {
         },
         concat : {
             options : {
-                paths : ['.'],
-                include : 'all'
+                include : 'relative'
             },
             main:{
                 files: [
@@ -42,6 +41,9 @@ module.exports = function (grunt) {
         },
 
         uglify : {
+            options : {
+                banner:'/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+            },
             main:{
                 files: [
                     {
@@ -53,8 +55,6 @@ module.exports = function (grunt) {
                 ]
             }
         },
-//        moment单独处理，jqBootstrapValidation放到deps里
-
         clean : {
             spm : ['.build']
         }
